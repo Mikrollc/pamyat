@@ -18,8 +18,6 @@ Follow Conventional Commits:
 <type>: <short description>
 
 [optional body]
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 ```
 
 Types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `style`
