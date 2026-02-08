@@ -1,0 +1,31 @@
+name: Task
+description: Technical or chore task (not user-facing)
+title: "[Task] "
+labels: ["task"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What needs to be done?
+      placeholder: "Set up Mapbox token in environment"
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of Done
+      placeholder: |
+        - [ ] Token configured in .env.local
+        - [ ] Map renders on iOS simulator
+    validations:
+      required: true
+  - type: dropdown
+    id: size
+    attributes:
+      label: Size
+      options:
+        - S (< 1 session)
+        - M (1-2 sessions)
+        - L (3+ sessions)
+    validations:
+      required: true

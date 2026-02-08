@@ -36,10 +36,20 @@ Rules:
 - Fill out the PR template — summary, user story, changes, testing checklist.
 - Squash merge to keep main history clean.
 
+### GitHub Issues
+All work items are tracked as GitHub Issues. Three templates:
+- **Story** — user-facing feature with acceptance criteria
+- **Task** — technical/chore work with definition of done
+- **Bug** — broken behavior with repro steps
+
+Labels: `story`, `task`, `bug`, `size/S`, `size/M`, `size/L`, `sprint`, `blocked`, `needs-review`, `accepted`
+
 ### Branch Lifecycle
 ```
-main → feat/my-feature → commit → commit → PR → squash merge → delete branch
+PO creates issue #12 → branch feat/12-add-grave-wizard → commits → PR (Closes #12) → squash merge → delete branch
 ```
+
+Branches reference issue numbers. PRs close issues on merge.
 
 ---
 
