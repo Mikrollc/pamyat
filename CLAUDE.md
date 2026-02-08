@@ -29,10 +29,14 @@ Rules:
 - Reference the user story if applicable: `feat: add grave wizard step 1 [S-3]`
 
 ### Pull Requests
-- Every feature branch gets a PR against `main`.
-- PR title follows same conventional commit format.
+- **Every work item (issue) gets its own branch and PR.** No exceptions.
+- Open a draft PR immediately when starting work on an issue.
+- PR title: `<type>: <description> (#<issue>)` (e.g., `feat: add grave wizard (#12)`)
+- PR body must include `Closes #<issue>` so the issue auto-closes on merge.
 - Fill out the PR template — summary, user story, changes, testing checklist.
-- Squash merge to keep main history clean.
+- PR stays in draft until validated (QA + user testing pass).
+- Mark ready for review → PO accepts → squash merge → branch deleted → issue closed.
+- If PO rejects: fix on same branch, push, re-validate. Do not open a new PR.
 
 ### GitHub Issues
 All work items are tracked as GitHub Issues. Three templates:
@@ -44,10 +48,15 @@ Labels: `story`, `task`, `bug`, `size/S`, `size/M`, `size/L`, `sprint`, `blocked
 
 ### Branch Lifecycle
 ```
-PO creates issue #12 → branch feat/12-add-grave-wizard → commits → PR (Closes #12) → squash merge → delete branch
+PO creates issue #12
+  → branch: feat/12-add-grave-wizard
+    → open draft PR (Closes #12)
+      → commits on branch
+        → QA + user-tester validate
+          → PO accepts → mark PR ready → squash merge → branch deleted → issue closed
 ```
 
-Branches reference issue numbers. PRs close issues on merge.
+Every branch references its issue number. Every PR closes its issue on merge. One issue = one branch = one PR.
 
 ---
 
