@@ -1,0 +1,88 @@
+{
+  "tabs": {
+    "map": "Map",
+    "myGraves": "My Graves",
+    "notifications": "Notifications",
+    "profile": "Profile"
+  },
+  "map": {
+    "search": "Search cemeteries...",
+    "addGrave": "Add a Grave"
+  },
+  "memorial": {
+    "share": "Share",
+    "wantCare": "Want this grave cared for?",
+    "onWaitlist": "You're on the waitlist",
+    "signUpToManage": "Sign up to help manage this memorial"
+  },
+  "graves": {
+    "empty": "No memorials yet",
+    "addFirst": "Add your first memorial",
+    "edit": "Edit",
+    "delete": "Delete memorial",
+    "deleteConfirm": "Are you sure? This cannot be undone."
+  },
+  "addGrave": {
+    "stepPin": "Place on map",
+    "stepCemetery": "Cemetery",
+    "stepPerson": "Person",
+    "stepPhoto": "Photo",
+    "stepInscription": "Inscription",
+    "stepReview": "Review",
+    "useMyLocation": "Use my location",
+    "cemeteryName": "Cemetery name",
+    "iDontKnow": "I don't know",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "birthDate": "Date of birth",
+    "deathDate": "Date of death",
+    "takePhoto": "Take Photo",
+    "chooseGallery": "Choose from Gallery",
+    "skip": "Skip",
+    "inscriptionHint": "Headstone inscription text",
+    "publish": "Publish"
+  },
+  "auth": {
+    "welcome": "Pamyat",
+    "tagline": "Keep their memory alive",
+    "continueWithPhone": "Continue with Phone",
+    "signInGoogle": "Sign in with Google",
+    "signInApple": "Sign in with Apple",
+    "enterPhone": "Enter your phone number",
+    "sendCode": "Send code",
+    "enterCode": "Enter verification code",
+    "resend": "Resend",
+    "yourName": "Your name",
+    "getStarted": "Get Started"
+  },
+  "invite": {
+    "title": "Invite Family",
+    "emailOrPhone": "Email or phone number",
+    "send": "Send Invite",
+    "pending": "Pending",
+    "accepted": "Accepted"
+  },
+  "notifications": {
+    "empty": "No upcoming dates",
+    "emptyHint": "Add memorials to get reminders before important dates",
+    "daysAway": "{{count}} days away",
+    "settings": "Notification Settings",
+    "orthodoxDates": "Orthodox memorial dates",
+    "usHolidays": "US holidays (Memorial Day, etc.)",
+    "remindBefore": "Remind me before"
+  },
+  "profile": {
+    "language": "Language",
+    "account": "Account Settings",
+    "signOut": "Sign Out"
+  },
+  "common": {
+    "next": "Next",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "done": "Done",
+    "loading": "Loading...",
+    "offline": "You are offline"
+  }
+}

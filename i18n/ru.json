@@ -1,0 +1,88 @@
+{
+  "tabs": {
+    "map": "Карта",
+    "myGraves": "Мои могилы",
+    "notifications": "Уведомления",
+    "profile": "Профиль"
+  },
+  "map": {
+    "search": "Поиск кладбищ...",
+    "addGrave": "Добавить могилу"
+  },
+  "memorial": {
+    "share": "Поделиться",
+    "wantCare": "Хотите заказать уход?",
+    "onWaitlist": "Вы в списке ожидания",
+    "signUpToManage": "Зарегистрируйтесь, чтобы управлять этим мемориалом"
+  },
+  "graves": {
+    "empty": "Пока нет мемориалов",
+    "addFirst": "Добавьте свой первый мемориал",
+    "edit": "Редактировать",
+    "delete": "Удалить мемориал",
+    "deleteConfirm": "Вы уверены? Это действие нельзя отменить."
+  },
+  "addGrave": {
+    "stepPin": "Отметьте на карте",
+    "stepCemetery": "Кладбище",
+    "stepPerson": "Человек",
+    "stepPhoto": "Фото",
+    "stepInscription": "Надпись",
+    "stepReview": "Проверка",
+    "useMyLocation": "Моё местоположение",
+    "cemeteryName": "Название кладбища",
+    "iDontKnow": "Не знаю",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "birthDate": "Дата рождения",
+    "deathDate": "Дата смерти",
+    "takePhoto": "Сделать фото",
+    "chooseGallery": "Выбрать из галереи",
+    "skip": "Пропустить",
+    "inscriptionHint": "Текст надписи на памятнике",
+    "publish": "Опубликовать"
+  },
+  "auth": {
+    "welcome": "Память",
+    "tagline": "Храните память о близких",
+    "continueWithPhone": "Войти по телефону",
+    "signInGoogle": "Войти через Google",
+    "signInApple": "Войти через Apple",
+    "enterPhone": "Введите номер телефона",
+    "sendCode": "Отправить код",
+    "enterCode": "Введите код подтверждения",
+    "resend": "Отправить снова",
+    "yourName": "Ваше имя",
+    "getStarted": "Начать"
+  },
+  "invite": {
+    "title": "Пригласить семью",
+    "emailOrPhone": "Email или номер телефона",
+    "send": "Отправить приглашение",
+    "pending": "Ожидает",
+    "accepted": "Принято"
+  },
+  "notifications": {
+    "empty": "Нет предстоящих дат",
+    "emptyHint": "Добавьте мемориалы, чтобы получать напоминания перед важными датами",
+    "daysAway": "через {{count}} дн.",
+    "settings": "Настройки уведомлений",
+    "orthodoxDates": "Православные поминальные дни",
+    "usHolidays": "Праздники США (День памяти и т.д.)",
+    "remindBefore": "Напомнить заранее"
+  },
+  "profile": {
+    "language": "Язык",
+    "account": "Настройки аккаунта",
+    "signOut": "Выйти"
+  },
+  "common": {
+    "next": "Далее",
+    "back": "Назад",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "done": "Готово",
+    "loading": "Загрузка...",
+    "offline": "Нет подключения к интернету"
+  }
+}
