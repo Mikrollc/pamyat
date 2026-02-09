@@ -21,6 +21,7 @@ export interface Database {
         };
         Insert: Partial<Database['public']['Tables']['profiles']['Row']> & { id: string };
         Update: Partial<Database['public']['Tables']['profiles']['Row']>;
+        Relationships: [];
       };
       cemeteries: {
         Row: {
@@ -37,6 +38,15 @@ export interface Database {
         };
         Insert: Partial<Database['public']['Tables']['cemeteries']['Row']> & { name: string };
         Update: Partial<Database['public']['Tables']['cemeteries']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'cemeteries_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       graves: {
         Row: {
@@ -63,6 +73,22 @@ export interface Database {
           created_by: string;
         };
         Update: Partial<Database['public']['Tables']['graves']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'graves_cemetery_id_fkey';
+            columns: ['cemetery_id'];
+            isOneToOne: false;
+            referencedRelation: 'cemeteries';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'graves_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       grave_photos: {
         Row: {
@@ -80,6 +106,22 @@ export interface Database {
           uploaded_by: string;
         };
         Update: Partial<Database['public']['Tables']['grave_photos']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'grave_photos_grave_id_fkey';
+            columns: ['grave_id'];
+            isOneToOne: false;
+            referencedRelation: 'graves';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'grave_photos_uploaded_by_fkey';
+            columns: ['uploaded_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       grave_members: {
         Row: {
@@ -91,6 +133,22 @@ export interface Database {
         };
         Insert: Partial<Database['public']['Tables']['grave_members']['Row']> & { grave_id: string };
         Update: Partial<Database['public']['Tables']['grave_members']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'grave_members_grave_id_fkey';
+            columns: ['grave_id'];
+            isOneToOne: false;
+            referencedRelation: 'graves';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'grave_members_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       invitations: {
         Row: {
@@ -113,6 +171,29 @@ export interface Database {
           recipient: string;
         };
         Update: Partial<Database['public']['Tables']['invitations']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'invitations_grave_id_fkey';
+            columns: ['grave_id'];
+            isOneToOne: false;
+            referencedRelation: 'graves';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'invitations_invited_by_fkey';
+            columns: ['invited_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'invitations_accepted_by_fkey';
+            columns: ['accepted_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       maintenance_waitlist: {
         Row: {
@@ -128,6 +209,22 @@ export interface Database {
           grave_id: string;
         };
         Update: Partial<Database['public']['Tables']['maintenance_waitlist']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'maintenance_waitlist_grave_id_fkey';
+            columns: ['grave_id'];
+            isOneToOne: false;
+            referencedRelation: 'graves';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'maintenance_waitlist_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       notification_preferences: {
         Row: {
@@ -144,7 +241,44 @@ export interface Database {
           user_id: string;
         };
         Update: Partial<Database['public']['Tables']['notification_preferences']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'notification_preferences_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notification_preferences_grave_id_fkey';
+            columns: ['grave_id'];
+            isOneToOne: false;
+            referencedRelation: 'graves';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
+    Views: Record<string, never>;
+    Functions: {
+      nearby_cemeteries: {
+        Args: { lat: number; lng: number; radius_m?: number };
+        Returns: Database['public']['Tables']['cemeteries']['Row'][];
+      };
+    };
+    Enums: {
+      grave_role: GraveRole;
+      invite_status: InviteStatus;
+      invite_channel: InviteChannel;
+    };
+    CompositeTypes: Record<string, never>;
   };
 }
+
+export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type Grave = Database['public']['Tables']['graves']['Row'];
+export type GraveInsert = Database['public']['Tables']['graves']['Insert'];
+export type GraveUpdate = Database['public']['Tables']['graves']['Update'];
+export type Cemetery = Database['public']['Tables']['cemeteries']['Row'];
+export type WaitlistEntry = Database['public']['Tables']['maintenance_waitlist']['Row'];
+export type WaitlistInsert = Database['public']['Tables']['maintenance_waitlist']['Insert'];
