@@ -1,5 +1,26 @@
 import { supabase } from '@/lib/supabase';
 
+export interface CemeterySearchResult {
+  id: string;
+  name: string;
+  name_ru: string | null;
+  city: string | null;
+  state: string | null;
+  location: unknown;
+}
+
+export async function searchCemeteries(query: string): Promise<CemeterySearchResult[]> {
+  const pattern = `%${query}%`;
+  const { data, error } = await supabase
+    .from('cemeteries')
+    .select('id, name, name_ru, city, state, location')
+    .or(`name.ilike.${pattern},name_ru.ilike.${pattern}`)
+    .limit(20);
+
+  if (error) throw error;
+  return data;
+}
+
 export async function fetchNearbyCemeteries(
   lat: number,
   lng: number,

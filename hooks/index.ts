@@ -8,3 +8,4 @@ export { usePublishGrave } from './usePublishGrave';
 export { useSession } from './useSession';
 export { useGraveMembership } from './useGraveMembership';
 export { useMapGraves } from './useMapGraves';
+export { useCemeterySearch } from './useCemeterySearch';

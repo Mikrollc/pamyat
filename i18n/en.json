@@ -7,6 +7,7 @@
   },
   "map": {
     "search": "Search cemeteries...",
+    "noResults": "No cemeteries found",
     "addGrave": "Add a Grave"
   },
   "memorial": {
