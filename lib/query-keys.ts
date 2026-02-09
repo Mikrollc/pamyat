@@ -1,0 +1,18 @@
+export const queryKeys = {
+  graves: {
+    all: ['graves'] as const,
+    bySlug: (slug: string) => ['graves', 'bySlug', slug] as const,
+    byUser: (userId: string) => ['graves', 'byUser', userId] as const,
+  },
+  cemeteries: {
+    all: ['cemeteries'] as const,
+    nearby: (lat: number, lng: number, radiusKm: number) =>
+      ['cemeteries', 'nearby', lat, lng, radiusKm] as const,
+  },
+  profiles: {
+    byId: (userId: string) => ['profiles', userId] as const,
+  },
+  waitlist: {
+    status: (graveId: string) => ['waitlist', graveId] as const,
+  },
+} as const;

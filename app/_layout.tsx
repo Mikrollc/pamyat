@@ -80,7 +80,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="add-grave" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="add-grave/index" options={{ presentation: 'modal' }} />
         <Stack.Screen name="+not-found" options={{ title: 'Not Found' }} />
       </Stack>
     </QueryClientProvider>
