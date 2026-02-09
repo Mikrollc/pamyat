@@ -1,5 +1,7 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Typography, Button } from '@/components/ui';
+import { colors, spacing } from '@/constants/tokens';
 
 export default function AuthScreen() {
   const { t } = useTranslation();
@@ -7,47 +9,36 @@ export default function AuthScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.hero}>
-        <Text style={styles.title}>{t('auth.welcome')}</Text>
-        <Text style={styles.tagline}>{t('auth.tagline')}</Text>
+        <Typography variant="h1" align="center">
+          {t('auth.welcome')}
+        </Typography>
+        <Typography variant="body" color={colors.textSecondary} align="center">
+          {t('auth.tagline')}
+        </Typography>
       </View>
 
       <View style={styles.buttons}>
-        <Pressable style={styles.primaryButton}>
-          <Text style={styles.primaryButtonText}>{t('auth.continueWithPhone')}</Text>
-        </Pressable>
-        <Pressable style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>{t('auth.signInGoogle')}</Text>
-        </Pressable>
-        <Pressable style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>{t('auth.signInApple')}</Text>
-        </Pressable>
+        <Button title={t('auth.continueWithPhone')} onPress={() => {}} />
+        <Button title={t('auth.signInGoogle')} variant="secondary" onPress={() => {}} />
+        <Button title={t('auth.signInApple')} variant="secondary" onPress={() => {}} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'space-between', padding: 24, paddingTop: 120 },
-  hero: { alignItems: 'center' },
-  title: { fontSize: 36, fontWeight: '700', marginBottom: 8 },
-  tagline: { fontSize: 18, color: '#666' },
-  buttons: { gap: 12, paddingBottom: 48 },
-  primaryButton: {
-    backgroundColor: '#1a73e8',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    minHeight: 52,
-    justifyContent: 'center',
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: spacing.xl,
+    paddingTop: 120,
   },
-  primaryButtonText: { color: '#fff', fontSize: 17, fontWeight: '600' },
-  secondaryButton: {
-    backgroundColor: '#f2f2f7',
-    paddingVertical: 16,
-    borderRadius: 12,
+  hero: {
     alignItems: 'center',
-    minHeight: 52,
-    justifyContent: 'center',
+    gap: spacing.sm,
   },
-  secondaryButtonText: { fontSize: 17, fontWeight: '500' },
+  buttons: {
+    gap: spacing.sm + spacing.xs,
+    paddingBottom: spacing.xxl,
+  },
 });
