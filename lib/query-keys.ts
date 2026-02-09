@@ -7,6 +7,7 @@ export const queryKeys = {
   },
   cemeteries: {
     all: ['cemeteries'] as const,
+    allMap: ['cemeteries', 'map'] as const,
     nearby: (lat: number, lng: number, radiusKm: number) =>
       ['cemeteries', 'nearby', lat, lng, radiusKm] as const,
     search: (query: string) => ['cemeteries', 'search', query] as const,

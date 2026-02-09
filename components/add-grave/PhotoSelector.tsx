@@ -130,11 +130,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: spacing.sm,
     width: '100%',
   },
-  actionButton: {
-    flex: 1,
-  },
+  actionButton: {},
 });

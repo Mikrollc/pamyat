@@ -277,6 +277,10 @@ export interface Database {
         Args: Record<string, never>;
         Returns: { id: string; slug: string; person_name: string; lat: number; lng: number }[];
       };
+      all_cemeteries: {
+        Args: Record<string, never>;
+        Returns: { id: string; name: string; name_ru: string | null; city: string | null; state: string | null; lat: number; lng: number }[];
+      };
     };
     Enums: {
       grave_role: GraveRole;

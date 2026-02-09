@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   emptyButton: {
     width: '100%',
-    maxWidth: 280,
+    paddingHorizontal: spacing.xxl,
   },
   card: {
     marginBottom: spacing.sm,

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import {
   View,
   TextInput,
@@ -13,7 +13,10 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapboxGL from '@rnmapbox/maps';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useMapGraves, useCemeterySearch } from '@/hooks';
+import { useMapGraves, useCemeterySearch, useAllCemeteries } from '@/hooks';
+import { useAddGraveStore } from '@/stores/add-grave-store';
+import { CemeteryFloatingCard } from '@/components/map/CemeteryFloatingCard';
+import { cemeteriesToGeoJSON } from '@/lib/geojson';
 import { Typography } from '@/components/ui/Typography';
 import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
 import type { MapGrave } from '@/lib/api/graves';
@@ -79,18 +82,43 @@ function parseCemeteryCoords(
   return null;
 }
 
+/** Matches @rnmapbox/maps OnPressEvent (not exported from package index) */
+interface OnPressEvent {
+  features: GeoJSON.Feature[];
+  coordinates: { latitude: number; longitude: number };
+  point: { x: number; y: number };
+}
+
+interface SelectedCemetery {
+  id: string;
+  name: string;
+  name_ru: string | null;
+  city: string | null;
+  state: string | null;
+  lat: number;
+  lng: number;
+}
+
 export default function MapScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: graves } = useMapGraves();
+  const { data: cemeteries } = useAllCemeteries();
+  const store = useAddGraveStore();
 
   const [searchText, setSearchText] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [cameraTarget, setCameraTarget] = useState<[number, number]>(NYC_CENTER);
   const [cameraZoom, setCameraZoom] = useState(DEFAULT_ZOOM);
+  const [selectedCemetery, setSelectedCemetery] = useState<SelectedCemetery | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cemeteryGeoJSON = useMemo(
+    () => cemeteriesToGeoJSON(cemeteries ?? []),
+    [cemeteries],
+  );
 
   const { data: searchResults, isLoading: searching } =
     useCemeterySearch(debouncedQuery);
@@ -117,12 +145,45 @@ export default function MapScreen() {
       setCameraTarget(coords);
       setCameraZoom(14);
     }
+    setSearchText('');
+    setDebouncedQuery('');
     setShowResults(false);
     Keyboard.dismiss();
   }
 
   function handlePinPress(grave: MapGrave) {
     router.push(`/memorial/${grave.slug}`);
+  }
+
+  function handleCemeteryPress(e: OnPressEvent) {
+    const feature = e.features?.[0];
+    if (!feature || feature.properties?.cluster) return;
+    const props = feature.properties;
+    const coords = (feature.geometry as GeoJSON.Point | undefined)?.coordinates;
+    if (!props || !coords) return;
+    setSelectedCemetery({
+      id: props.id,
+      name: props.name,
+      name_ru: props.name_ru ?? null,
+      city: props.city ?? null,
+      state: props.state ?? null,
+      lng: coords[0],
+      lat: coords[1],
+    });
+  }
+
+  function handleAddMemorialHere() {
+    if (!selectedCemetery) return;
+    store.reset();
+    store.setLocation(selectedCemetery.lat, selectedCemetery.lng, true);
+    store.setCemeteryName(selectedCemetery.name);
+    store.setCemeteryId(selectedCemetery.id);
+    setSelectedCemetery(null);
+    router.push('/add-grave');
+  }
+
+  function handleMapPress() {
+    setSelectedCemetery(null);
   }
 
   return (
@@ -132,6 +193,7 @@ export default function MapScreen() {
         styleURL={MapboxGL.StyleURL.Street}
         attributionEnabled={false}
         logoEnabled={false}
+        onPress={handleMapPress}
       >
         <MapboxGL.Camera
           centerCoordinate={cameraTarget}
@@ -139,6 +201,59 @@ export default function MapScreen() {
           animationDuration={1000}
           animationMode="flyTo"
         />
+
+        <MapboxGL.ShapeSource
+          id="cemetery-source"
+          shape={cemeteryGeoJSON}
+          cluster
+          clusterRadius={40}
+          clusterMaxZoomLevel={14}
+          onPress={handleCemeteryPress}
+          hitbox={{ width: 24, height: 24 }}
+        >
+          <MapboxGL.CircleLayer
+            id="cemetery-circles"
+            filter={['!', ['has', 'point_count']]}
+            style={{
+              circleRadius: 8,
+              circleColor: colors.textTertiary,
+              circleOpacity: 0.8,
+              circleStrokeColor: colors.white,
+              circleStrokeWidth: 1.5,
+            }}
+          />
+          <MapboxGL.SymbolLayer
+            id="cemetery-labels"
+            filter={['!', ['has', 'point_count']]}
+            minZoomLevel={12}
+            style={{
+              textField: ['get', 'name'],
+              textSize: 11,
+              textColor: colors.textSecondary,
+              textOffset: [0, 1.5],
+              textAnchor: 'top',
+              textMaxWidth: 8,
+            }}
+          />
+          <MapboxGL.CircleLayer
+            id="cemetery-cluster-circles"
+            filter={['has', 'point_count']}
+            style={{
+              circleRadius: ['step', ['get', 'point_count'], 15, 10, 20, 30, 25],
+              circleColor: colors.border,
+              circleOpacity: 0.7,
+            }}
+          />
+          <MapboxGL.SymbolLayer
+            id="cemetery-cluster-count"
+            filter={['has', 'point_count']}
+            style={{
+              textField: ['get', 'point_count_abbreviated'],
+              textSize: 12,
+              textColor: colors.white,
+            }}
+          />
+        </MapboxGL.ShapeSource>
 
         {graves?.map((grave) => (
           <MapboxGL.PointAnnotation
@@ -227,6 +342,17 @@ export default function MapScreen() {
           </View>
         )}
       </View>
+
+      {selectedCemetery && (
+        <CemeteryFloatingCard
+          name={selectedCemetery.name}
+          nameRu={selectedCemetery.name_ru}
+          city={selectedCemetery.city}
+          state={selectedCemetery.state}
+          onAddMemorial={handleAddMemorialHere}
+          onClose={() => setSelectedCemetery(null)}
+        />
+      )}
 
       {/* Add Grave FAB */}
       <View style={[styles.fab, { bottom: insets.bottom + spacing.lg }]}>

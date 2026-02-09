@@ -1,5 +1,21 @@
 import { supabase } from '@/lib/supabase';
 
+export interface MapCemetery {
+  id: string;
+  name: string;
+  name_ru: string | null;
+  city: string | null;
+  state: string | null;
+  lat: number;
+  lng: number;
+}
+
+export async function fetchAllCemeteries(): Promise<MapCemetery[]> {
+  const { data, error } = await supabase.rpc('all_cemeteries');
+  if (error) throw error;
+  return data as MapCemetery[];
+}
+
 export interface CemeterySearchResult {
   id: string;
   name: string;
