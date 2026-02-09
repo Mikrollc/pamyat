@@ -155,7 +155,7 @@ export default function MemorialPageScreen() {
           />
         ) : (
           <View style={styles.heroPlaceholder}>
-            <FontAwesome name="camera" size={48} color={colors.textTertiary} />
+            <FontAwesome name="camera" size={48} color={colors.textSecondary} />
           </View>
         )}
 
@@ -192,12 +192,14 @@ export default function MemorialPageScreen() {
               variant="secondary"
               disabled
               title={t('memorial.onWaitlist')}
+              icon="clock-o"
               onPress={() => {}}
             />
           ) : (
             <Button
               variant="accent"
               title={t('memorial.wantCare')}
+              icon="heart"
               onPress={handleWaitlistPress}
               loading={joinWaitlist.isPending}
             />

@@ -8,6 +8,7 @@ import { StepLocationPerson } from '@/components/add-grave/StepLocationPerson';
 import { StepPhoto } from '@/components/add-grave/StepPhoto';
 import { StepReview } from '@/components/add-grave/StepReview';
 import { SuccessInterstitial } from '@/components/add-grave/SuccessInterstitial';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useAddGraveStore } from '@/stores/add-grave-store';
 import { usePublishGrave } from '@/hooks/usePublishGrave';
 import { colors } from '@/constants/tokens';
@@ -21,19 +22,16 @@ export default function AddGraveScreen() {
   const store = useAddGraveStore();
   const publishMutation = usePublishGrave();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showDiscard, setShowDiscard] = useState(false);
 
   const handleClose = () => {
-    Alert.alert(t('addGrave.leaveTitle'), t('addGrave.leaveMessage'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('addGrave.leave'),
-        style: 'destructive',
-        onPress: () => {
-          store.reset();
-          router.back();
-        },
-      },
-    ]);
+    setShowDiscard(true);
+  };
+
+  const handleDiscard = () => {
+    setShowDiscard(false);
+    store.reset();
+    router.back();
   };
 
   const goToStep = (step: 1 | 2 | 3) => {
@@ -100,6 +98,18 @@ export default function AddGraveScreen() {
           publishing={publishMutation.isPending}
         />
       )}
+
+      <ConfirmModal
+        visible={showDiscard}
+        title={t('addGrave.leaveTitle')}
+        message={t('addGrave.leaveMessage')}
+        cancelLabel={t('common.cancel')}
+        confirmLabel={t('addGrave.leave')}
+        confirmVariant="destructive"
+        confirmIcon="trash"
+        onCancel={() => setShowDiscard(false)}
+        onConfirm={handleDiscard}
+      />
     </View>
   );
 }

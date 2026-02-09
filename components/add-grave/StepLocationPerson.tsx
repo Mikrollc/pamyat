@@ -86,6 +86,7 @@ export function StepLocationPerson({ onNext }: StepLocationPersonProps) {
         <Button
           variant="brand"
           title={t('common.next')}
+          icon="arrow-right"
           onPress={onNext}
           disabled={!canProceed}
           testID="step1-next"

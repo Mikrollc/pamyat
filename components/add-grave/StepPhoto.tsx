@@ -29,6 +29,7 @@ export function StepPhoto({ onNext, onBack }: StepPhotoProps) {
           <Button
             variant="secondary"
             title={t('common.back')}
+            icon="arrow-left"
             onPress={onBack}
             testID="step2-back"
           />
@@ -37,6 +38,7 @@ export function StepPhoto({ onNext, onBack }: StepPhotoProps) {
           <Button
             variant="brand"
             title={photoUri ? t('common.next') : t('addGrave.skip')}
+            icon="arrow-right"
             onPress={onNext}
             testID="step2-next"
           />

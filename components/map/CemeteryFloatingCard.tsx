@@ -2,6 +2,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Typography } from '@/components/ui/Typography';
+import { Button } from '@/components/ui/Button';
 import { colors, spacing, radii } from '@/constants/tokens';
 
 interface CemeteryFloatingCardProps {
@@ -36,7 +37,9 @@ export function CemeteryFloatingCard({
         accessibilityRole="button"
         accessibilityLabel={t('common.cancel')}
       >
-        <FontAwesome name="times" size={14} color={colors.textTertiary} />
+        <View style={styles.closeCircle}>
+          <FontAwesome name="times" size={11} color={colors.textSecondary} />
+        </View>
       </Pressable>
 
       <View style={styles.primaryName}>
@@ -67,19 +70,14 @@ export function CemeteryFloatingCard({
         </View>
       ) : null}
 
-      <Pressable
-        onPress={onAddMemorial}
-        style={({ pressed }) => [
-          styles.cta,
-          { opacity: pressed ? 0.85 : 1 },
-        ]}
-        accessibilityRole="button"
-      >
-        <FontAwesome name="plus" size={14} color={colors.white} />
-        <Typography variant="button" color={colors.white}>
-          {t('map.addMemorialHere')}
-        </Typography>
-      </Pressable>
+      <View style={styles.cta}>
+        <Button
+          variant="brand"
+          title={t('map.addMemorialHere')}
+          icon="plus"
+          onPress={onAddMemorial}
+        />
+      </View>
     </View>
   );
 }
@@ -102,10 +100,17 @@ const styles = StyleSheet.create({
   },
   close: {
     position: 'absolute',
-    top: spacing.sm,
-    right: spacing.sm,
+    top: spacing.md,
+    right: spacing.md,
     zIndex: 1,
-    padding: spacing.xs,
+  },
+  closeCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.backgroundSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   primaryName: {
     paddingRight: spacing.lg,
@@ -114,13 +119,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   cta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.brand,
-    paddingVertical: spacing.sm + spacing.xs,
-    borderRadius: radii.sm,
     marginTop: spacing.md,
   },
 });

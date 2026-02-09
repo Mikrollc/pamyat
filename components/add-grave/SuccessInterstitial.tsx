@@ -34,6 +34,7 @@ export function SuccessInterstitial({ personName, onDone, testID }: SuccessInter
         <Button
           variant="brand"
           title={t('common.done')}
+          icon="check"
           onPress={onDone}
           testID={testID ? `${testID}-done` : undefined}
         />

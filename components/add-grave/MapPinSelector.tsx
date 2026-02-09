@@ -98,6 +98,7 @@ export function MapPinSelector({
         <Button
           variant="secondary"
           title={t('addGrave.useMyLocation')}
+          icon="crosshairs"
           onPress={handleUseMyLocation}
           loading={locating}
           testID={testID ? `${testID}-locate` : undefined}
@@ -129,7 +130,5 @@ const styles = StyleSheet.create({
     // offset so the pin tip is at center, not the icon middle
     marginBottom: 40,
   },
-  locationButton: {
-    paddingHorizontal: spacing.md,
-  },
+  locationButton: {},
 });

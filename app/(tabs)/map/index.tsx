@@ -114,6 +114,7 @@ export default function MapScreen() {
   const [cameraZoom, setCameraZoom] = useState(DEFAULT_ZOOM);
   const [selectedCemetery, setSelectedCemetery] = useState<SelectedCemetery | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const currentZoomRef = useRef(DEFAULT_ZOOM);
 
   const cemeteryGeoJSON = useMemo(
     () => cemeteriesToGeoJSON(cemeteries ?? []),
@@ -186,6 +187,23 @@ export default function MapScreen() {
     setSelectedCemetery(null);
   }
 
+  function handleRegionChange(feature: GeoJSON.Feature) {
+    const zoom = (feature.properties as { zoomLevel?: number })?.zoomLevel;
+    if (zoom != null) currentZoomRef.current = zoom;
+  }
+
+  function handleZoomIn() {
+    const newZoom = Math.min(currentZoomRef.current + 1, 18);
+    setCameraZoom(newZoom);
+    currentZoomRef.current = newZoom;
+  }
+
+  function handleZoomOut() {
+    const newZoom = Math.max(currentZoomRef.current - 1, 5);
+    setCameraZoom(newZoom);
+    currentZoomRef.current = newZoom;
+  }
+
   return (
     <View style={styles.container}>
       <MapboxGL.MapView
@@ -194,6 +212,7 @@ export default function MapScreen() {
         attributionEnabled={false}
         logoEnabled={false}
         onPress={handleMapPress}
+        onRegionDidChange={handleRegionChange}
       >
         <MapboxGL.Camera
           centerCoordinate={cameraTarget}
@@ -215,11 +234,15 @@ export default function MapScreen() {
             id="cemetery-circles"
             filter={['!', ['has', 'point_count']]}
             style={{
-              circleRadius: 8,
-              circleColor: colors.textTertiary,
-              circleOpacity: 0.8,
+              circleRadius: selectedCemetery
+                ? ['case', ['==', ['get', 'id'], selectedCemetery.id], 11, 8]
+                : 8,
+              circleColor: selectedCemetery
+                ? ['case', ['==', ['get', 'id'], selectedCemetery.id], colors.brand, colors.textTertiary]
+                : colors.textTertiary,
+              circleOpacity: 1,
               circleStrokeColor: colors.white,
-              circleStrokeWidth: 1.5,
+              circleStrokeWidth: 2.5,
             }}
           />
           <MapboxGL.SymbolLayer
@@ -343,6 +366,27 @@ export default function MapScreen() {
         )}
       </View>
 
+      {/* Zoom controls */}
+      <View style={[styles.zoomControls, { top: insets.top + spacing.sm + 44 + spacing.md }]}>
+        <Pressable
+          onPress={handleZoomIn}
+          style={({ pressed }) => [styles.zoomButton, pressed && styles.zoomButtonPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Zoom in"
+        >
+          <FontAwesome name="plus" size={14} color={colors.textSecondary} />
+        </Pressable>
+        <View style={styles.zoomDivider} />
+        <Pressable
+          onPress={handleZoomOut}
+          style={({ pressed }) => [styles.zoomButton, pressed && styles.zoomButtonPressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Zoom out"
+        >
+          <FontAwesome name="minus" size={14} color={colors.textSecondary} />
+        </Pressable>
+      </View>
+
       {selectedCemetery && (
         <CemeteryFloatingCard
           name={selectedCemetery.name}
@@ -354,24 +398,26 @@ export default function MapScreen() {
         />
       )}
 
-      {/* Add Grave FAB */}
-      <View style={[styles.fab, { bottom: insets.bottom + spacing.lg }]}>
-        <Pressable
-          onPress={() => router.push('/add-grave')}
-          style={({ pressed }) => [
-            styles.fabButton,
-            { opacity: pressed ? 0.85 : 1 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t('map.addGrave')}
-          testID="add-grave-button"
-        >
-          <FontAwesome name="plus" size={20} color={colors.white} />
-          <Typography variant="button" color={colors.white}>
-            {t('map.addGrave')}
-          </Typography>
-        </Pressable>
-      </View>
+      {/* Add Grave FAB — hidden when floating card is shown */}
+      {!selectedCemetery && (
+        <View style={[styles.fab, { bottom: insets.bottom + spacing.lg }]}>
+          <Pressable
+            onPress={() => router.push('/add-grave')}
+            style={({ pressed }) => [
+              styles.fabButton,
+              { opacity: pressed ? 0.85 : 1 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={t('map.addGrave')}
+            testID="add-grave-button"
+          >
+            <FontAwesome name="plus" size={20} color={colors.white} />
+            <Typography variant="button" color={colors.white}>
+              {t('map.addGrave')}
+            </Typography>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -397,7 +443,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderRadius: radii.sm,
+    borderRadius: radii.md,
     paddingHorizontal: spacing.md,
     height: 44,
     shadowColor: '#000',
@@ -417,7 +463,7 @@ const styles = StyleSheet.create({
   },
   results: {
     backgroundColor: colors.white,
-    borderRadius: radii.sm,
+    borderRadius: radii.md,
     marginTop: spacing.xs,
     maxHeight: 240,
     shadowColor: '#000',
@@ -443,6 +489,32 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     alignItems: 'center',
   },
+  zoomControls: {
+    position: 'absolute',
+    right: spacing.md,
+    zIndex: 30,
+    backgroundColor: colors.white,
+    borderRadius: radii.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  zoomButton: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zoomButtonPressed: {
+    backgroundColor: colors.backgroundSecondary,
+  },
+  zoomDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
+  },
   fab: {
     position: 'absolute',
     alignSelf: 'center',
@@ -455,10 +527,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     borderRadius: radii.full,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowColor: colors.brand,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 6,
   },
 });

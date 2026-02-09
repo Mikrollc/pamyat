@@ -6,7 +6,7 @@ describe('Design Tokens', () => {
   });
 
   it('has correct primary color', () => {
-    expect(colors.primary).toBe('#1a73e8');
+    expect(colors.primary).toBe('#1a5c54');
   });
 
   it('has Cyrillic-safe lineHeight (~1.2x fontSize)', () => {

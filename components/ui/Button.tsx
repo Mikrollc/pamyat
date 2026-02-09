@@ -1,5 +1,6 @@
-import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { colors, radii, typography, buttonHeight } from '@/constants/tokens';
+import { Pressable, View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { colors, radii, spacing, typography, buttonHeight } from '@/constants/tokens';
 
 type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'destructive' | 'brand';
 
@@ -7,6 +8,7 @@ interface ButtonProps {
   variant?: ButtonVariant;
   title: string;
   onPress: () => void;
+  icon?: React.ComponentProps<typeof FontAwesome>['name'];
   loading?: boolean;
   disabled?: boolean;
   testID?: string;
@@ -15,15 +17,16 @@ interface ButtonProps {
 const variantColors = {
   primary: { bg: colors.primary, pressed: colors.primaryPressed, text: colors.white },
   secondary: { bg: colors.backgroundSecondary, pressed: colors.border, text: colors.textPrimary },
-  accent: { bg: colors.accent, pressed: colors.accentPressed, text: colors.textPrimary },
-  destructive: { bg: colors.destructive, pressed: '#cc2f26', text: colors.white },
-  brand: { bg: colors.brand, pressed: '#14463f', text: colors.white },
+  accent: { bg: colors.accent, pressed: colors.accentPressed, text: colors.white },
+  destructive: { bg: colors.destructive, pressed: colors.destructivePressed, text: colors.white },
+  brand: { bg: colors.brand, pressed: colors.primaryPressed, text: colors.white },
 } as const;
 
 export function Button({
   variant = 'primary',
   title,
   onPress,
+  icon,
   loading = false,
   disabled = false,
   testID,
@@ -49,7 +52,10 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={scheme.text} testID={testID ? `${testID}-loader` : undefined} />
       ) : (
-        <Text style={[styles.text, { color: scheme.text }]}>{title}</Text>
+        <View style={styles.content}>
+          {icon && <FontAwesome name={icon} size={16} color={scheme.text} />}
+          <Text style={[styles.text, { color: scheme.text }]}>{title}</Text>
+        </View>
       )}
     </Pressable>
   );
@@ -63,6 +69,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 16,
     paddingHorizontal: 24,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   text: {
     fontSize: typography.button.fontSize,

@@ -63,6 +63,7 @@ export function PhotoSelector({
             <Button
               variant="secondary"
               title={t('addGrave.retakePhoto')}
+              icon="camera"
               onPress={takePhoto}
               testID={testID ? `${testID}-retake` : undefined}
             />
@@ -71,6 +72,7 @@ export function PhotoSelector({
             <Button
               variant="destructive"
               title={t('addGrave.removePhoto')}
+              icon="trash"
               onPress={onPhotoRemoved}
               testID={testID ? `${testID}-remove` : undefined}
             />
@@ -83,7 +85,7 @@ export function PhotoSelector({
   return (
     <View style={styles.container} testID={testID}>
       <View style={styles.emptyState}>
-        <FontAwesome name="camera" size={48} color={colors.textTertiary} />
+        <FontAwesome name="camera" size={48} color={colors.textSecondary} />
         <Typography variant="body" color={colors.textSecondary} align="center">
           {t('addGrave.photoHint')}
         </Typography>
@@ -93,6 +95,7 @@ export function PhotoSelector({
           <Button
             variant="secondary"
             title={t('addGrave.takePhoto')}
+            icon="camera"
             onPress={takePhoto}
             testID={testID ? `${testID}-camera` : undefined}
           />
@@ -101,6 +104,7 @@ export function PhotoSelector({
           <Button
             variant="secondary"
             title={t('addGrave.chooseGallery')}
+            icon="image"
             onPress={pickFromGallery}
             testID={testID ? `${testID}-gallery` : undefined}
           />

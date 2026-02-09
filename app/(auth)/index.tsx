@@ -20,9 +20,9 @@ export default function AuthScreen() {
       </View>
 
       <View style={styles.buttons}>
-        <Button title={t('auth.continueWithPhone')} onPress={() => router.push('/(auth)/phone')} />
-        <Button title={t('auth.signInGoogle')} variant="secondary" disabled onPress={() => {}} />
-        <Button title={t('auth.signInApple')} variant="secondary" disabled onPress={() => {}} />
+        <Button title={t('auth.continueWithPhone')} icon="phone" onPress={() => router.push('/(auth)/phone')} />
+        <Button title={t('auth.signInGoogle')} icon="google" variant="secondary" disabled onPress={() => {}} />
+        <Button title={t('auth.signInApple')} icon="apple" variant="secondary" disabled onPress={() => {}} />
       </View>
     </View>
   );

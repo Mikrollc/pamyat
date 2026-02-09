@@ -53,6 +53,7 @@ export function StepReview({ onBack, onPublish, publishing }: StepReviewProps) {
           <Button
             variant="secondary"
             title={t('common.back')}
+            icon="arrow-left"
             onPress={onBack}
             disabled={publishing}
             testID="step3-back"
@@ -62,6 +63,7 @@ export function StepReview({ onBack, onPublish, publishing }: StepReviewProps) {
           <Button
             variant="brand"
             title={t('addGrave.publish')}
+            icon="check"
             onPress={onPublish}
             loading={publishing}
             testID="step3-publish"
