@@ -19,7 +19,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="map"
+        name="map/index"
         options={{
           title: t('tabs.map'),
           tabBarIcon: ({ color, size }) => (
@@ -28,7 +28,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="graves"
+        name="graves/index"
         options={{
           title: t('tabs.myGraves'),
           tabBarIcon: ({ color, size }) => (
@@ -37,7 +37,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="notifications"
+        name="notifications/index"
         options={{
           title: t('tabs.notifications'),
           tabBarIcon: ({ color, size }) => (
@@ -46,7 +46,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="profile/index"
         options={{
           title: t('tabs.profile'),
           tabBarIcon: ({ color, size }) => (

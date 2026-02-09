@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -33,10 +35,12 @@ function useProtectedRoute(session: Session | null, isReady: boolean) {
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [fontsLoaded] = useFonts({
+    ...FontAwesome.font,
+  });
 
   useEffect(() => {
     async function initAuth() {
-      // If dev bypass is enabled, auto-sign in with seeded dev user
       if (isDevBypassEnabled()) {
         try {
           const devSession = await devSignIn();
@@ -50,7 +54,6 @@ export default function RootLayout() {
       }
 
       setIsReady(true);
-      SplashScreen.hideAsync();
     }
 
     initAuth();
@@ -64,7 +67,13 @@ export default function RootLayout() {
 
   useProtectedRoute(session, isReady);
 
-  if (!isReady) return null;
+  useEffect(() => {
+    if (isReady && fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [isReady, fontsLoaded]);
+
+  if (!isReady || !fontsLoaded) return null;
 
   return (
     <QueryClientProvider client={queryClient}>
