@@ -37,6 +37,30 @@ export async function createGrave(data: GraveInsert) {
   return grave;
 }
 
+export async function generateSlug(
+  name: string,
+  birthYear?: number | null,
+  deathYear?: number | null,
+): Promise<string> {
+  const { data, error } = await supabase.rpc('generate_grave_slug', {
+    p_name: name,
+    p_birth_year: birthYear ?? undefined,
+    p_death_year: deathYear ?? undefined,
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateGraveCoverPhoto(graveId: string, storagePath: string) {
+  const { error } = await supabase
+    .from('graves')
+    .update({ cover_photo_path: storagePath })
+    .eq('id', graveId);
+
+  if (error) throw error;
+}
+
 export async function updateGrave(id: string, data: GraveUpdate) {
   const { data: grave, error } = await supabase
     .from('graves')

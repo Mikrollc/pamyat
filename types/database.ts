@@ -55,8 +55,12 @@ export interface Database {
           location: unknown;
           person_name: string;
           person_name_ru: string | null;
-          birth_date: string | null;
-          death_date: string | null;
+          birth_year: number | null;
+          birth_month: number | null;
+          birth_day: number | null;
+          death_year: number | null;
+          death_month: number | null;
+          death_day: number | null;
           inscription: string | null;
           slug: string;
           is_public: boolean;
@@ -265,6 +269,10 @@ export interface Database {
         Args: { lat: number; lng: number; radius_m?: number };
         Returns: Database['public']['Tables']['cemeteries']['Row'][];
       };
+      generate_grave_slug: {
+        Args: { p_name: string; p_birth_year?: number | null; p_death_year?: number | null };
+        Returns: string;
+      };
     };
     Enums: {
       grave_role: GraveRole;
@@ -280,5 +288,7 @@ export type Grave = Database['public']['Tables']['graves']['Row'];
 export type GraveInsert = Database['public']['Tables']['graves']['Insert'];
 export type GraveUpdate = Database['public']['Tables']['graves']['Update'];
 export type Cemetery = Database['public']['Tables']['cemeteries']['Row'];
+export type GravePhoto = Database['public']['Tables']['grave_photos']['Row'];
+export type GravePhotoInsert = Database['public']['Tables']['grave_photos']['Insert'];
 export type WaitlistEntry = Database['public']['Tables']['maintenance_waitlist']['Row'];
 export type WaitlistInsert = Database['public']['Tables']['maintenance_waitlist']['Insert'];

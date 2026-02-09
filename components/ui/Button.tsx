@@ -1,7 +1,7 @@
 import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { colors, radii, typography, buttonHeight } from '@/constants/tokens';
 
-type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'destructive';
+type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'destructive' | 'brand';
 
 interface ButtonProps {
   variant?: ButtonVariant;
@@ -17,6 +17,7 @@ const variantColors = {
   secondary: { bg: colors.backgroundSecondary, pressed: colors.border, text: colors.textPrimary },
   accent: { bg: colors.accent, pressed: colors.accentPressed, text: colors.textPrimary },
   destructive: { bg: colors.destructive, pressed: '#cc2f26', text: colors.white },
+  brand: { bg: colors.brand, pressed: '#14463f', text: colors.white },
 } as const;
 
 export function Button({
