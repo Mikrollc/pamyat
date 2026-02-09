@@ -59,18 +59,22 @@ export function PhotoSelector({
       <View style={styles.container} testID={testID}>
         <Image source={{ uri: photoUri }} style={styles.preview} />
         <View style={styles.actions}>
-          <Button
-            variant="secondary"
-            title={t('addGrave.retakePhoto')}
-            onPress={takePhoto}
-            testID={testID ? `${testID}-retake` : undefined}
-          />
-          <Button
-            variant="destructive"
-            title={t('addGrave.removePhoto')}
-            onPress={onPhotoRemoved}
-            testID={testID ? `${testID}-remove` : undefined}
-          />
+          <View style={styles.actionButton}>
+            <Button
+              variant="secondary"
+              title={t('addGrave.retakePhoto')}
+              onPress={takePhoto}
+              testID={testID ? `${testID}-retake` : undefined}
+            />
+          </View>
+          <View style={styles.actionButton}>
+            <Button
+              variant="destructive"
+              title={t('addGrave.removePhoto')}
+              onPress={onPhotoRemoved}
+              testID={testID ? `${testID}-remove` : undefined}
+            />
+          </View>
         </View>
       </View>
     );
@@ -80,23 +84,27 @@ export function PhotoSelector({
     <View style={styles.container} testID={testID}>
       <View style={styles.emptyState}>
         <FontAwesome name="camera" size={48} color={colors.textTertiary} />
-        <Typography variant="bodySmall" color={colors.textTertiary} align="center">
-          {t('addGrave.stepPhoto')}
+        <Typography variant="body" color={colors.textSecondary} align="center">
+          {t('addGrave.photoHint')}
         </Typography>
       </View>
       <View style={styles.actions}>
-        <Button
-          variant="secondary"
-          title={t('addGrave.takePhoto')}
-          onPress={takePhoto}
-          testID={testID ? `${testID}-camera` : undefined}
-        />
-        <Button
-          variant="secondary"
-          title={t('addGrave.chooseGallery')}
-          onPress={pickFromGallery}
-          testID={testID ? `${testID}-gallery` : undefined}
-        />
+        <View style={styles.actionButton}>
+          <Button
+            variant="secondary"
+            title={t('addGrave.takePhoto')}
+            onPress={takePhoto}
+            testID={testID ? `${testID}-camera` : undefined}
+          />
+        </View>
+        <View style={styles.actionButton}>
+          <Button
+            variant="secondary"
+            title={t('addGrave.chooseGallery')}
+            onPress={pickFromGallery}
+            testID={testID ? `${testID}-gallery` : undefined}
+          />
+        </View>
       </View>
     </View>
   );
@@ -125,5 +133,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     width: '100%',
+  },
+  actionButton: {
+    flex: 1,
   },
 });

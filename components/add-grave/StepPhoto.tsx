@@ -25,18 +25,22 @@ export function StepPhoto({ onNext, onBack }: StepPhotoProps) {
         />
       </View>
       <View style={styles.footer}>
-        <Button
-          variant="secondary"
-          title={t('common.back')}
-          onPress={onBack}
-          testID="step2-back"
-        />
-        <Button
-          variant="brand"
-          title={photoUri ? t('common.next') : t('addGrave.skip')}
-          onPress={onNext}
-          testID="step2-next"
-        />
+        <View style={styles.footerButton}>
+          <Button
+            variant="secondary"
+            title={t('common.back')}
+            onPress={onBack}
+            testID="step2-back"
+          />
+        </View>
+        <View style={styles.footerButton}>
+          <Button
+            variant="brand"
+            title={photoUri ? t('common.next') : t('addGrave.skip')}
+            onPress={onNext}
+            testID="step2-next"
+          />
+        </View>
       </View>
     </View>
   );
@@ -49,12 +53,15 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: spacing.md,
-    justifyContent: 'center',
+    paddingTop: spacing.xl,
   },
   footer: {
     flexDirection: 'row',
     gap: spacing.sm,
     padding: spacing.md,
     paddingBottom: spacing.xxl,
+  },
+  footerButton: {
+    flex: 1,
   },
 });

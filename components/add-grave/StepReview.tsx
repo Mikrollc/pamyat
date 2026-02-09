@@ -49,20 +49,24 @@ export function StepReview({ onBack, onPublish, publishing }: StepReviewProps) {
         </Typography>
       </ScrollView>
       <View style={styles.footer}>
-        <Button
-          variant="secondary"
-          title={t('common.back')}
-          onPress={onBack}
-          disabled={publishing}
-          testID="step3-back"
-        />
-        <Button
-          variant="brand"
-          title={t('addGrave.publishMemorial')}
-          onPress={onPublish}
-          loading={publishing}
-          testID="step3-publish"
-        />
+        <View style={styles.footerButton}>
+          <Button
+            variant="secondary"
+            title={t('common.back')}
+            onPress={onBack}
+            disabled={publishing}
+            testID="step3-back"
+          />
+        </View>
+        <View style={styles.footerButton}>
+          <Button
+            variant="brand"
+            title={t('addGrave.publishMemorial')}
+            onPress={onPublish}
+            loading={publishing}
+            testID="step3-publish"
+          />
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -80,5 +84,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     padding: spacing.md,
     paddingBottom: spacing.xxl,
+  },
+  footerButton: {
+    flex: 1,
   },
 });

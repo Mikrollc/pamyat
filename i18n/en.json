@@ -60,7 +60,9 @@
     "permissionPhotos": "Permission needed to access photos.",
     "permissionCamera": "Permission needed to use camera.",
     "locationDenied": "Location permission denied. Drag the map to place the pin.",
-    "publishError": "Could not save memorial. Please try again."
+    "publishError": "Could not save memorial. Please try again.",
+    "photoHint": "Add a photo of the grave or your loved one. This step is optional.",
+    "stepOf": "Step {{current}} of {{total}}"
   },
   "auth": {
     "welcome": "Pamyat",
