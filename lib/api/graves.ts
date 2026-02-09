@@ -73,6 +73,20 @@ export async function updateGrave(id: string, data: GraveUpdate) {
   return grave;
 }
 
+export interface MapGrave {
+  id: string;
+  slug: string;
+  person_name: string;
+  lat: number;
+  lng: number;
+}
+
+export async function fetchMapGraves(): Promise<MapGrave[]> {
+  const { data, error } = await supabase.rpc('map_graves');
+  if (error) throw error;
+  return data as MapGrave[];
+}
+
 export async function fetchGraveMembership(graveId: string, userId: string) {
   const { data, error } = await supabase
     .from('grave_members')

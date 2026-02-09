@@ -3,6 +3,7 @@ export const queryKeys = {
     all: ['graves'] as const,
     bySlug: (slug: string) => ['graves', 'bySlug', slug] as const,
     byUser: (userId: string) => ['graves', 'byUser', userId] as const,
+    map: ['graves', 'map'] as const,
   },
   cemeteries: {
     all: ['cemeteries'] as const,

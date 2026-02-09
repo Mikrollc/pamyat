@@ -7,3 +7,4 @@ export { useWaitlistStatus, useJoinWaitlist } from './useWaitlist';
 export { usePublishGrave } from './usePublishGrave';
 export { useSession } from './useSession';
 export { useGraveMembership } from './useGraveMembership';
+export { useMapGraves } from './useMapGraves';

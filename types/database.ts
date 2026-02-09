@@ -273,6 +273,10 @@ export interface Database {
         Args: { p_name: string; p_birth_year?: number | null; p_death_year?: number | null };
         Returns: string;
       };
+      map_graves: {
+        Args: Record<string, never>;
+        Returns: { id: string; slug: string; person_name: string; lat: number; lng: number }[];
+      };
     };
     Enums: {
       grave_role: GraveRole;
