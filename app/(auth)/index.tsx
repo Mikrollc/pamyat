@@ -1,10 +1,12 @@
 import { View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import { Typography, Button } from '@/components/ui';
 import { colors, spacing } from '@/constants/tokens';
 
 export default function AuthScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -18,9 +20,9 @@ export default function AuthScreen() {
       </View>
 
       <View style={styles.buttons}>
-        <Button title={t('auth.continueWithPhone')} onPress={() => {}} />
-        <Button title={t('auth.signInGoogle')} variant="secondary" onPress={() => {}} />
-        <Button title={t('auth.signInApple')} variant="secondary" onPress={() => {}} />
+        <Button title={t('auth.continueWithPhone')} onPress={() => router.push('/(auth)/phone')} />
+        <Button title={t('auth.signInGoogle')} variant="secondary" disabled onPress={() => {}} />
+        <Button title={t('auth.signInApple')} variant="secondary" disabled onPress={() => {}} />
       </View>
     </View>
   );

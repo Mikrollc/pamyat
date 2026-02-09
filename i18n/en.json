@@ -83,7 +83,13 @@
     "enterCode": "Enter verification code",
     "resend": "Resend",
     "yourName": "Your name",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "invalidPhone": "Invalid phone number",
+    "wrongCode": "Invalid code. Please try again.",
+    "codeExpired": "Code expired. Please resend.",
+    "networkError": "Connection error. Check your internet.",
+    "resendIn": "Resend in {{seconds}}s",
+    "chooseLanguage": "Choose your language"
   },
   "invite": {
     "title": "Invite Family",
