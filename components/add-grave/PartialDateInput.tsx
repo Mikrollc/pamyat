@@ -3,21 +3,28 @@ import { Typography } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing } from '@/constants/tokens';
+import { validatePartialDate } from '@/lib/validate-date';
 import type { PartialDate } from '@/stores/add-grave-store';
 
 interface PartialDateInputProps {
   label: string;
   value: PartialDate;
   onChange: (update: Partial<PartialDate>) => void;
+  error?: string | null;
   testID?: string;
 }
 
-export function PartialDateInput({ label, value, onChange, testID }: PartialDateInputProps) {
+export function PartialDateInput({ label, value, onChange, error, testID }: PartialDateInputProps) {
   const { t } = useTranslation();
 
   const handleToggleUnknown = (unknown: boolean) => {
     onChange({ unknown, year: null, month: null, day: null });
   };
+
+  const validationKey = !value.unknown
+    ? validatePartialDate(value.year, value.month, value.day)
+    : null;
+  const displayError = error ?? (validationKey ? t(`addGrave.${validationKey}`) : undefined);
 
   return (
     <View style={styles.container} testID={testID}>
@@ -41,7 +48,7 @@ export function PartialDateInput({ label, value, onChange, testID }: PartialDate
               value={value.day != null ? String(value.day) : ''}
               onChangeText={(text) => {
                 const n = parseInt(text, 10);
-                onChange({ day: isNaN(n) ? null : Math.min(31, Math.max(1, n)) });
+                onChange({ day: isNaN(n) ? null : n });
               }}
               keyboardType="number-pad"
               placeholder="—"
@@ -54,7 +61,7 @@ export function PartialDateInput({ label, value, onChange, testID }: PartialDate
               value={value.month != null ? String(value.month) : ''}
               onChangeText={(text) => {
                 const n = parseInt(text, 10);
-                onChange({ month: isNaN(n) ? null : Math.min(12, Math.max(1, n)) });
+                onChange({ month: isNaN(n) ? null : n });
               }}
               keyboardType="number-pad"
               placeholder="—"
@@ -76,6 +83,11 @@ export function PartialDateInput({ label, value, onChange, testID }: PartialDate
           </View>
         </View>
       )}
+      {displayError ? (
+        <Typography variant="caption" color={colors.destructive}>
+          {displayError}
+        </Typography>
+      ) : null}
     </View>
   );
 }

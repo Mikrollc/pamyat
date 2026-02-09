@@ -65,7 +65,11 @@
     "locationDenied": "Location permission denied. Drag the map to place the pin.",
     "publishError": "Could not save memorial. Please try again.",
     "photoHint": "Add a photo of the grave or your loved one. This step is optional.",
-    "stepOf": "Step {{current}} of {{total}}"
+    "stepOf": "Step {{current}} of {{total}}",
+    "invalidDay": "Invalid day",
+    "invalidMonth": "Invalid month",
+    "invalidYear": "Year must be between 1800 and now",
+    "deathBeforeBirth": "Death date must be after birth date"
   },
   "auth": {
     "welcome": "Pamyat",
