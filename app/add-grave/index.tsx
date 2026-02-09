@@ -1,17 +1,111 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Alert, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { WizardHeader } from '@/components/add-grave/WizardHeader';
+import { StepLocationPerson } from '@/components/add-grave/StepLocationPerson';
+import { StepPhoto } from '@/components/add-grave/StepPhoto';
+import { StepReview } from '@/components/add-grave/StepReview';
+import { SuccessInterstitial } from '@/components/add-grave/SuccessInterstitial';
+import { useAddGraveStore } from '@/stores/add-grave-store';
+import { usePublishGrave } from '@/hooks/usePublishGrave';
+import { colors } from '@/constants/tokens';
+
+const STEP_TITLES = ['addGrave.step1Title', 'addGrave.step2Title', 'addGrave.step3Title'] as const;
 
 export default function AddGraveScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const store = useAddGraveStore();
+  const publishMutation = usePublishGrave();
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleClose = () => {
+    Alert.alert(t('addGrave.leaveTitle'), t('addGrave.leaveMessage'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('addGrave.leave'),
+        style: 'destructive',
+        onPress: () => {
+          store.reset();
+          router.back();
+        },
+      },
+    ]);
+  };
+
+  const goToStep = (step: 1 | 2 | 3) => {
+    store.setStep(step);
+  };
+
+  const handlePublish = async () => {
+    if (store.latitude == null || store.longitude == null) return;
+
+    try {
+      await publishMutation.mutateAsync({
+        latitude: store.latitude,
+        longitude: store.longitude,
+        firstName: store.firstName,
+        lastName: store.lastName,
+        birthDate: store.birthDate,
+        deathDate: store.deathDate,
+        cemeteryName: store.cemeteryName,
+        photoUri: store.photoUri,
+        inscription: store.inscription,
+      });
+      setShowSuccess(true);
+    } catch (error) {
+      Alert.alert('', t('addGrave.publishError'));
+    }
+  };
+
+  const handleDone = () => {
+    store.reset();
+    router.replace('/(tabs)/graves');
+  };
+
+  if (showSuccess) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <SuccessInterstitial
+          personName={`${store.firstName} ${store.lastName}`.trim()}
+          onDone={handleDone}
+          testID="success"
+        />
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.placeholder}>{t('addGrave.stepPin')}</Text>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <WizardHeader
+        step={store.currentStep}
+        title={t(STEP_TITLES[store.currentStep - 1])}
+        onClose={handleClose}
+        testID="wizard-header"
+      />
+      {store.currentStep === 1 && (
+        <StepLocationPerson onNext={() => goToStep(2)} />
+      )}
+      {store.currentStep === 2 && (
+        <StepPhoto onNext={() => goToStep(3)} onBack={() => goToStep(1)} />
+      )}
+      {store.currentStep === 3 && (
+        <StepReview
+          onBack={() => goToStep(2)}
+          onPublish={handlePublish}
+          publishing={publishMutation.isPending}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  placeholder: { fontSize: 18, color: '#999' },
+  container: {
+    flex: 1,
+    backgroundColor: colors.backgroundPrimary,
+  },
 });
