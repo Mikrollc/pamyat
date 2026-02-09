@@ -13,7 +13,10 @@
     "share": "Share",
     "wantCare": "Want this grave cared for?",
     "onWaitlist": "You're on the waitlist",
-    "signUpToManage": "Sign up to help manage this memorial"
+    "signUpToManage": "Sign up to help manage this memorial",
+    "confirmCare": "You'll be notified when care services become available for this grave.",
+    "confirmCareYes": "Join Waitlist",
+    "notFound": "Memorial not found"
   },
   "graves": {
     "empty": "No memorials yet",
@@ -105,6 +108,7 @@
     "save": "Save",
     "done": "Done",
     "loading": "Loading...",
-    "offline": "You are offline"
+    "offline": "You are offline",
+    "error": "Something went wrong"
   }
 }

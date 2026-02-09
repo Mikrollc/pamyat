@@ -24,7 +24,8 @@ function useProtectedRoute(session: Session | null, isReady: boolean) {
 
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (!session && !inAuthGroup) {
+    const isPublicRoute = segments[0] === 'memorial';
+    if (!session && !inAuthGroup && !isPublicRoute) {
       router.replace('/(auth)');
     } else if (session && inAuthGroup) {
       router.replace('/(tabs)/map');
@@ -81,6 +82,7 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="add-grave/index" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="memorial/[slug]" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ title: 'Not Found' }} />
       </Stack>
     </QueryClientProvider>

@@ -15,4 +15,8 @@ export const queryKeys = {
   waitlist: {
     status: (graveId: string) => ['waitlist', graveId] as const,
   },
+  graveMembers: {
+    byGraveAndUser: (graveId: string, userId: string) =>
+      ['graveMembers', graveId, userId] as const,
+  },
 } as const;

@@ -35,3 +35,8 @@ export async function uploadGravePhoto(
 
   return storagePath;
 }
+
+export function getGravePhotoUrl(storagePath: string): string {
+  const { data } = supabase.storage.from('grave-photos').getPublicUrl(storagePath);
+  return data.publicUrl;
+}

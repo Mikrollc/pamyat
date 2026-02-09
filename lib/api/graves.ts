@@ -72,3 +72,15 @@ export async function updateGrave(id: string, data: GraveUpdate) {
   if (error) throw error;
   return grave;
 }
+
+export async function fetchGraveMembership(graveId: string, userId: string) {
+  const { data, error } = await supabase
+    .from('grave_members')
+    .select('role')
+    .eq('grave_id', graveId)
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
