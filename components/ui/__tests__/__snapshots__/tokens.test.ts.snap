@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Design Tokens matches token snapshot 1`] = `
+{
+  "buttonHeight": {
+    "md": 52,
+  },
+  "colors": {
+    "accent": "#f5c518",
+    "accentPressed": "#d4a90e",
+    "backgroundPrimary": "#fff",
+    "backgroundSecondary": "#f2f2f7",
+    "border": "#e5e5ea",
+    "brand": "#1a5c54",
+    "destructive": "#ff3b30",
+    "primary": "#1a73e8",
+    "primaryPressed": "#1557b0",
+    "textPrimary": "#000",
+    "textSecondary": "#666",
+    "textTertiary": "#999",
+    "white": "#fff",
+  },
+  "radii": {
+    "full": 9999,
+    "lg": 16,
+    "md": 12,
+    "sm": 8,
+  },
+  "spacing": {
+    "lg": 20,
+    "md": 16,
+    "sm": 8,
+    "xl": 24,
+    "xs": 4,
+    "xxl": 48,
+  },
+  "typography": {
+    "body": {
+      "fontSize": 17,
+      "fontWeight": "500",
+      "lineHeight": 20,
+    },
+    "bodySmall": {
+      "fontSize": 14,
+      "fontWeight": "500",
+      "lineHeight": 17,
+    },
+    "button": {
+      "fontSize": 17,
+      "fontWeight": "600",
+      "lineHeight": 20,
+    },
+    "caption": {
+      "fontSize": 12,
+      "fontWeight": "500",
+      "lineHeight": 14,
+    },
+    "h1": {
+      "fontSize": 36,
+      "fontWeight": "700",
+      "lineHeight": 43,
+    },
+    "h2": {
+      "fontSize": 24,
+      "fontWeight": "700",
+      "lineHeight": 29,
+    },
+  },
+}
+`;
