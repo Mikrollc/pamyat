@@ -52,11 +52,14 @@ PO creates issue #12
   → branch: feat/12-add-grave-wizard
     → open draft PR (Closes #12)
       → commits on branch
-        → QA + user-tester validate
-          → PO accepts → mark PR ready → squash merge → branch deleted → issue closed
+        → launch app locally → Oleg tests on simulator/device
+          → bugs fixed on same branch → re-test until clean
+            → QA + user-tester validate
+              → PO accepts → mark PR ready → squash merge → branch deleted → issue closed
 ```
 
 Every branch references its issue number. Every PR closes its issue on merge. One issue = one branch = one PR.
+**No PR merges without a local test pass.** Code that hasn't been run is not done.
 
 ---
 
