@@ -55,6 +55,7 @@ describe('usePublishGrave', () => {
     birthDate: { year: 1935, month: null, day: null, unknown: false },
     deathDate: { year: 2020, month: 5, day: 15, unknown: false },
     cemeteryName: 'Green-Wood',
+    cemeteryId: null,
     photoUri: null,
     inscription: '',
   };

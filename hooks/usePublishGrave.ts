@@ -13,6 +13,7 @@ interface PublishParams {
   birthDate: PartialDate;
   deathDate: PartialDate;
   cemeteryName: string;
+  cemeteryId: string | null;
   photoUri: string | null;
   inscription: string;
 }
@@ -35,9 +36,9 @@ export function usePublishGrave() {
         params.deathDate.unknown ? null : params.deathDate.year,
       );
 
-      // 2. Find or create cemetery if name provided
-      let cemeteryId: string | null = null;
-      if (params.cemeteryName.trim()) {
+      // 2. Use provided cemeteryId, or find/create cemetery by name
+      let cemeteryId: string | null = params.cemeteryId;
+      if (!cemeteryId && params.cemeteryName.trim()) {
         cemeteryId = await findOrCreateCemetery(
           params.cemeteryName.trim(),
           params.latitude,
@@ -72,6 +73,7 @@ export function usePublishGrave() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.graves.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.graves.map });
     },
   });
 }

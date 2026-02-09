@@ -21,6 +21,7 @@ interface AddGraveState {
   birthDate: PartialDate;
   deathDate: PartialDate;
   cemeteryName: string;
+  cemeteryId: string | null;
 
   // Step 2: Photo
   photoUri: string | null;
@@ -39,6 +40,7 @@ interface AddGraveState {
   setBirthDate: (date: Partial<PartialDate>) => void;
   setDeathDate: (date: Partial<PartialDate>) => void;
   setCemeteryName: (name: string) => void;
+  setCemeteryId: (id: string | null) => void;
   setPhotoUri: (uri: string | null) => void;
   setInscription: (text: string) => void;
   setStep: (step: 1 | 2 | 3) => void;
@@ -54,6 +56,7 @@ const initialState = {
   birthDate: { ...emptyDate },
   deathDate: { ...emptyDate },
   cemeteryName: '',
+  cemeteryId: null as string | null,
   photoUri: null as string | null,
   inscription: '',
   currentStep: 1 as const,
@@ -72,6 +75,7 @@ export const useAddGraveStore = create<AddGraveState>()(
       setDeathDate: (date) =>
         set((state) => ({ deathDate: { ...state.deathDate, ...date } })),
       setCemeteryName: (name) => set({ cemeteryName: name }),
+      setCemeteryId: (id) => set({ cemeteryId: id }),
       setPhotoUri: (uri) => set({ photoUri: uri }),
       setInscription: (text) => set({ inscription: text }),
       setStep: (step) => set({ currentStep: step }),
@@ -89,6 +93,7 @@ export const useAddGraveStore = create<AddGraveState>()(
         birthDate: state.birthDate,
         deathDate: state.deathDate,
         cemeteryName: state.cemeteryName,
+        cemeteryId: state.cemeteryId,
         photoUri: state.photoUri,
         inscription: state.inscription,
         currentStep: state.currentStep,

@@ -61,7 +61,7 @@ export function StepReview({ onBack, onPublish, publishing }: StepReviewProps) {
         <View style={styles.footerButton}>
           <Button
             variant="brand"
-            title={t('addGrave.publishMemorial')}
+            title={t('addGrave.publish')}
             onPress={onPublish}
             loading={publishing}
             testID="step3-publish"

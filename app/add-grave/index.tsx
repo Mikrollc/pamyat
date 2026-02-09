@@ -52,6 +52,7 @@ export default function AddGraveScreen() {
         birthDate: store.birthDate,
         deathDate: store.deathDate,
         cemeteryName: store.cemeteryName,
+        cemeteryId: store.cemeteryId,
         photoUri: store.photoUri,
         inscription: store.inscription,
       });

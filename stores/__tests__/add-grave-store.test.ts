@@ -24,6 +24,8 @@ describe('useAddGraveStore', () => {
     expect(state.photoUri).toBeNull();
     expect(state.inscription).toBe('');
     expect(state.birthDate.unknown).toBe(false);
+    expect(state.cemeteryId).toBeNull();
+    expect(state.cemeteryName).toBe('');
   });
 
   it('sets location', () => {
@@ -65,15 +67,27 @@ describe('useAddGraveStore', () => {
     expect(useAddGraveStore.getState().photoUri).toBe('file://photo.jpg');
   });
 
+  it('sets cemetery name and id', () => {
+    useAddGraveStore.getState().setCemeteryName('Green-Wood');
+    useAddGraveStore.getState().setCemeteryId('cem-123');
+    const state = useAddGraveStore.getState();
+    expect(state.cemeteryName).toBe('Green-Wood');
+    expect(state.cemeteryId).toBe('cem-123');
+  });
+
   it('resets all fields', () => {
     useAddGraveStore.getState().setFirstName('Ivan');
     useAddGraveStore.getState().setLocation(40, -74);
     useAddGraveStore.getState().setStep(3);
+    useAddGraveStore.getState().setCemeteryName('Green-Wood');
+    useAddGraveStore.getState().setCemeteryId('cem-123');
     useAddGraveStore.getState().reset();
 
     const state = useAddGraveStore.getState();
     expect(state.firstName).toBe('');
     expect(state.latitude).toBeNull();
     expect(state.currentStep).toBe(1);
+    expect(state.cemeteryName).toBe('');
+    expect(state.cemeteryId).toBeNull();
   });
 });
