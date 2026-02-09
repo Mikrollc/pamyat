@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query-keys';
-import { createGrave, generateSlug, uploadGravePhoto, updateGraveCoverPhoto } from '@/lib/api';
+import { createGrave, generateSlug, uploadGravePhoto, updateGraveCoverPhoto, findOrCreateCemetery } from '@/lib/api';
 import { transliterate } from '@/lib/transliterate';
 import { supabase } from '@/lib/supabase';
 import type { PartialDate } from '@/stores/add-grave-store';
@@ -35,12 +35,24 @@ export function usePublishGrave() {
         params.deathDate.unknown ? null : params.deathDate.year,
       );
 
-      // 2. Create grave (trigger auto-creates grave_member)
+      // 2. Find or create cemetery if name provided
+      let cemeteryId: string | null = null;
+      if (params.cemeteryName.trim()) {
+        cemeteryId = await findOrCreateCemetery(
+          params.cemeteryName.trim(),
+          params.latitude,
+          params.longitude,
+          user.id,
+        );
+      }
+
+      // 3. Create grave (trigger auto-creates grave_member)
       const grave = await createGrave({
         location: `POINT(${params.longitude} ${params.latitude})`,
         person_name: fullName,
         slug,
         created_by: user.id,
+        cemetery_id: cemeteryId,
         birth_year: params.birthDate.unknown ? null : params.birthDate.year,
         birth_month: params.birthDate.unknown ? null : params.birthDate.month,
         birth_day: params.birthDate.unknown ? null : params.birthDate.day,
@@ -50,7 +62,7 @@ export function usePublishGrave() {
         inscription: params.inscription || null,
       });
 
-      // 3. Upload photo if provided (RLS requires grave_member to exist first)
+      // 4. Upload photo if provided (RLS requires grave_member to exist first)
       if (params.photoUri) {
         const storagePath = await uploadGravePhoto(grave.id, params.photoUri, user.id);
         await updateGraveCoverPhoto(grave.id, storagePath);

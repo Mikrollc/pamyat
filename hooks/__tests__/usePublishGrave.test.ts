@@ -7,12 +7,14 @@ const mockCreateGrave = jest.fn();
 const mockGenerateSlug = jest.fn();
 const mockUploadGravePhoto = jest.fn();
 const mockUpdateGraveCoverPhoto = jest.fn();
+const mockFindOrCreateCemetery = jest.fn();
 
 jest.mock('@/lib/api', () => ({
   createGrave: (...args: unknown[]) => mockCreateGrave(...args),
   generateSlug: (...args: unknown[]) => mockGenerateSlug(...args),
   uploadGravePhoto: (...args: unknown[]) => mockUploadGravePhoto(...args),
   updateGraveCoverPhoto: (...args: unknown[]) => mockUpdateGraveCoverPhoto(...args),
+  findOrCreateCemetery: (...args: unknown[]) => mockFindOrCreateCemetery(...args),
 }));
 
 jest.mock('@/lib/transliterate', () => ({
@@ -61,6 +63,7 @@ describe('usePublishGrave', () => {
     jest.clearAllMocks();
     mockGenerateSlug.mockResolvedValue('ivan-petrov-1935-2020-abc123');
     mockCreateGrave.mockResolvedValue({ id: 'grave-1', slug: 'ivan-petrov-1935-2020-abc123' });
+    mockFindOrCreateCemetery.mockResolvedValue('cemetery-1');
   });
 
   it('creates grave without photo', async () => {
@@ -71,7 +74,10 @@ describe('usePublishGrave', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(mockGenerateSlug).toHaveBeenCalledWith('ivan petrov', 1935, 2020);
-    expect(mockCreateGrave).toHaveBeenCalledTimes(1);
+    expect(mockFindOrCreateCemetery).toHaveBeenCalledWith('Green-Wood', 40.7128, -74.006, 'user-1');
+    expect(mockCreateGrave).toHaveBeenCalledWith(
+      expect.objectContaining({ cemetery_id: 'cemetery-1' }),
+    );
     expect(mockUploadGravePhoto).not.toHaveBeenCalled();
   });
 
@@ -87,6 +93,19 @@ describe('usePublishGrave', () => {
 
     expect(mockUploadGravePhoto).toHaveBeenCalledWith('grave-1', 'file:///photo.jpg', 'user-1');
     expect(mockUpdateGraveCoverPhoto).toHaveBeenCalledWith('grave-1', 'grave-1/123.jpg');
+  });
+
+  it('skips cemetery when name is empty', async () => {
+    const { result } = renderHook(() => usePublishGrave(), { wrapper: createWrapper() });
+
+    result.current.mutate({ ...baseParams, cemeteryName: '' });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockFindOrCreateCemetery).not.toHaveBeenCalled();
+    expect(mockCreateGrave).toHaveBeenCalledWith(
+      expect.objectContaining({ cemetery_id: null }),
+    );
   });
 
   it('passes null dates when unknown', async () => {

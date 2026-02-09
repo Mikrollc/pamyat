@@ -13,7 +13,7 @@ const DEFAULT_ZOOM = 15;
 interface MapPinSelectorProps {
   latitude: number | null;
   longitude: number | null;
-  onLocationChange: (lat: number, lng: number) => void;
+  onLocationChange: (lat: number, lng: number, confirmed?: boolean) => void;
   testID?: string;
 }
 
@@ -33,16 +33,19 @@ export function MapPinSelector({
       : DEFAULT_CENTER;
 
   useEffect(() => {
-    // Set initial location if none saved
+    // Set initial coords for camera display, but don't mark as confirmed
     if (latitude == null || longitude == null) {
       onLocationChange(DEFAULT_CENTER[1], DEFAULT_CENTER[0]);
     }
   }, []);
 
+  const [userInteracted, setUserInteracted] = useState(false);
+
   const handleRegionChange = (feature: GeoJSON.Feature) => {
     if (feature.geometry.type !== 'Point') return;
     const coords = feature.geometry.coordinates;
-    onLocationChange(coords[1], coords[0]);
+    setUserInteracted(true);
+    onLocationChange(coords[1], coords[0], true);
   };
 
   const handleUseMyLocation = async () => {
@@ -54,7 +57,8 @@ export function MapPinSelector({
         return;
       }
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      onLocationChange(loc.coords.latitude, loc.coords.longitude);
+      setUserInteracted(true);
+      onLocationChange(loc.coords.latitude, loc.coords.longitude, true);
       cameraRef.current?.setCamera({
         centerCoordinate: [loc.coords.longitude, loc.coords.latitude],
         zoomLevel: DEFAULT_ZOOM,

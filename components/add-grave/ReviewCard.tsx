@@ -1,8 +1,8 @@
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, Text, StyleSheet } from 'react-native';
 import { Card } from '@/components/ui/Card';
 import { Typography } from '@/components/ui/Typography';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing, radii } from '@/constants/tokens';
+import { colors, spacing, radii, typography as typographyTokens } from '@/constants/tokens';
 import type { PartialDate } from '@/stores/add-grave-store';
 
 interface ReviewCardProps {
@@ -61,11 +61,7 @@ export function ReviewCard({
           </Typography>
         ) : null}
         {inscription ? (
-          <View style={styles.inscription}>
-            <Typography variant="bodySmall" color={colors.textSecondary}>
-              {inscription}
-            </Typography>
-          </View>
+          <Text style={styles.inscription}>{`\u201C${inscription}\u201D`}</Text>
         ) : null}
       </View>
     </Card>
@@ -92,6 +88,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   inscription: {
+    fontSize: typographyTokens.bodySmall.fontSize,
+    fontWeight: typographyTokens.bodySmall.fontWeight,
+    lineHeight: typographyTokens.bodySmall.lineHeight,
+    color: colors.textSecondary,
     fontStyle: 'italic',
     marginTop: spacing.sm,
   },

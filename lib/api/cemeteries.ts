@@ -14,3 +14,34 @@ export async function fetchNearbyCemeteries(
   if (error) throw error;
   return data;
 }
+
+export async function findOrCreateCemetery(
+  name: string,
+  lat: number,
+  lng: number,
+  userId: string,
+): Promise<string> {
+  // Try to find existing cemetery by name (case-insensitive)
+  const { data: existing } = await supabase
+    .from('cemeteries')
+    .select('id')
+    .ilike('name', name)
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) return existing.id;
+
+  // Create new cemetery
+  const { data: created, error } = await supabase
+    .from('cemeteries')
+    .insert({
+      name,
+      location: `POINT(${lng} ${lat})`,
+      created_by: userId,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return created.id;
+}

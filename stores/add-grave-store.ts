@@ -15,6 +15,7 @@ interface AddGraveState {
   // Step 1: Location + Person
   latitude: number | null;
   longitude: number | null;
+  pinConfirmed: boolean;
   firstName: string;
   lastName: string;
   birthDate: PartialDate;
@@ -31,7 +32,8 @@ interface AddGraveState {
   currentStep: 1 | 2 | 3;
 
   // Actions
-  setLocation: (lat: number, lng: number) => void;
+  setLocation: (lat: number, lng: number, confirmed?: boolean) => void;
+  confirmPin: () => void;
   setFirstName: (name: string) => void;
   setLastName: (name: string) => void;
   setBirthDate: (date: Partial<PartialDate>) => void;
@@ -46,6 +48,7 @@ interface AddGraveState {
 const initialState = {
   latitude: null as number | null,
   longitude: null as number | null,
+  pinConfirmed: false,
   firstName: '',
   lastName: '',
   birthDate: { ...emptyDate },
@@ -60,7 +63,8 @@ export const useAddGraveStore = create<AddGraveState>()(
   persist(
     (set) => ({
       ...initialState,
-      setLocation: (lat, lng) => set({ latitude: lat, longitude: lng }),
+      setLocation: (lat, lng, confirmed) => set({ latitude: lat, longitude: lng, pinConfirmed: confirmed ?? false }),
+      confirmPin: () => set({ pinConfirmed: true }),
       setFirstName: (name) => set({ firstName: name }),
       setLastName: (name) => set({ lastName: name }),
       setBirthDate: (date) =>
@@ -71,7 +75,7 @@ export const useAddGraveStore = create<AddGraveState>()(
       setPhotoUri: (uri) => set({ photoUri: uri }),
       setInscription: (text) => set({ inscription: text }),
       setStep: (step) => set({ currentStep: step }),
-      reset: () => set({ ...initialState, birthDate: { ...emptyDate }, deathDate: { ...emptyDate } }),
+      reset: () => set({ ...initialState, pinConfirmed: false, birthDate: { ...emptyDate }, deathDate: { ...emptyDate } }),
     }),
     {
       name: 'add-grave-draft',
@@ -79,6 +83,7 @@ export const useAddGraveStore = create<AddGraveState>()(
       partialize: (state) => ({
         latitude: state.latitude,
         longitude: state.longitude,
+        pinConfirmed: state.pinConfirmed,
         firstName: state.firstName,
         lastName: state.lastName,
         birthDate: state.birthDate,

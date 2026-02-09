@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 import { useAddGraveStore } from '@/stores/add-grave-store';
+import { validatePartialDate, validateDateOrder } from '@/lib/validate-date';
 import { spacing } from '@/constants/tokens';
 
 interface StepLocationPersonProps {
@@ -15,7 +16,23 @@ export function StepLocationPerson({ onNext }: StepLocationPersonProps) {
   const { t } = useTranslation();
   const store = useAddGraveStore();
 
-  const canProceed = store.latitude != null && store.longitude != null && store.firstName.trim().length > 0;
+  const birthValid = store.birthDate.unknown || !validatePartialDate(store.birthDate.year, store.birthDate.month, store.birthDate.day);
+  const deathValid = store.deathDate.unknown || !validatePartialDate(store.deathDate.year, store.deathDate.month, store.deathDate.day);
+  const dateOrderValid = validateDateOrder(
+    store.birthDate.year, store.deathDate.year,
+    store.birthDate.month, store.deathDate.month,
+    store.birthDate.day, store.deathDate.day,
+  );
+  const dateOrderError = !dateOrderValid ? t('addGrave.deathBeforeBirth') : null;
+
+  const canProceed =
+    store.latitude != null &&
+    store.longitude != null &&
+    store.pinConfirmed &&
+    store.firstName.trim().length > 0 &&
+    birthValid &&
+    deathValid &&
+    dateOrderValid;
 
   return (
     <KeyboardAvoidingView
@@ -56,6 +73,7 @@ export function StepLocationPerson({ onNext }: StepLocationPersonProps) {
           label={t('addGrave.deathDate')}
           value={store.deathDate}
           onChange={store.setDeathDate}
+          error={dateOrderError}
           testID="death-date"
         />
         <Input
