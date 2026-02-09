@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { devSignIn, isDevBypassEnabled } from '@/lib/dev-auth';
 import '@/i18n';
 
 export { ErrorBoundary } from 'expo-router';
@@ -34,11 +35,25 @@ export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    async function initAuth() {
+      // If dev bypass is enabled, auto-sign in with seeded dev user
+      if (isDevBypassEnabled()) {
+        try {
+          const devSession = await devSignIn();
+          setSession(devSession);
+        } catch (e) {
+          console.warn('Dev auth bypass failed:', e);
+        }
+      } else {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+      }
+
       setIsReady(true);
       SplashScreen.hideAsync();
-    });
+    }
+
+    initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => setSession(session),
