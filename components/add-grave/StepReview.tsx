@@ -1,6 +1,5 @@
-import { ScrollView, View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { ReviewCard } from './ReviewCard';
-import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
 import { useTranslation } from 'react-i18next';
@@ -18,15 +17,10 @@ export function StepReview({ onBack, onPublish, publishing }: StepReviewProps) {
   const store = useAddGraveStore();
 
   return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={100}
-    >
+    <View style={styles.flex}>
       <ScrollView
         style={styles.flex}
         contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
       >
         <ReviewCard
           firstName={store.firstName}
@@ -34,43 +28,37 @@ export function StepReview({ onBack, onPublish, publishing }: StepReviewProps) {
           birthDate={store.birthDate}
           deathDate={store.deathDate}
           cemeteryName={store.cemeteryName}
+          plotInfo={store.plotInfo}
+          relationship={store.relationship}
           photoUri={store.photoUri}
           inscription={store.inscription}
           testID="review-card"
-        />
-        <Input
-          label={t('addGrave.inscriptionHint')}
-          value={store.inscription}
-          onChangeText={store.setInscription}
-          testID="inscription"
         />
         <Typography variant="caption" color={colors.textTertiary} align="center">
           {t('addGrave.editAnytime')}
         </Typography>
       </ScrollView>
       <View style={styles.footer}>
-        <View style={styles.footerButton}>
-          <Button
-            variant="secondary"
-            title={t('common.back')}
-            icon="arrow-left"
-            onPress={onBack}
-            disabled={publishing}
-            testID="step3-back"
-          />
-        </View>
-        <View style={styles.footerButton}>
+        <Button
+          variant="secondary"
+          title={t('common.back')}
+          icon="arrow-left"
+          onPress={onBack}
+          disabled={publishing}
+          testID="step4-back"
+        />
+        <View style={styles.nextButton}>
           <Button
             variant="brand"
             title={t('addGrave.publish')}
             icon="check"
             onPress={onPublish}
             loading={publishing}
-            testID="step3-publish"
+            testID="step4-publish"
           />
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -87,7 +75,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     paddingBottom: spacing.xxl,
   },
-  footerButton: {
+  nextButton: {
     flex: 1,
   },
 });

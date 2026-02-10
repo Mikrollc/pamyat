@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, Pressable, StyleSheet, Alert } from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import * as Location from 'expo-location';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing } from '@/constants/tokens';
+import { colors, spacing, radii } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const DEFAULT_CENTER: [number, number] = [-74.006, 40.7128]; // NYC
-const DEFAULT_ZOOM = 15;
+const DEFAULT_ZOOM = 17;
 
 interface MapPinSelectorProps {
   latitude: number | null;
@@ -26,6 +26,15 @@ export function MapPinSelector({
   const { t } = useTranslation();
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const [locating, setLocating] = useState(false);
+  const zoomRef = useRef(DEFAULT_ZOOM);
+
+  const handleZoom = (delta: number) => {
+    zoomRef.current = Math.max(5, Math.min(20, zoomRef.current + delta));
+    cameraRef.current?.setCamera({
+      zoomLevel: zoomRef.current,
+      animationDuration: 300,
+    });
+  };
 
   const initialCenter: [number, number] =
     longitude != null && latitude != null
@@ -93,6 +102,16 @@ export function MapPinSelector({
         <View style={styles.pinOverlay} pointerEvents="none">
           <FontAwesome name="map-marker" size={40} color={colors.brand} style={styles.pinIcon} />
         </View>
+        {/* Zoom controls */}
+        <View style={styles.zoomControls}>
+          <Pressable style={styles.zoomButton} onPress={() => handleZoom(1)}>
+            <FontAwesome name="plus" size={14} color={colors.textSecondary} />
+          </Pressable>
+          <View style={styles.zoomDivider} />
+          <Pressable style={styles.zoomButton} onPress={() => handleZoom(-1)}>
+            <FontAwesome name="minus" size={14} color={colors.textSecondary} />
+          </Pressable>
+        </View>
       </View>
       <View style={styles.locationButton}>
         <Button
@@ -129,6 +148,29 @@ const styles = StyleSheet.create({
   pinIcon: {
     // offset so the pin tip is at center, not the icon middle
     marginBottom: 40,
+  },
+  zoomControls: {
+    position: 'absolute',
+    right: spacing.sm,
+    top: spacing.sm,
+    backgroundColor: colors.white,
+    borderRadius: radii.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  zoomButton: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zoomDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
   },
   locationButton: {},
 });

@@ -14,6 +14,8 @@ interface PublishParams {
   deathDate: PartialDate;
   cemeteryName: string;
   cemeteryId: string | null;
+  plotInfo: string;
+  relationship: string | null;
   photoUri: string | null;
   inscription: string;
 }
@@ -32,8 +34,8 @@ export function usePublishGrave() {
       // 1. Generate slug server-side
       const slug = await generateSlug(
         transliteratedName,
-        params.birthDate.unknown ? null : params.birthDate.year,
-        params.deathDate.unknown ? null : params.deathDate.year,
+        params.birthDate.year,
+        params.deathDate.year,
       );
 
       // 2. Use provided cemeteryId, or find/create cemetery by name
@@ -54,16 +56,26 @@ export function usePublishGrave() {
         slug,
         created_by: user.id,
         cemetery_id: cemeteryId,
-        birth_year: params.birthDate.unknown ? null : params.birthDate.year,
-        birth_month: params.birthDate.unknown ? null : params.birthDate.month,
-        birth_day: params.birthDate.unknown ? null : params.birthDate.day,
-        death_year: params.deathDate.unknown ? null : params.deathDate.year,
-        death_month: params.deathDate.unknown ? null : params.deathDate.month,
-        death_day: params.deathDate.unknown ? null : params.deathDate.day,
+        birth_year: params.birthDate.year,
+        birth_month: params.birthDate.month,
+        birth_day: params.birthDate.day,
+        death_year: params.deathDate.year,
+        death_month: params.deathDate.month,
+        death_day: params.deathDate.day,
         inscription: params.inscription || null,
+        plot_info: params.plotInfo || null,
       });
 
-      // 4. Upload photo if provided (RLS requires grave_member to exist first)
+      // 4. Update relationship on grave_member if provided
+      if (params.relationship) {
+        await supabase
+          .from('grave_members')
+          .update({ relationship: params.relationship })
+          .eq('grave_id', grave.id)
+          .eq('user_id', user.id);
+      }
+
+      // 5. Upload photo if provided (RLS requires grave_member to exist first)
       if (params.photoUri) {
         const storagePath = await uploadGravePhoto(grave.id, params.photoUri, user.id);
         await updateGraveCoverPhoto(grave.id, storagePath);

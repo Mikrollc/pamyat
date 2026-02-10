@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, Alert } from 'react-native';
+import { View, Pressable, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
@@ -84,31 +84,27 @@ export function PhotoSelector({
 
   return (
     <View style={styles.container} testID={testID}>
-      <View style={styles.emptyState}>
-        <FontAwesome name="camera" size={48} color={colors.textSecondary} />
-        <Typography variant="body" color={colors.textSecondary} align="center">
-          {t('addGrave.photoHint')}
-        </Typography>
-      </View>
-      <View style={styles.actions}>
-        <View style={styles.actionButton}>
-          <Button
-            variant="secondary"
-            title={t('addGrave.takePhoto')}
-            icon="camera"
-            onPress={takePhoto}
-            testID={testID ? `${testID}-camera` : undefined}
-          />
-        </View>
-        <View style={styles.actionButton}>
-          <Button
-            variant="secondary"
-            title={t('addGrave.chooseGallery')}
-            icon="image"
-            onPress={pickFromGallery}
-            testID={testID ? `${testID}-gallery` : undefined}
-          />
-        </View>
+      <View style={styles.twoAreaRow}>
+        <Pressable
+          style={styles.areaCard}
+          onPress={takePhoto}
+          testID={testID ? `${testID}-camera` : undefined}
+        >
+          <FontAwesome name="camera" size={32} color={colors.textSecondary} />
+          <Typography variant="bodySmall" color={colors.textSecondary} align="center">
+            {t('addGrave.takePhoto')}
+          </Typography>
+        </Pressable>
+        <Pressable
+          style={styles.areaCard}
+          onPress={pickFromGallery}
+          testID={testID ? `${testID}-gallery` : undefined}
+        >
+          <FontAwesome name="image" size={32} color={colors.textSecondary} />
+          <Typography variant="bodySmall" color={colors.textSecondary} align="center">
+            {t('addGrave.chooseGallery')}
+          </Typography>
+        </Pressable>
       </View>
     </View>
   );
@@ -119,9 +115,14 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     alignItems: 'center',
   },
-  emptyState: {
+  twoAreaRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
     width: '100%',
-    height: 200,
+  },
+  areaCard: {
+    flex: 1,
+    height: 160,
     backgroundColor: colors.backgroundSecondary,
     borderRadius: radii.md,
     alignItems: 'center',

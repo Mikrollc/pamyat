@@ -11,13 +11,14 @@ interface ReviewCardProps {
   birthDate: PartialDate;
   deathDate: PartialDate;
   cemeteryName: string;
+  plotInfo: string;
+  relationship: string | null;
   photoUri: string | null;
   inscription: string;
   testID?: string;
 }
 
 function formatPartialDate(d: PartialDate): string {
-  if (d.unknown) return '?';
   const parts: string[] = [];
   if (d.day != null) parts.push(String(d.day).padStart(2, '0'));
   if (d.month != null) parts.push(String(d.month).padStart(2, '0'));
@@ -31,6 +32,8 @@ export function ReviewCard({
   birthDate,
   deathDate,
   cemeteryName,
+  plotInfo,
+  relationship,
   photoUri,
   inscription,
   testID,
@@ -58,6 +61,16 @@ export function ReviewCard({
         {cemeteryName ? (
           <Typography variant="bodySmall" color={colors.textTertiary}>
             {cemeteryName}
+          </Typography>
+        ) : null}
+        {plotInfo ? (
+          <Typography variant="bodySmall" color={colors.textTertiary}>
+            {plotInfo}
+          </Typography>
+        ) : null}
+        {relationship ? (
+          <Typography variant="bodySmall" color={colors.textTertiary}>
+            {t(`addGrave.rel${relationship.charAt(0).toUpperCase()}${relationship.slice(1)}`)}
           </Typography>
         ) : null}
         {inscription ? (

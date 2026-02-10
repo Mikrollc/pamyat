@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WizardHeader } from '@/components/add-grave/WizardHeader';
 import { StepLocationPerson } from '@/components/add-grave/StepLocationPerson';
+import { StepDates } from '@/components/add-grave/StepDates';
 import { StepPhoto } from '@/components/add-grave/StepPhoto';
 import { StepReview } from '@/components/add-grave/StepReview';
 import { SuccessInterstitial } from '@/components/add-grave/SuccessInterstitial';
@@ -13,7 +14,6 @@ import { useAddGraveStore } from '@/stores/add-grave-store';
 import { usePublishGrave } from '@/hooks/usePublishGrave';
 import { colors } from '@/constants/tokens';
 
-const STEP_TITLES = ['addGrave.step1Title', 'addGrave.step2Title', 'addGrave.step3Title'] as const;
 
 export default function AddGraveScreen() {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ export default function AddGraveScreen() {
     router.back();
   };
 
-  const goToStep = (step: 1 | 2 | 3) => {
+  const goToStep = (step: 1 | 2 | 3 | 4) => {
     store.setStep(step);
   };
 
@@ -51,6 +51,8 @@ export default function AddGraveScreen() {
         deathDate: store.deathDate,
         cemeteryName: store.cemeteryName,
         cemeteryId: store.cemeteryId,
+        plotInfo: store.plotInfo,
+        relationship: store.relationship,
         photoUri: store.photoUri,
         inscription: store.inscription,
       });
@@ -81,7 +83,7 @@ export default function AddGraveScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <WizardHeader
         step={store.currentStep}
-        title={t(STEP_TITLES[store.currentStep - 1])}
+        title={t('addGrave.wizardTitle')}
         onClose={handleClose}
         testID="wizard-header"
       />
@@ -89,11 +91,14 @@ export default function AddGraveScreen() {
         <StepLocationPerson onNext={() => goToStep(2)} />
       )}
       {store.currentStep === 2 && (
-        <StepPhoto onNext={() => goToStep(3)} onBack={() => goToStep(1)} />
+        <StepDates onNext={() => goToStep(3)} onBack={() => goToStep(1)} />
       )}
       {store.currentStep === 3 && (
+        <StepPhoto onNext={() => goToStep(4)} onBack={() => goToStep(2)} />
+      )}
+      {store.currentStep === 4 && (
         <StepReview
-          onBack={() => goToStep(2)}
+          onBack={() => goToStep(3)}
           onPublish={handlePublish}
           publishing={publishMutation.isPending}
         />

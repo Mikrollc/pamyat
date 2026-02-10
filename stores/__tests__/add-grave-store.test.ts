@@ -23,7 +23,7 @@ describe('useAddGraveStore', () => {
     expect(state.currentStep).toBe(1);
     expect(state.photoUri).toBeNull();
     expect(state.inscription).toBe('');
-    expect(state.birthDate.unknown).toBe(false);
+    expect(state.birthDate.year).toBeNull();
     expect(state.cemeteryId).toBeNull();
     expect(state.cemeteryName).toBe('');
   });
@@ -51,10 +51,11 @@ describe('useAddGraveStore', () => {
     expect(state.birthDate.day).toBeNull();
   });
 
-  it('sets death date unknown', () => {
-    useAddGraveStore.getState().setDeathDate({ unknown: true });
+  it('sets death date partially', () => {
+    useAddGraveStore.getState().setDeathDate({ year: 2020 });
     const state = useAddGraveStore.getState();
-    expect(state.deathDate.unknown).toBe(true);
+    expect(state.deathDate.year).toBe(2020);
+    expect(state.deathDate.month).toBeNull();
   });
 
   it('sets step', () => {

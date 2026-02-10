@@ -6,10 +6,9 @@ export interface PartialDate {
   year: number | null;
   month: number | null;
   day: number | null;
-  unknown: boolean;
 }
 
-const emptyDate: PartialDate = { year: null, month: null, day: null, unknown: false };
+const emptyDate: PartialDate = { year: null, month: null, day: null };
 
 interface AddGraveState {
   // Step 1: Location + Person
@@ -23,6 +22,10 @@ interface AddGraveState {
   cemeteryName: string;
   cemeteryId: string | null;
 
+  // Step 1b: Dates & Details
+  plotInfo: string;
+  relationship: string | null;
+
   // Step 2: Photo
   photoUri: string | null;
 
@@ -30,7 +33,7 @@ interface AddGraveState {
   inscription: string;
 
   // Navigation
-  currentStep: 1 | 2 | 3;
+  currentStep: 1 | 2 | 3 | 4;
 
   // Actions
   setLocation: (lat: number, lng: number, confirmed?: boolean) => void;
@@ -41,9 +44,11 @@ interface AddGraveState {
   setDeathDate: (date: Partial<PartialDate>) => void;
   setCemeteryName: (name: string) => void;
   setCemeteryId: (id: string | null) => void;
+  setPlotInfo: (text: string) => void;
+  setRelationship: (rel: string | null) => void;
   setPhotoUri: (uri: string | null) => void;
   setInscription: (text: string) => void;
-  setStep: (step: 1 | 2 | 3) => void;
+  setStep: (step: 1 | 2 | 3 | 4) => void;
   reset: () => void;
 }
 
@@ -57,6 +62,8 @@ const initialState = {
   deathDate: { ...emptyDate },
   cemeteryName: '',
   cemeteryId: null as string | null,
+  plotInfo: '',
+  relationship: null as string | null,
   photoUri: null as string | null,
   inscription: '',
   currentStep: 1 as const,
@@ -76,10 +83,12 @@ export const useAddGraveStore = create<AddGraveState>()(
         set((state) => ({ deathDate: { ...state.deathDate, ...date } })),
       setCemeteryName: (name) => set({ cemeteryName: name }),
       setCemeteryId: (id) => set({ cemeteryId: id }),
+      setPlotInfo: (text) => set({ plotInfo: text }),
+      setRelationship: (rel) => set({ relationship: rel }),
       setPhotoUri: (uri) => set({ photoUri: uri }),
       setInscription: (text) => set({ inscription: text }),
       setStep: (step) => set({ currentStep: step }),
-      reset: () => set({ ...initialState, pinConfirmed: false, birthDate: { ...emptyDate }, deathDate: { ...emptyDate } }),
+      reset: () => set({ ...initialState, birthDate: { ...emptyDate }, deathDate: { ...emptyDate } }),
     }),
     {
       name: 'add-grave-draft',
@@ -94,6 +103,8 @@ export const useAddGraveStore = create<AddGraveState>()(
         deathDate: state.deathDate,
         cemeteryName: state.cemeteryName,
         cemeteryId: state.cemeteryId,
+        plotInfo: state.plotInfo,
+        relationship: state.relationship,
         photoUri: state.photoUri,
         inscription: state.inscription,
         currentStep: state.currentStep,

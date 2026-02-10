@@ -62,6 +62,7 @@ export interface Database {
           death_month: number | null;
           death_day: number | null;
           inscription: string | null;
+          plot_info: string | null;
           slug: string;
           is_public: boolean;
           cover_photo_path: string | null;
@@ -133,6 +134,7 @@ export interface Database {
           grave_id: string;
           user_id: string | null;
           role: GraveRole;
+          relationship: string | null;
           created_at: string;
         };
         Insert: Partial<Database['public']['Tables']['grave_members']['Row']> & { grave_id: string };

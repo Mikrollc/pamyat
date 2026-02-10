@@ -52,10 +52,12 @@ describe('usePublishGrave', () => {
     longitude: -74.006,
     firstName: 'Ivan',
     lastName: 'Petrov',
-    birthDate: { year: 1935, month: null, day: null, unknown: false },
-    deathDate: { year: 2020, month: 5, day: 15, unknown: false },
+    birthDate: { year: 1935, month: null, day: null },
+    deathDate: { year: 2020, month: 5, day: 15 },
     cemeteryName: 'Green-Wood',
     cemeteryId: null,
+    plotInfo: '',
+    relationship: null,
     photoUri: null,
     inscription: '',
   };
@@ -114,7 +116,7 @@ describe('usePublishGrave', () => {
 
     result.current.mutate({
       ...baseParams,
-      birthDate: { year: null, month: null, day: null, unknown: true },
+      birthDate: { year: null, month: null, day: null },
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

@@ -1,5 +1,6 @@
-import { View, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { PhotoSelector } from './PhotoSelector';
+import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 import { useAddGraveStore } from '@/stores/add-grave-store';
@@ -12,50 +13,61 @@ interface StepPhotoProps {
 
 export function StepPhoto({ onNext, onBack }: StepPhotoProps) {
   const { t } = useTranslation();
-  const { photoUri, setPhotoUri } = useAddGraveStore();
+  const { photoUri, setPhotoUri, inscription, setInscription } = useAddGraveStore();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={100}
+    >
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+      >
         <PhotoSelector
           photoUri={photoUri}
           onPhotoSelected={setPhotoUri}
           onPhotoRemoved={() => setPhotoUri(null)}
           testID="photo-selector"
         />
-      </View>
+        <Input
+          label={t('addGrave.inscriptionHint')}
+          value={inscription}
+          onChangeText={setInscription}
+          testID="inscription"
+        />
+      </ScrollView>
       <View style={styles.footer}>
-        <View style={styles.footerButton}>
-          <Button
-            variant="secondary"
-            title={t('common.back')}
-            icon="arrow-left"
-            onPress={onBack}
-            testID="step2-back"
-          />
-        </View>
-        <View style={styles.footerButton}>
+        <Button
+          variant="secondary"
+          title={t('common.back')}
+          icon="arrow-left"
+          onPress={onBack}
+          testID="step3-back"
+        />
+        <View style={styles.nextButton}>
           <Button
             variant="brand"
             title={photoUri ? t('common.next') : t('addGrave.skip')}
             icon="arrow-right"
             onPress={onNext}
-            testID="step2-next"
+            testID="step3-next"
           />
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  flex: { flex: 1 },
   content: {
-    flex: 1,
     padding: spacing.md,
     paddingTop: spacing.xl,
+    gap: spacing.md,
+    paddingBottom: spacing.md,
   },
   footer: {
     flexDirection: 'row',
@@ -63,7 +75,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     paddingBottom: spacing.xxl,
   },
-  footerButton: {
+  nextButton: {
     flex: 1,
   },
 });

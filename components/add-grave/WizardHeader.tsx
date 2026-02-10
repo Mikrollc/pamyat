@@ -6,57 +6,69 @@ import { colors, spacing } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface WizardHeaderProps {
-  step: 1 | 2 | 3;
+  step: number;
+  totalSteps?: number;
   title: string;
   onClose: () => void;
   testID?: string;
 }
 
-export function WizardHeader({ step, title, onClose, testID }: WizardHeaderProps) {
+export function WizardHeader({ step, totalSteps = 4, title, onClose, testID }: WizardHeaderProps) {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.container} testID={testID}>
-      <View style={styles.topRow}>
-        <Pressable
-          onPress={onClose}
-          hitSlop={16}
-          accessibilityRole="button"
-          accessibilityLabel="Close"
-          testID={testID ? `${testID}-close` : undefined}
-        >
-          <FontAwesome name="times" size={22} color={colors.textPrimary} />
-        </Pressable>
-        <View style={styles.title}>
-          <Typography variant="body" align="center">
-            {title}
-          </Typography>
-          <Typography variant="caption" color={colors.textTertiary} align="center">
-            {t('addGrave.stepOf', { current: step, total: 3 })}
-          </Typography>
+    <View testID={testID}>
+      <View style={styles.container}>
+        <View style={styles.topRow}>
+          <View style={styles.titleGroup}>
+            <Typography variant="button">
+              {title}
+            </Typography>
+            <Typography variant="caption" color={colors.textTertiary}>
+              {t('addGrave.stepOf', { current: step, total: totalSteps })}
+            </Typography>
+          </View>
+          <Pressable
+            style={styles.closeButton}
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+            testID={testID ? `${testID}-close` : undefined}
+          >
+            <FontAwesome name="times" size={15} color="#666" />
+          </Pressable>
         </View>
-        <View style={styles.placeholder} />
       </View>
-      <ProgressBar step={step} />
+      <View style={styles.progressWrapper}>
+        <ProgressBar step={step} totalSteps={totalSteps} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  title: {
+  titleGroup: {
     flex: 1,
   },
-  placeholder: {
-    width: 22,
+  progressWrapper: {
+    paddingVertical: spacing.sm,
+  },
+  closeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
