@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   chipSelected: {
-    backgroundColor: '#e8f0ef',
+    backgroundColor: colors.brandLight,
     borderColor: colors.brand,
   },
   footer: {

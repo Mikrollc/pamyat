@@ -77,7 +77,11 @@ export default function GravesScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <Pressable onPress={() => router.push(`/memorial/${item.slug}`)}>
+          <Pressable
+            onPress={() => router.push(`/memorial/${item.slug}`)}
+            accessibilityRole="button"
+            accessibilityLabel={item.person_name}
+          >
             <Card style={styles.card}>
               <View style={styles.row}>
                 {item.cover_photo_path ? (
