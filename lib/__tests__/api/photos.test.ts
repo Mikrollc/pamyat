@@ -13,9 +13,9 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
-// Mock fetch for blob conversion
+// Mock fetch for arrayBuffer conversion
 global.fetch = jest.fn().mockResolvedValue({
-  blob: () => Promise.resolve(new Blob()),
+  arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
 }) as jest.Mock;
 
 describe('uploadGravePhoto', () => {

@@ -26,11 +26,13 @@ export interface CemeterySearchResult {
 }
 
 export async function searchCemeteries(query: string): Promise<CemeterySearchResult[]> {
-  const pattern = `%${query}%`;
+  // Escape PostgREST special characters in user input to prevent filter injection
+  const escaped = query.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const pattern = `%${escaped}%`;
   const { data, error } = await supabase
     .from('cemeteries')
     .select('id, name, name_ru, city, state, location')
-    .or(`name.ilike.${pattern},name_ru.ilike.${pattern}`)
+    .or(`name.ilike."${pattern}",name_ru.ilike."${pattern}"`)
     .limit(20);
 
   if (error) throw error;
