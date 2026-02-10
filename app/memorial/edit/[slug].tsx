@@ -296,7 +296,7 @@ export default function EditMemorialScreen() {
                       variant="bodySmall"
                       color={selected ? colors.brand : colors.textSecondary}
                     >
-                      {t(relKeys[rel])}
+                      {t(relKeys[rel] ?? rel)}
                     </Typography>
                   </Pressable>
                 );

@@ -29,7 +29,7 @@ export function parseLocationCoords(
     'coordinates' in location
   ) {
     const coords = (location as { coordinates: number[] }).coordinates;
-    if (Array.isArray(coords) && coords.length >= 2) {
+    if (Array.isArray(coords) && coords.length >= 2 && coords[0] != null && coords[1] != null) {
       return [coords[0], coords[1]];
     }
   }
@@ -38,7 +38,7 @@ export function parseLocationCoords(
       return parseEWKBPoint(location);
     }
     const wktMatch = location.match(/POINT\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
-    if (wktMatch) {
+    if (wktMatch?.[1] && wktMatch[2]) {
       return [parseFloat(wktMatch[1]), parseFloat(wktMatch[2])];
     }
     try {

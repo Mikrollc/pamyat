@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Typography, Button } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { fetchProfile } from '@/lib/api/profiles';
-import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
+import { colors, spacing, radii } from '@/constants/tokens';
 
 const CODE_LENGTH = 6;
 const RESEND_SECONDS = 60;

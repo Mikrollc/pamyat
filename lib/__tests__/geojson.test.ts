@@ -11,11 +11,11 @@ describe('cemeteriesToGeoJSON', () => {
 
     expect(result.type).toBe('FeatureCollection');
     expect(result.features).toHaveLength(1);
-    expect(result.features[0].geometry).toEqual({
+    expect(result.features[0]!.geometry).toEqual({
       type: 'Point',
       coordinates: [-73.97, 40.63],
     });
-    expect(result.features[0].properties).toEqual({
+    expect(result.features[0]!.properties).toEqual({
       id: '1',
       name: 'Test Cemetery',
       name_ru: 'Тестовое',
@@ -38,7 +38,7 @@ describe('cemeteriesToGeoJSON', () => {
 
     const result = cemeteriesToGeoJSON(cemeteries);
 
-    expect(result.features[0].properties).toEqual({
+    expect(result.features[0]!.properties).toEqual({
       id: '2',
       name: 'No Russian',
       name_ru: null,

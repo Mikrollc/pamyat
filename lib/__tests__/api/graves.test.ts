@@ -58,7 +58,7 @@ describe('fetchGravesByUser', () => {
     const result = await fetchGravesByUser('user-1');
 
     expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('1');
+    expect(result[0]!.id).toBe('1');
   });
 
   it('throws on supabase error', async () => {

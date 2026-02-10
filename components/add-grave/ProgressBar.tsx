@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import { colors, radii } from '@/constants/tokens';
+import { colors } from '@/constants/tokens';
 
 interface ProgressBarProps {
   step: number;

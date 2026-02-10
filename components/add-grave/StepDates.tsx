@@ -96,7 +96,7 @@ export function StepDates({ onNext, onBack }: StepDatesProps) {
                     variant="bodySmall"
                     color={selected ? colors.brand : colors.textSecondary}
                   >
-                    {t(relKeys[rel])}
+                    {t(relKeys[rel] ?? rel)}
                   </Typography>
                 </Pressable>
               );
