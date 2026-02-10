@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useGrave, useSession, useGraveMembership, useUpdateGrave, useDeleteGrave } from '@/hooks';
 import { getGravePhotoUrl } from '@/lib/api/photos';
+import { parseLocationCoords } from '@/lib/geo';
 import { validatePartialDate, validateDateOrder } from '@/lib/validate-date';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -116,6 +117,7 @@ export default function EditMemorialScreen() {
   function handleSave() {
     if (!grave || !canSave) return;
 
+    const coords = parseLocationCoords(grave.location);
     updateGrave.mutate(
       {
         graveId: grave.id,
@@ -126,8 +128,8 @@ export default function EditMemorialScreen() {
         cemeteryName,
         cemeteryId: grave.cemetery_id,
         cemeteryNameChanged: cemeteryName.trim() !== originalCemeteryName.current.trim(),
-        latitude: 0, // Location not editable; lat/lng only needed if cemetery name changed to new
-        longitude: 0,
+        latitude: coords ? coords[1] : 0,
+        longitude: coords ? coords[0] : 0,
         plotInfo,
         relationship,
         originalRelationship: originalRelationship.current,

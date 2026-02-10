@@ -13,11 +13,11 @@ export async function uploadGravePhoto(
   const storagePath = `${graveId}/${Date.now()}.${ext}`;
 
   const response = await fetch(localUri);
-  const blob = await response.blob();
+  const arrayBuffer = await response.arrayBuffer();
 
   const { error: uploadError } = await supabase.storage
     .from('grave-photos')
-    .upload(storagePath, blob, { contentType: `image/${ext === 'jpg' ? 'jpeg' : ext}` });
+    .upload(storagePath, arrayBuffer, { contentType: `image/${ext === 'jpg' ? 'jpeg' : ext}` });
 
   if (uploadError) throw uploadError;
 

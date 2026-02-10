@@ -17,6 +17,7 @@ import { useMapGraves, useCemeterySearch, useAllCemeteries } from '@/hooks';
 import { useAddGraveStore } from '@/stores/add-grave-store';
 import { CemeteryFloatingCard } from '@/components/map/CemeteryFloatingCard';
 import { cemeteriesToGeoJSON } from '@/lib/geojson';
+import { parseLocationCoords } from '@/lib/geo';
 import { Typography } from '@/components/ui/Typography';
 import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
 import type { MapGrave } from '@/lib/api/graves';
@@ -27,60 +28,6 @@ const DEFAULT_ZOOM = 11;
 const SEARCH_DEBOUNCE_MS = 300;
 
 MapboxGL.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN!);
-
-function parseEWKBPoint(hex: string): [number, number] | null {
-  // EWKB Point: byte order (1) + type (4) + SRID (4) + X double (8) + Y double (8)
-  // Little-endian (starts with "01"), type 0x20000001 = Point with SRID
-  // X starts at byte 9 (hex offset 18), Y starts at byte 17 (hex offset 34)
-  if (hex.length < 50) return null;
-  const buf = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < buf.length; i++) {
-    buf[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16);
-  }
-  const view = new DataView(buf.buffer);
-  const le = buf[0] === 1; // little-endian flag
-  const lng = view.getFloat64(9, le);
-  const lat = view.getFloat64(17, le);
-  if (isFinite(lng) && isFinite(lat)) return [lng, lat];
-  return null;
-}
-
-function parseCemeteryCoords(
-  location: unknown,
-): [number, number] | null {
-  // GeoJSON object: { type: "Point", coordinates: [lng, lat] }
-  if (
-    typeof location === 'object' &&
-    location !== null &&
-    'coordinates' in location
-  ) {
-    const coords = (location as { coordinates: number[] }).coordinates;
-    if (Array.isArray(coords) && coords.length >= 2) {
-      return [coords[0], coords[1]];
-    }
-  }
-  if (typeof location === 'string') {
-    // EWKB hex (starts with "01" for little-endian point)
-    if (/^[0-9a-f]+$/i.test(location) && location.length >= 50) {
-      return parseEWKBPoint(location);
-    }
-    // WKT string: "POINT(lng lat)"
-    const wktMatch = location.match(/POINT\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
-    if (wktMatch) {
-      return [parseFloat(wktMatch[1]), parseFloat(wktMatch[2])];
-    }
-    // GeoJSON returned as JSON string
-    try {
-      const parsed = JSON.parse(location);
-      if (parsed?.coordinates?.length >= 2) {
-        return [parsed.coordinates[0], parsed.coordinates[1]];
-      }
-    } catch {
-      // not JSON
-    }
-  }
-  return null;
-}
 
 /** Matches @rnmapbox/maps OnPressEvent (not exported from package index) */
 interface OnPressEvent {
@@ -141,7 +88,7 @@ export default function MapScreen() {
   }
 
   function handleSelectCemetery(cemetery: CemeterySearchResult) {
-    const coords = parseCemeteryCoords(cemetery.location);
+    const coords = parseLocationCoords(cemetery.location);
     if (coords) {
       setCameraTarget(coords);
       setCameraZoom(14);
