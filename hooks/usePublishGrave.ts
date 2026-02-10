@@ -68,11 +68,12 @@ export function usePublishGrave() {
 
       // 4. Update relationship on grave_member if provided
       if (params.relationship) {
-        await supabase
+        const { error: relError } = await supabase
           .from('grave_members')
           .update({ relationship: params.relationship })
           .eq('grave_id', grave.id)
           .eq('user_id', user.id);
+        if (relError) throw relError;
       }
 
       // 5. Upload photo if provided (RLS requires grave_member to exist first)

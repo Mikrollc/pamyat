@@ -60,11 +60,12 @@ export function useUpdateGrave() {
 
       // 3. Update relationship on grave_member
       if (params.relationship !== params.originalRelationship) {
-        await supabase
+        const { error: relError } = await supabase
           .from('grave_members')
           .update({ relationship: params.relationship })
           .eq('grave_id', params.graveId)
           .eq('user_id', user.id);
+        if (relError) throw relError;
       }
 
       // 4. Handle photo changes
