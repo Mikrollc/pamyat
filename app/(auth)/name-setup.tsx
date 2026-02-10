@@ -65,6 +65,7 @@ export default function NameSetupScreen() {
             setName(text);
             setError('');
           }}
+          maxLength={100}
           error={error}
           testID="name-input"
         />

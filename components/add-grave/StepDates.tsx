@@ -75,6 +75,7 @@ export function StepDates({ onNext, onBack }: StepDatesProps) {
             value={store.plotInfo}
             onChangeText={store.setPlotInfo}
             placeholder={t('addGrave.plotInfoHint')}
+            maxLength={200}
             testID="plot-info"
           />
         </View>
