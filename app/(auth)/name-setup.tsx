@@ -18,9 +18,13 @@ export default function NameSetupScreen() {
   const [sessionUserId, setSessionUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setSessionUserId(data.session.user.id);
-    });
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        if (data.session) setSessionUserId(data.session.user.id);
+      })
+      .catch(() => {
+        // Session fetch failed — user will be redirected by auth guard
+      });
   }, []);
 
   const updateProfile = useUpdateProfile(sessionUserId ?? '');

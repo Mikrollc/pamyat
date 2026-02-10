@@ -143,6 +143,8 @@
     "more": "More options",
     "loading": "Loading...",
     "close": "Close",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
     "offline": "You are offline",
     "error": "Something went wrong"
   }

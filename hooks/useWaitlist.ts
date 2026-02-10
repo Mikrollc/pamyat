@@ -5,7 +5,10 @@ import { joinWaitlist, checkWaitlistStatus } from '@/lib/api/waitlist';
 export function useWaitlistStatus(graveId: string, userId: string | undefined) {
   return useQuery({
     queryKey: queryKeys.waitlist.status(graveId),
-    queryFn: () => checkWaitlistStatus(graveId, userId!),
+    queryFn: () => {
+      if (!userId) throw new Error('userId required');
+      return checkWaitlistStatus(graveId, userId);
+    },
     enabled: !!graveId && !!userId,
   });
 }

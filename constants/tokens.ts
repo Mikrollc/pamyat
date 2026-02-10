@@ -13,6 +13,8 @@ export const colors = {
   backgroundSecondary: '#f2f2f7',
   border: '#e5e5ea',
   white: '#fff',
+  shadow: '#000',
+  brandLight: '#e8f0ef',
 } as const;
 
 export const spacing = {

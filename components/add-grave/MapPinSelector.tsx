@@ -101,11 +101,21 @@ export function MapPinSelector({
         </View>
         {/* Zoom controls */}
         <View style={styles.zoomControls}>
-          <Pressable style={styles.zoomButton} onPress={() => handleZoom(1)}>
+          <Pressable
+            style={styles.zoomButton}
+            onPress={() => handleZoom(1)}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.zoomIn')}
+          >
             <FontAwesome name="plus" size={14} color={colors.textSecondary} />
           </Pressable>
           <View style={styles.zoomDivider} />
-          <Pressable style={styles.zoomButton} onPress={() => handleZoom(-1)}>
+          <Pressable
+            style={styles.zoomButton}
+            onPress={() => handleZoom(-1)}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.zoomOut')}
+          >
             <FontAwesome name="minus" size={14} color={colors.textSecondary} />
           </Pressable>
         </View>
@@ -152,7 +162,7 @@ const styles = StyleSheet.create({
     top: spacing.sm,
     backgroundColor: colors.white,
     borderRadius: radii.sm,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
