@@ -4,7 +4,11 @@
 
 -- 0. EXTENSIONS
 create extension if not exists postgis;
-create extension if not exists "uuid-ossp";
+create extension if not exists pgcrypto;
+
+-- Hosted Supabase installs extensions in the 'extensions' schema.
+-- Add it to search_path so gen_random_bytes() is accessible.
+set search_path to public, extensions;
 
 -- 1. PROFILES (extends Supabase auth.users)
 create table public.profiles (
@@ -23,7 +27,7 @@ create table public.profiles (
 
 -- 2. CEMETERIES
 create table public.cemeteries (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   name        text not null,
   name_ru     text,
   city        text,
@@ -37,7 +41,7 @@ create table public.cemeteries (
 
 -- 3. GRAVES (core entity)
 create table public.graves (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   cemetery_id     uuid references public.cemeteries(id),
   location        geography(Point, 4326) not null,
   person_name     text not null,
@@ -56,7 +60,7 @@ create table public.graves (
 
 -- 4. GRAVE PHOTOS
 create table public.grave_photos (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   grave_id    uuid not null references public.graves(id) on delete cascade,
   storage_path text not null,
   caption     text,
@@ -69,7 +73,7 @@ create table public.grave_photos (
 create type public.grave_role as enum ('owner', 'editor', 'viewer');
 
 create table public.grave_members (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   grave_id    uuid not null references public.graves(id) on delete cascade,
   user_id     uuid references public.profiles(id),
   role        public.grave_role not null default 'editor',
@@ -82,7 +86,7 @@ create type public.invite_status as enum ('pending', 'accepted', 'expired', 'rev
 create type public.invite_channel as enum ('email', 'sms');
 
 create table public.invitations (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   grave_id        uuid not null references public.graves(id) on delete cascade,
   invited_by      uuid not null references public.profiles(id),
   channel         public.invite_channel not null,
@@ -97,7 +101,7 @@ create table public.invitations (
 
 -- 7. MAINTENANCE WAITLIST
 create table public.maintenance_waitlist (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   grave_id    uuid not null references public.graves(id) on delete cascade,
   user_id     uuid references public.profiles(id),
   email       text,
@@ -109,7 +113,7 @@ create table public.maintenance_waitlist (
 
 -- 8. NOTIFICATION PREFERENCES
 create table public.notification_preferences (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references public.profiles(id) on delete cascade,
   grave_id        uuid references public.graves(id) on delete cascade,
   push_orthodox   boolean not null default true,
