@@ -238,12 +238,14 @@ export default function EditMemorialScreen() {
             label={t('addGrave.firstName')}
             value={firstName}
             onChangeText={setFirstName}
+            maxLength={50}
             testID="edit-first-name"
           />
           <Input
             label={t('addGrave.lastName')}
             value={lastName}
             onChangeText={setLastName}
+            maxLength={100}
             testID="edit-last-name"
           />
 
@@ -267,6 +269,7 @@ export default function EditMemorialScreen() {
             label={t('addGrave.cemeteryName')}
             value={cemeteryName}
             onChangeText={setCemeteryName}
+            maxLength={100}
             testID="edit-cemetery"
           />
           <Input
@@ -274,6 +277,7 @@ export default function EditMemorialScreen() {
             value={plotInfo}
             onChangeText={setPlotInfo}
             placeholder={t('addGrave.plotInfoHint')}
+            maxLength={200}
             testID="edit-plot"
           />
 
@@ -309,6 +313,7 @@ export default function EditMemorialScreen() {
             label={t('addGrave.inscriptionHint')}
             value={inscription}
             onChangeText={setInscription}
+            maxLength={500}
             testID="edit-inscription"
           />
         </ScrollView>

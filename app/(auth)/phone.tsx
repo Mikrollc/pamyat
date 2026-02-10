@@ -4,11 +4,8 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Typography, Button } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
+import { formatUSPhone, stripPhone } from '@/lib/format-phone';
 import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
-
-function stripPhone(raw: string): string {
-  return raw.replace(/\D/g, '');
-}
 
 export default function PhoneScreen() {
   const { t } = useTranslation();
@@ -56,14 +53,15 @@ export default function PhoneScreen() {
           </View>
           <TextInput
             style={styles.phoneInput}
-            value={phone}
+            value={formatUSPhone(phone)}
             onChangeText={(text) => {
-              setPhone(text);
+              setPhone(stripPhone(text));
               setError('');
             }}
             placeholder="(555) 123-4567"
             placeholderTextColor={colors.textTertiary}
             keyboardType="phone-pad"
+            maxLength={14}
             autoFocus
             testID="phone-input"
           />

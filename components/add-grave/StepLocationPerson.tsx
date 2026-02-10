@@ -48,12 +48,14 @@ export function StepLocationPerson({ onNext }: StepLocationPersonProps) {
           label={t('addGrave.firstName')}
           value={store.firstName}
           onChangeText={store.setFirstName}
+          maxLength={50}
           testID="first-name"
         />
         <Input
           label={t('addGrave.lastName')}
           value={store.lastName}
           onChangeText={store.setLastName}
+          maxLength={100}
           testID="last-name"
         />
         {store.cemeteryId ? (
@@ -78,6 +80,7 @@ export function StepLocationPerson({ onNext }: StepLocationPersonProps) {
             value={store.cemeteryName}
             onChangeText={store.setCemeteryName}
             placeholder={t('addGrave.iDontKnow')}
+            maxLength={100}
             testID="cemetery-name"
           />
         )}

@@ -35,6 +35,7 @@ export function PartialDateInput({ label, value, onChange, error, testID }: Part
               onChange({ day: isNaN(n) ? null : n });
             }}
             keyboardType="number-pad"
+            maxLength={2}
             placeholder="—"
             testID={testID ? `${testID}-day` : undefined}
           />
@@ -48,6 +49,7 @@ export function PartialDateInput({ label, value, onChange, error, testID }: Part
               onChange({ month: isNaN(n) ? null : n });
             }}
             keyboardType="number-pad"
+            maxLength={2}
             placeholder="—"
             testID={testID ? `${testID}-month` : undefined}
           />
@@ -61,6 +63,7 @@ export function PartialDateInput({ label, value, onChange, error, testID }: Part
               onChange({ year: isNaN(n) ? null : n });
             }}
             keyboardType="number-pad"
+            maxLength={4}
             placeholder="—"
             testID={testID ? `${testID}-year` : undefined}
           />

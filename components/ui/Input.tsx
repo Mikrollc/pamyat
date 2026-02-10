@@ -10,6 +10,7 @@ interface InputProps {
   error?: string;
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
+  maxLength?: number;
   testID?: string;
 }
 
@@ -21,6 +22,7 @@ export function Input({
   error,
   secureTextEntry,
   keyboardType,
+  maxLength,
   testID,
 }: InputProps) {
   return (
@@ -35,6 +37,7 @@ export function Input({
         placeholderTextColor={colors.textTertiary}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
+        maxLength={maxLength}
         autoCorrect={false}
         testID={testID}
         style={[styles.input, error ? styles.inputError : undefined]}
