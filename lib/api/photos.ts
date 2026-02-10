@@ -36,6 +36,22 @@ export async function uploadGravePhoto(
   return storagePath;
 }
 
+export async function deleteGravePhoto(graveId: string, storagePath: string) {
+  const { error: storageError } = await supabase.storage
+    .from('grave-photos')
+    .remove([storagePath]);
+
+  if (storageError) throw storageError;
+
+  const { error: dbError } = await supabase
+    .from('grave_photos')
+    .delete()
+    .eq('grave_id', graveId)
+    .eq('storage_path', storagePath);
+
+  if (dbError) throw dbError;
+}
+
 export function getGravePhotoUrl(storagePath: string): string {
   const { data } = supabase.storage.from('grave-photos').getPublicUrl(storagePath);
   return data.publicUrl;

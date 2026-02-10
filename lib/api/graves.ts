@@ -87,10 +87,27 @@ export async function fetchMapGraves(): Promise<MapGrave[]> {
   return data as MapGrave[];
 }
 
+export async function fetchGraveById(id: string) {
+  const { data, error } = await supabase
+    .from('graves')
+    .select('*, cemetery:cemeteries(*)')
+    .eq('id', id)
+    .is('deleted_at', null)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function softDeleteGrave(id: string) {
+  const { error } = await supabase.rpc('soft_delete_grave', { p_grave_id: id });
+  if (error) throw error;
+}
+
 export async function fetchGraveMembership(graveId: string, userId: string) {
   const { data, error } = await supabase
     .from('grave_members')
-    .select('role')
+    .select('role, relationship')
     .eq('grave_id', graveId)
     .eq('user_id', userId)
     .maybeSingle();

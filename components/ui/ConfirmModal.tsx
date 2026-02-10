@@ -11,6 +11,7 @@ interface ConfirmModalProps {
   confirmLabel: string;
   confirmVariant?: 'destructive' | 'brand' | 'primary';
   confirmIcon?: React.ComponentProps<typeof Button>['icon'];
+  loading?: boolean;
   onCancel: () => void;
   onConfirm: () => void;
 }
@@ -23,6 +24,7 @@ export function ConfirmModal({
   confirmLabel,
   confirmVariant = 'destructive',
   confirmIcon,
+  loading = false,
   onCancel,
   onConfirm,
 }: ConfirmModalProps) {
@@ -43,6 +45,7 @@ export function ConfirmModal({
                 variant={confirmVariant}
                 title={confirmLabel}
                 icon={confirmIcon}
+                loading={loading}
                 onPress={onConfirm}
               />
             </View>
