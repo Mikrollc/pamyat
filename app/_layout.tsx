@@ -14,7 +14,13 @@ export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes — avoid unnecessary refetches on mobile
+    },
+  },
+});
 
 function useProtectedRoute(session: Session | null, isReady: boolean) {
   const segments: string[] = useSegments();
@@ -58,6 +64,8 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    let subscription: { unsubscribe: () => void } | null = null;
+
     async function initAuth() {
       if (isDevBypassEnabled()) {
         try {
@@ -69,6 +77,11 @@ export default function RootLayout() {
       } else {
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
+
+        const { data } = supabase.auth.onAuthStateChange(
+          (_event, session) => setSession(session),
+        );
+        subscription = data.subscription;
       }
 
       setIsReady(true);
@@ -76,11 +89,7 @@ export default function RootLayout() {
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => setSession(session),
-    );
-
-    return () => subscription.unsubscribe();
+    return () => subscription?.unsubscribe();
   }, []);
 
   useProtectedRoute(session, isReady);

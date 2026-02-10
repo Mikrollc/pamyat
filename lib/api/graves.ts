@@ -44,8 +44,8 @@ export async function generateSlug(
 ): Promise<string> {
   const { data, error } = await supabase.rpc('generate_grave_slug', {
     p_name: name,
-    p_birth_year: birthYear ?? undefined,
-    p_death_year: deathYear ?? undefined,
+    p_birth_year: birthYear ?? null,
+    p_death_year: deathYear ?? null,
   });
 
   if (error) throw error;
