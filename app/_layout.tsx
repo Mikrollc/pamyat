@@ -17,7 +17,7 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function useProtectedRoute(session: Session | null, isReady: boolean) {
-  const segments = useSegments();
+  const segments: string[] = useSegments();
   const router = useRouter();
   const checkedProfile = useRef(false);
 
