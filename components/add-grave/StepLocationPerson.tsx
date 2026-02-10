@@ -66,7 +66,7 @@ export function StepLocationPerson({ onNext }: StepLocationPersonProps) {
               onPress={handleClearCemetery}
               hitSlop={12}
               accessibilityRole="button"
-              accessibilityLabel="Clear cemetery"
+              accessibilityLabel={t('addGrave.clearCemetery')}
               testID="cemetery-clear"
             >
               <FontAwesome name="times-circle" size={18} color={colors.textTertiary} />

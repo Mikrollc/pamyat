@@ -38,6 +38,7 @@
     "useMyLocation": "Use my location",
     "cemeteryName": "Cemetery name",
     "iDontKnow": "I don't know",
+    "clearCemetery": "Clear cemetery",
     "firstName": "First name",
     "lastName": "Last name",
     "birthDate": "Date of birth",
@@ -141,6 +142,7 @@
     "done": "Done",
     "more": "More options",
     "loading": "Loading...",
+    "close": "Close",
     "offline": "You are offline",
     "error": "Something went wrong"
   }

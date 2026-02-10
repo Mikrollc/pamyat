@@ -32,7 +32,7 @@ export function WizardHeader({ step, totalSteps = 4, title, onClose, testID }: W
             style={styles.closeButton}
             onPress={onClose}
             accessibilityRole="button"
-            accessibilityLabel="Close"
+            accessibilityLabel={t('common.close')}
             testID={testID ? `${testID}-close` : undefined}
           >
             <FontAwesome name="times" size={15} color="#666" />
