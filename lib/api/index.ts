@@ -1,6 +1,6 @@
-export { fetchGrave, fetchGravesByUser, createGrave, generateSlug, updateGraveCoverPhoto, updateGrave, fetchGraveMembership, fetchMapGraves } from './graves';
+export { fetchGrave, fetchGraveById, fetchGravesByUser, createGrave, generateSlug, updateGraveCoverPhoto, updateGrave, softDeleteGrave, fetchGraveMembership, fetchMapGraves } from './graves';
 export type { MapGrave } from './graves';
-export { uploadGravePhoto, getGravePhotoUrl } from './photos';
+export { uploadGravePhoto, deleteGravePhoto, getGravePhotoUrl } from './photos';
 export { searchCemeteries, fetchNearbyCemeteries, findOrCreateCemetery, fetchAllCemeteries } from './cemeteries';
 export type { CemeterySearchResult, MapCemetery } from './cemeteries';
 export { fetchProfile, updateProfile } from './profiles';

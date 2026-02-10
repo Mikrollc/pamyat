@@ -121,9 +121,7 @@ export default function MemorialPageScreen() {
 
           {canEdit && (
             <Pressable
-              onPress={() => {
-                // Placeholder: edit route not yet implemented
-              }}
+              onPress={() => router.push(`/memorial/edit/${slug}`)}
               hitSlop={12}
               accessibilityRole="button"
               accessibilityLabel={t('graves.edit')}

@@ -121,12 +121,25 @@
     "account": "Account Settings",
     "signOut": "Sign Out"
   },
+  "manage": {
+    "title": "Edit Memorial",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Changes saved",
+    "saveError": "Could not save changes. Please try again.",
+    "deleteTitle": "Delete Memorial",
+    "deleteMessage": "This memorial and all its data will be permanently removed.",
+    "deleteConfirm": "Delete",
+    "deleteError": "Could not delete memorial. Please try again.",
+    "deleted": "Memorial deleted"
+  },
   "common": {
     "next": "Next",
     "back": "Back",
     "cancel": "Cancel",
     "save": "Save",
     "done": "Done",
+    "more": "More options",
     "loading": "Loading...",
     "offline": "You are offline",
     "error": "Something went wrong"

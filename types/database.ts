@@ -283,6 +283,10 @@ export interface Database {
         Args: Record<string, never>;
         Returns: { id: string; name: string; name_ru: string | null; city: string | null; state: string | null; lat: number; lng: number }[];
       };
+      soft_delete_grave: {
+        Args: { p_grave_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       grave_role: GraveRole;
