@@ -48,12 +48,10 @@ export function MapPinSelector({
     }
   }, []);
 
-  const [userInteracted, setUserInteracted] = useState(false);
-
   const handleRegionChange = (feature: GeoJSON.Feature) => {
     if (feature.geometry.type !== 'Point') return;
     const coords = feature.geometry.coordinates;
-    setUserInteracted(true);
+    if (coords[1] == null || coords[0] == null) return;
     onLocationChange(coords[1], coords[0], true);
   };
 
@@ -66,7 +64,6 @@ export function MapPinSelector({
         return;
       }
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      setUserInteracted(true);
       onLocationChange(loc.coords.latitude, loc.coords.longitude, true);
       cameraRef.current?.setCamera({
         centerCoordinate: [loc.coords.longitude, loc.coords.latitude],

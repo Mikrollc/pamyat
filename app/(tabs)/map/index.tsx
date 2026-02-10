@@ -108,7 +108,7 @@ export default function MapScreen() {
     if (!feature || feature.properties?.cluster) return;
     const props = feature.properties;
     const coords = (feature.geometry as GeoJSON.Point | undefined)?.coordinates;
-    if (!props || !coords) return;
+    if (!props || !coords || coords[0] == null || coords[1] == null) return;
     setSelectedCemetery({
       id: props.id,
       name: props.name,
