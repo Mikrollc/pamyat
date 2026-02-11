@@ -2,7 +2,9 @@ name: Deploy to TestFlight
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -34,19 +36,15 @@ jobs:
           LAST_TAG=$(git tag -l 'build/v*' --sort=-version:refname | head -n1)
 
           if [ -z "$LAST_TAG" ]; then
-            # No previous build tag, get all commits
             COMMITS=$(git log --pretty=format:"%s" origin/main)
           else
-            # Get commits since last tag
-            COMMITS=$(git log --pretty=format:"%s" ${LAST_TAG}..origin/main)
+            COMMITS=$(git log --pretty=format:"%s" ${LAST_TAG}..HEAD)
           fi
 
           # Build changelog from PR merge commit titles
           CHANGELOG=""
           while IFS= read -r commit; do
-            # Match PR merge commits (format: "Title (#123)")
             if [[ $commit =~ ^.*\(#[0-9]+\)$ ]]; then
-              # Extract title without PR number
               TITLE=$(echo "$commit" | sed 's/ (#[0-9]\+)$//')
               if [ -n "$CHANGELOG" ]; then
                 CHANGELOG="${CHANGELOG}\n- ${TITLE}"
@@ -56,15 +54,12 @@ jobs:
             fi
           done <<< "$COMMITS"
 
-          # Fallback if no PRs found
           if [ -z "$CHANGELOG" ]; then
             CHANGELOG="Minor improvements and bug fixes"
           fi
 
-          # Truncate to 4000 chars (Apple's limit)
           CHANGELOG=$(echo -e "$CHANGELOG" | head -c 4000)
 
-          # Export for next step (handle multiline)
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo -e "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -75,7 +70,6 @@ jobs:
       - name: Tag build with changelog
         if: success()
         run: |
-          # Get the next build number
           LAST_TAG=$(git tag -l 'build/v*' --sort=-version:refname | head -n1)
           if [ -z "$LAST_TAG" ]; then
             BUILD_NUM=1
