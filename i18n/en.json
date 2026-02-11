@@ -98,6 +98,7 @@
     "wrongCode": "Invalid code. Please try again.",
     "codeExpired": "Code expired. Please resend.",
     "networkError": "Connection error. Check your internet.",
+    "otpSendError": "Could not send code. Please try again.",
     "resendIn": "Resend in {{seconds}}s",
     "chooseLanguage": "Choose your language"
   },
