@@ -25,12 +25,15 @@ export function MapPinSelector({
 }: MapPinSelectorProps) {
   const { t } = useTranslation();
   const cameraRef = useRef<MapboxGL.Camera>(null);
+  const mapRef = useRef<MapboxGL.MapView>(null);
   const [locating, setLocating] = useState(false);
   const zoomRef = useRef(DEFAULT_ZOOM);
 
-  const handleZoom = (delta: number) => {
+  const handleZoom = async (delta: number) => {
     zoomRef.current = Math.max(5, Math.min(20, zoomRef.current + delta));
+    const center = await mapRef.current?.getCenter();
     cameraRef.current?.setCamera({
+      centerCoordinate: center ?? undefined,
       zoomLevel: zoomRef.current,
       animationDuration: 300,
     });
@@ -81,6 +84,7 @@ export function MapPinSelector({
     <View style={styles.container} testID={testID}>
       <View style={styles.mapWrapper}>
         <MapboxGL.MapView
+          ref={mapRef}
           style={styles.map}
           styleURL={MapboxGL.StyleURL.Street}
           onRegionDidChange={handleRegionChange}
