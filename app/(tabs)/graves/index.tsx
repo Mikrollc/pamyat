@@ -4,7 +4,6 @@ import {
   FlatList,
   Image,
   Pressable,
-  ActivityIndicator,
   RefreshControl,
   StyleSheet,
 } from 'react-native';
@@ -18,6 +17,9 @@ import { formatGraveDateRange } from '@/lib/format-dates';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { GravesListSkeleton } from '@/components/ui/Skeleton';
 import { colors, spacing } from '@/constants/tokens';
 
 const THUMB_SIZE = 64;
@@ -27,7 +29,7 @@ export default function GravesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const session = useSession();
-  const { data, isLoading, refetch } = useMyGraves(session?.user?.id);
+  const { data, isLoading, error, refetch } = useMyGraves(session?.user?.id);
 
   const sorted = useMemo(
     () =>
@@ -42,8 +44,19 @@ export default function GravesScreen() {
 
   if (isLoading) {
     return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Typography variant="h2">{t('tabs.myGraves')}</Typography>
+        </View>
+        <GravesListSkeleton />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
       <View style={[styles.center, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ErrorState onRetry={refetch} testID="graves-error" />
       </View>
     );
   }
@@ -62,19 +75,19 @@ export default function GravesScreen() {
           <RefreshControl refreshing={false} onRefresh={refetch} />
         }
         ListEmptyComponent={
-          <View style={styles.empty}>
-            <Typography variant="body" color={colors.textSecondary} align="center">
-              {t('graves.empty')}
-            </Typography>
-            <View style={styles.emptyButton}>
-              <Button
-                variant="brand"
-                title={t('graves.addFirst')}
-                onPress={() => router.push('/add-grave')}
-                testID="add-first-grave-button"
-              />
-            </View>
-          </View>
+          <EmptyState
+            icon="book"
+            title={t('graves.empty')}
+            subtitle={t('notifications.emptyHint')}
+            testID="graves-empty"
+          >
+            <Button
+              variant="brand"
+              title={t('graves.addFirst')}
+              onPress={() => router.push('/add-grave')}
+              testID="add-first-grave-button"
+            />
+          </EmptyState>
         }
         renderItem={({ item }) => (
           <Pressable
@@ -148,15 +161,6 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.xl,
-  },
-  empty: {
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingTop: spacing.xxl,
-  },
-  emptyButton: {
-    width: '100%',
-    paddingHorizontal: spacing.xxl,
   },
   card: {
     marginBottom: spacing.sm,

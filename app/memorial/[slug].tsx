@@ -18,6 +18,8 @@ import { getGravePhotoUrl } from '@/lib/api/photos';
 import { formatGraveDateRange } from '@/lib/format-dates';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { colors, spacing, typography as typographyTokens } from '@/constants/tokens';
 
 const BOTTOM_BAR_HEIGHT = 56;
@@ -29,7 +31,7 @@ export default function MemorialPageScreen() {
   const { t } = useTranslation();
   const session = useSession();
 
-  const { data: grave, isLoading, error } = useGrave(slug);
+  const { data: grave, isLoading, error, refetch } = useGrave(slug);
   const { data: membership } = useGraveMembership(grave?.id, session?.user?.id);
   const { data: waitlistEntry } = useWaitlistStatus(grave?.id ?? '', session?.user?.id);
   const joinWaitlist = useJoinWaitlist();
@@ -77,9 +79,7 @@ export default function MemorialPageScreen() {
   if (error) {
     return (
       <View style={styles.centered}>
-        <Typography variant="body" color={colors.textSecondary}>
-          {error.message ?? t('common.error')}
-        </Typography>
+        <ErrorState onRetry={refetch} testID="memorial-error" />
       </View>
     );
   }
@@ -87,9 +87,7 @@ export default function MemorialPageScreen() {
   if (!grave) {
     return (
       <View style={styles.centered}>
-        <Typography variant="body" color={colors.textSecondary}>
-          {t('memorial.notFound')}
-        </Typography>
+        <EmptyState icon="book" title={t('memorial.notFound')} testID="memorial-not-found" />
       </View>
     );
   }
