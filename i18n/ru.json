@@ -120,8 +120,13 @@
   },
   "profile": {
     "language": "Язык",
+    "russian": "Русский",
+    "english": "English",
     "account": "Настройки аккаунта",
-    "signOut": "Выйти"
+    "signOut": "Выйти",
+    "signOutConfirm": "Вы уверены, что хотите выйти?",
+    "privacyPolicy": "Политика конфиденциальности",
+    "version": "Версия {{version}}"
   },
   "manage": {
     "title": "Редактировать",
