@@ -51,6 +51,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         RNMapboxMapsDownloadToken: process.env.RNMAPBOX_MAPS_DOWNLOAD_TOKEN,
       },
     ],
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'Pamyat needs access to your photos to add memorial images.',
+        cameraPermission: 'Pamyat needs access to your camera to take memorial photos.',
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
