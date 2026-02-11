@@ -152,6 +152,7 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "offline": "You are offline",
-    "error": "Something went wrong"
+    "error": "Something went wrong",
+    "retry": "Try Again"
   }
 }
