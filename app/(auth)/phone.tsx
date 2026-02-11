@@ -32,7 +32,12 @@ export default function PhoneScreen() {
     setLoading(false);
 
     if (otpError) {
-      setError(t('auth.networkError'));
+      if (__DEV__) console.error('OTP error:', otpError.message, otpError.status);
+      if (otpError.message?.includes('fetch') || otpError.status === 0) {
+        setError(t('auth.networkError'));
+      } else {
+        setError(t('auth.otpSendError'));
+      }
       return;
     }
 
