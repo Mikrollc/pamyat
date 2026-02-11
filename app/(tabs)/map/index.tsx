@@ -134,9 +134,8 @@ export default function MapScreen() {
     setSelectedCemetery(null);
   }
 
-  function handleRegionChange(feature: GeoJSON.Feature) {
-    const zoom = (feature.properties as { zoomLevel?: number })?.zoomLevel;
-    if (zoom != null) currentZoomRef.current = zoom;
+  function handleRegionChange(state: { properties: { zoom: number } }) {
+    currentZoomRef.current = state.properties.zoom;
   }
 
   function handleZoomIn() {
@@ -159,7 +158,7 @@ export default function MapScreen() {
         attributionEnabled={false}
         logoEnabled={false}
         onPress={handleMapPress}
-        onRegionDidChange={handleRegionChange}
+        onMapIdle={handleRegionChange}
       >
         <MapboxGL.Camera
           centerCoordinate={cameraTarget}
