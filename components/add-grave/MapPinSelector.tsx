@@ -25,24 +25,24 @@ export function MapPinSelector({
 }: MapPinSelectorProps) {
   const { t } = useTranslation();
   const cameraRef = useRef<MapboxGL.Camera>(null);
-  const mapRef = useRef<MapboxGL.MapView>(null);
   const [locating, setLocating] = useState(false);
   const zoomRef = useRef(DEFAULT_ZOOM);
-
-  const handleZoom = async (delta: number) => {
-    zoomRef.current = Math.max(5, Math.min(20, zoomRef.current + delta));
-    const center = await mapRef.current?.getCenter();
-    cameraRef.current?.setCamera({
-      centerCoordinate: center ?? undefined,
-      zoomLevel: zoomRef.current,
-      animationDuration: 300,
-    });
-  };
 
   const initialCenter: [number, number] =
     longitude != null && latitude != null
       ? [longitude, latitude]
       : DEFAULT_CENTER;
+
+  const centerRef = useRef<[number, number]>(initialCenter);
+
+  const handleZoom = (delta: number) => {
+    zoomRef.current = Math.max(5, Math.min(20, zoomRef.current + delta));
+    cameraRef.current?.setCamera({
+      centerCoordinate: centerRef.current,
+      zoomLevel: zoomRef.current,
+      animationDuration: 300,
+    });
+  };
 
   useEffect(() => {
     // Set initial coords for camera display, but don't mark as confirmed
@@ -55,6 +55,7 @@ export function MapPinSelector({
     if (feature.geometry.type !== 'Point') return;
     const coords = feature.geometry.coordinates;
     if (coords[1] == null || coords[0] == null) return;
+    centerRef.current = [coords[0], coords[1]];
     onLocationChange(coords[1], coords[0], true);
   };
 
@@ -84,7 +85,6 @@ export function MapPinSelector({
     <View style={styles.container} testID={testID}>
       <View style={styles.mapWrapper}>
         <MapboxGL.MapView
-          ref={mapRef}
           style={styles.map}
           styleURL={MapboxGL.StyleURL.Street}
           onRegionDidChange={handleRegionChange}
