@@ -51,12 +51,11 @@ export function MapPinSelector({
     }
   }, []);
 
-  const handleRegionChange = (feature: GeoJSON.Feature) => {
-    if (feature.geometry.type !== 'Point') return;
-    const coords = feature.geometry.coordinates;
-    if (coords[1] == null || coords[0] == null) return;
-    centerRef.current = [coords[0], coords[1]];
-    onLocationChange(coords[1], coords[0], true);
+  const handleRegionChange = (state: { properties: { center: GeoJSON.Position } }) => {
+    const [lng, lat] = state.properties.center;
+    if (lat == null || lng == null) return;
+    centerRef.current = [lng, lat];
+    onLocationChange(lat, lng, true);
   };
 
   const handleUseMyLocation = async () => {
@@ -87,7 +86,7 @@ export function MapPinSelector({
         <MapboxGL.MapView
           style={styles.map}
           styleURL={MapboxGL.StyleURL.Street}
-          onRegionDidChange={handleRegionChange}
+          onMapIdle={handleRegionChange}
           attributionEnabled={false}
           logoEnabled={false}
         >
