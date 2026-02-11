@@ -1,16 +1,29 @@
-import { View, Pressable, Image, StyleSheet, Alert } from 'react-native';
+import { View, Pressable, Image, StyleSheet, Alert, Linking } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, radii } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+const MAX_WIDTH = 1920;
+
 interface PhotoSelectorProps {
   photoUri: string | null;
   onPhotoSelected: (uri: string) => void;
   onPhotoRemoved: () => void;
   testID?: string;
+}
+
+async function compressPhoto(uri: string, width: number): Promise<string> {
+  const actions: { resize: { width: number } }[] =
+    width > MAX_WIDTH ? [{ resize: { width: MAX_WIDTH } }] : [];
+  const result = await manipulateAsync(uri, actions, {
+    compress: 0.7,
+    format: SaveFormat.JPEG,
+  });
+  return result.uri;
 }
 
 export function PhotoSelector({
@@ -21,36 +34,47 @@ export function PhotoSelector({
 }: PhotoSelectorProps) {
   const { t } = useTranslation();
 
+  const showPermissionAlert = (messageKey: string) => {
+    Alert.alert('', t(messageKey), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.settings'), onPress: () => Linking.openSettings() },
+    ]);
+  };
+
   const pickFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('', t('addGrave.permissionPhotos'));
+      showPermissionAlert('addGrave.permissionPhotos');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 0.8,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 2],
     });
     if (!result.canceled && result.assets[0]) {
-      onPhotoSelected(result.assets[0].uri);
+      const asset = result.assets[0];
+      const compressed = await compressPhoto(asset.uri, asset.width);
+      onPhotoSelected(compressed);
     }
   };
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('', t('addGrave.permissionCamera'));
+      showPermissionAlert('addGrave.permissionCamera');
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
       quality: 0.8,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 2],
     });
     if (!result.canceled && result.assets[0]) {
-      onPhotoSelected(result.assets[0].uri);
+      const asset = result.assets[0];
+      const compressed = await compressPhoto(asset.uri, asset.width);
+      onPhotoSelected(compressed);
     }
   };
 
@@ -131,7 +155,7 @@ const styles = StyleSheet.create({
   },
   preview: {
     width: '100%',
-    height: 250,
+    aspectRatio: 3 / 2,
     borderRadius: radii.md,
   },
   actions: {
