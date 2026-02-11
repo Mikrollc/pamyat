@@ -66,16 +66,10 @@ jobs:
           echo -e "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Inject changelog into eas.json
-        run: |
-          # Use jq to add changelog to submit.production.ios
-          jq --arg cl "${{ steps.changelog.outputs.changelog }}" '.submit.production.ios.changelogs = {"en-US": $cl}' eas.json > eas.json.tmp
-          mv eas.json.tmp eas.json
-
       - name: Build iOS and submit to TestFlight
         run: eas build --platform ios --profile production --non-interactive --auto-submit
 
-      - name: Tag build
+      - name: Tag build with changelog
         if: success()
         run: |
           # Get the next build number
@@ -88,5 +82,14 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "build/v${BUILD_NUM}"
+          git tag -a "build/v${BUILD_NUM}" -m "${{ steps.changelog.outputs.changelog }}"
           git push origin "build/v${BUILD_NUM}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LAST_TAG=$(git tag -l 'build/v*' --sort=-version:refname | head -n1)
+          gh release create "$LAST_TAG" \
+            --title "Build ${LAST_TAG#build/}" \
+            --notes "${{ steps.changelog.outputs.changelog }}"
