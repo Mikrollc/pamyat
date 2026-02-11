@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
-      backgroundColor: '#1a5c54',
+      backgroundImage: './assets/images/adaptive-icon-bg.png',
     },
     edgeToEdgeEnabled: true,
     package: 'com.mikrollc.pamyat',
