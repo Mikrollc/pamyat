@@ -1,4 +1,4 @@
-import { View, Pressable, ScrollView, Alert, Linking, StyleSheet } from 'react-native';
+import { View, Pressable, ScrollView, Alert, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -9,7 +9,6 @@ import { Typography } from '@/components/ui/Typography';
 import { colors, spacing, radii } from '@/constants/tokens';
 import i18n from '@/i18n';
 
-const PRIVACY_POLICY_URL = 'https://mikrollc.github.io/pamyat/privacy';
 
 function ProfileRow({
   icon,
@@ -82,10 +81,6 @@ export default function ProfileScreen() {
     ]);
   };
 
-  const handlePrivacyPolicy = () => {
-    Linking.openURL(PRIVACY_POLICY_URL);
-  };
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
@@ -107,15 +102,6 @@ export default function ProfileScreen() {
           value={currentLang}
           onPress={handleLanguageToggle}
           testID="language-toggle"
-        />
-      </View>
-
-      <View style={styles.section}>
-        <ProfileRow
-          icon="shield"
-          label={t('profile.privacyPolicy')}
-          onPress={handlePrivacyPolicy}
-          testID="privacy-policy"
         />
       </View>
 
