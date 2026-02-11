@@ -4,10 +4,32 @@ Product and technical decisions with dates and reasoning. Newest first.
 
 ---
 
+## 2026-02-10 — Switch EAS builds to manual trigger
+- **Decision:** Removed auto-deploy on push to main. Builds now trigger only on version tag push (`v*`) or manual workflow_dispatch.
+- **Rationale:** Multiple PRs per session were burning EAS build credits fast. Manual control lets us batch changes into fewer builds.
+- **Usage:** `git tag v1.0.2 && git push origin v1.0.2` or GitHub Actions "Run workflow" button.
+
+## 2026-02-10 — Photo compression pipeline
+- **Decision:** Added `expo-image-manipulator` for post-pick compression. Photos resized to max 1920px wide at 0.7 JPEG quality. Crop aspect changed from 4:3 to 3:2 (matches memorial hero layout).
+- **Rationale:** Acceptance criteria requires <2MB guarantee. Quality 0.8 from image picker alone can exceed 2MB with high-res cameras.
+
+## 2026-02-10 — Notifications: Orthodox calendar computation
+- **Decision:** Implemented Pascha algorithm (Julian computus + Gregorian conversion) to derive all orthodox memorial dates dynamically. No hardcoded dates.
+- **Dates derived:** Universal Parental Saturday, 3 Lent Parental Saturdays, Radonitsa, Trinity Saturday, Dmitrievskaya Saturday. Plus US Memorial Day and death anniversaries from user's graves.
+- **Verified:** 2024 (May 5), 2025 (Apr 20), 2026 (Apr 12) Pascha dates all correct.
+
+## 2026-02-10 — Family tree / genealogy: linked memorials, not a full tree
+- **Decision:** Phase 2: linked memorials (simple parent/child/spouse connections between graves). Phase 3: visual tree if data supports. Full genealogy social network: never.
+- **Rationale:** Full tree is a scope trap. Linked memorials add value with minimal schema changes.
+
+## 2026-02-10 — Phone auth: Twilio Verify on cloud Supabase
+- **Decision:** Twilio Verify (shared short codes, no dedicated phone number). Configured on cloud Supabase only. Local dev uses email/password bypass.
+- **Rationale:** Twilio Verify is free tier friendly and doesn't require buying a phone number.
+
 ## 2026-02-10 — CI/CD: GitHub Actions + EAS Build → TestFlight
-- **Decision:** Auto-trigger EAS Build + TestFlight submit on push to `main`. No staging environment — local Supabase is staging. Single Supabase production project (Free → Pro at launch).
+- **Decision:** No staging environment — local Supabase is staging. Single Supabase production project (Free → Pro at launch).
 - **Rationale:** Solo dev pre-revenue. Staging project adds cost and complexity with no benefit. Cemetery seed data already in a migration. One Mapbox token sufficient at MVP scale.
-- **Infrastructure:** `eas.json` (development + production profiles), `.github/workflows/ci.yml` (PR checks), `.github/workflows/deploy.yml` (build + TestFlight on push to main).
+- **Infrastructure:** `eas.json` (development + production profiles), `.github/workflows/ci.yml` (PR checks), `.github/workflows/deploy.yml` (manual build + TestFlight).
 
 ## 2026-02-09 — ManageGrave: RLS fixes for soft delete and grave_members UPDATE (#43)
 - **Decision:** Soft delete uses a `SECURITY DEFINER` RPC (`soft_delete_grave`) instead of a direct `UPDATE` on `graves`. Added missing `"Members: self update"` RLS policy on `grave_members`.

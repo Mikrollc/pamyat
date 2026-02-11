@@ -8,37 +8,51 @@ Each entry tagged with `[verified: YYYY-MM-DD]` — if older than 30 days, re-ve
 ## Expo / React Native
 
 - **Expo SDK 54 + New Architecture enabled** — Tamagui's compiler has compatibility issues. Don't use Tamagui. Roll own design tokens instead. [verified: 2026-02-08]
-- **@rnmapbox/maps requires EAS build** — won't work in Expo Go. Must run `npx expo prebuild` then native build. Test early. [verified: 2026-02-08]
-- **@rnmapbox/maps Camera** — imperative `ref.setCamera()` is unreliable. Use declarative props (`centerCoordinate`, `zoomLevel`, `animationMode="flyTo"`) driven by state. [verified: 2026-02-09]
-- **@rnmapbox/maps v10.2.10 requires `$RNMapboxMaps.post_install(installer)` in Podfile.** Without it, the `RNMBX_11` Swift flag is not set and MapboxMaps v11 `Style→StyleManager` rename causes 100+ build errors. The fix is NOT version pinning — it's adding the post_install hook. [verified: 2026-02-08]
-- **CocoaPods must be 1.15+** for visionOS support in react-native-safe-area-context. RVM's old Ruby 2.6.3 had pod 1.11.3. Fix: `gem install cocoapods` under RVM ruby. [verified: 2026-02-08]
-- **react-native-mmkv v4.1.2 installed** — not yet used in codebase. Intended for offline cache / Zustand persistence. [verified: 2026-02-08]
+- **Cannot use Expo Go** — Mapbox and other native modules require a dev build. Always use `npx expo run:ios` (not `npx expo start --ios`). Expo Go will crash with "native code not available". [verified: 2026-02-10]
+- **expo-image-picker plugin required in app.config.ts** — Without it, iOS permission descriptions (NSCameraUsageDescription, NSPhotoLibraryUsageDescription) are missing. App Store will reject. Added in PR #83. [verified: 2026-02-10]
+- **expo-image-manipulator** — Use `manipulateAsync` (legacy API, still works in SDK 54). New context API exists but `manipulateAsync` is simpler. Used for photo compression (<2MB guarantee). [verified: 2026-02-10]
+- **react-native-mmkv v4.1.2** — Used for Zustand persistence (add-grave-store draft). [verified: 2026-02-10]
+
+## @rnmapbox/maps
+
+- **Requires EAS build** — won't work in Expo Go. Must run `npx expo prebuild` then native build. [verified: 2026-02-08]
+- **`RNMapboxMapsDownloadToken` is DEPRECATED** in plugin config. Remove it from app.config.ts — the plugin reads `RNMAPBOX_MAPS_DOWNLOAD_TOKEN` environment variable directly. Passing it explicitly produces noisy warnings. [verified: 2026-02-10]
+- **MapView.getCenter() is UNRELIABLE** — returns stale/default coordinates, not the current visible center. DO NOT USE for zoom. Instead, track center via `onRegionDidChange` callback in a ref (`centerRef.current = [lng, lat]`) and use that ref when calling `setCamera`. Fixed in PR #85. [verified: 2026-02-10]
+- **v10.2.10 requires `$RNMapboxMaps.post_install(installer)` in Podfile.** Without it, the `RNMBX_11` Swift flag is not set and MapboxMaps v11 `Style→StyleManager` rename causes 100+ build errors. [verified: 2026-02-08]
+- **Camera declarative props vs imperative** — imperative `ref.setCamera()` works but must include `centerCoordinate` (won't preserve current center if omitted). [verified: 2026-02-10]
 
 ## Supabase
 
-- **Local dev running on port 54321** — config in `supabase/config.toml`. PostgreSQL 17, PostGIS enabled. [verified: 2026-02-08]
-- **Phone auth (SMS OTP)** — enabled in config (`enable_signup = true` under SMS). Test OTP configured: `4152127777 = "123456"`. Twilio to be wired before launch. [verified: 2026-02-09]
-- **RLS policies written** — all 8 tables have row-level security. Tested against actual queries. [verified: 2026-02-09]
-- **RLS + soft delete gotcha** — UPDATE policies with `WITH CHECK` fail when the updated row becomes invisible to SELECT policies. Example: setting `deleted_at` on `graves` fails because both SELECT policies require `deleted_at IS NULL`, so the WITH CHECK subquery can't see the row post-update. Fix: use a `SECURITY DEFINER` RPC function that bypasses RLS after verifying ownership in SQL. See `soft_delete_grave()`. [verified: 2026-02-09]
-- **RLS UPDATE policies must exist explicitly** — enabling RLS on a table without an UPDATE policy blocks ALL updates, even by row owners. This caused a silent bug on `grave_members` where relationship updates during publish were denied. Always add UPDATE policies for tables that need writes. [verified: 2026-02-09]
-- **Hosted Supabase: extensions schema** — extensions like `pgcrypto` and `uuid-ossp` are installed in the `extensions` schema, not `public`. Functions like `uuid_generate_v4()` and `gen_random_bytes()` aren't on the default search path. Fix: use `gen_random_uuid()` (built-in PG13+) and add `set search_path to public, extensions;` for `gen_random_bytes()`. [verified: 2026-02-10]
-- **PostgREST returns PostGIS geography as EWKB hex** (e.g. `0101000020E6...`), not GeoJSON or WKT. Parse coords with DataView: lng at byte offset 9, lat at byte offset 17 (little-endian). [verified: 2026-02-09]
+- **Local dev on port 54321** — `.env.local` has `EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`. No Twilio configured locally. [verified: 2026-02-10]
+- **Cloud Supabase URL:** `https://fjldxmrwemdyjbvjynpo.supabase.co` — has Twilio Verify configured for phone OTP. [verified: 2026-02-10]
+- **Dev auth bypass** — `lib/dev-auth.ts` signs in with `dev@pamyat.local` / `devpassword123`. Enabled via `EXPO_PUBLIC_DEV_AUTH_BYPASS=true` in `.env.local`. Use for local testing instead of phone OTP. [verified: 2026-02-10]
+- **Phone auth: Twilio Verify** — configured on cloud Supabase. Account SID: `ACdcbb34eb35d8eadd3fcfb7020d75596f`, Service SID: `VA8f3376884a7f844268ebe4307ba456de`. No dedicated phone number needed — uses Twilio Verify shared short codes. [verified: 2026-02-10]
+- **`phone_provider_disabled` error** — When phone auth provider isn't configured (e.g., local Supabase without Twilio), Supabase returns this error. The app differentiates this from network errors in `phone.tsx`. [verified: 2026-02-10]
+- **RLS policies written** — all 8 tables have row-level security. [verified: 2026-02-09]
+- **RLS + soft delete gotcha** — UPDATE with `WITH CHECK` fails when updated row becomes invisible to SELECT policies. Fix: `SECURITY DEFINER` RPC (`soft_delete_grave`). [verified: 2026-02-09]
+- **RLS UPDATE policies must exist explicitly** — enabling RLS without UPDATE policy blocks ALL updates. [verified: 2026-02-09]
+- **`spatial_ref_sys` RLS advisory** — PostGIS system table, can't ALTER (not owner). Fix: `REVOKE ALL ON public.spatial_ref_sys FROM anon, authenticated;` [verified: 2026-02-10]
+- **Hosted Supabase: extensions schema** — `uuid_generate_v4()` etc. not on default search path. Use `gen_random_uuid()` instead. [verified: 2026-02-10]
+- **PostgREST returns PostGIS geography as EWKB hex** — parse coords with DataView: lng at byte 9, lat at byte 17 (little-endian). [verified: 2026-02-09]
 
-## EAS / Expo
+## EAS / CI/CD
 
-- **EAS CLI `eas secret:create` is deprecated** — use `eas env:create` instead. Same flags. [verified: 2026-02-10]
-- **EAS env var visibility matters for prebuild** — "secret" vars may not be available as `process.env` during config evaluation (prebuild). Use "sensitive" for tokens needed in `app.config.ts` (e.g., `RNMAPBOX_MAPS_DOWNLOAD_TOKEN`). [verified: 2026-02-10]
+- **Builds are MANUAL now** — no auto-deploy on push to main. Trigger via `git tag v1.0.x && git push origin v1.0.x` or GitHub Actions "Run workflow" button. Changed in PR #86 to conserve EAS build credits. [verified: 2026-02-10]
+- **`changelogs` is NOT a valid eas.json field** — EAS validation rejects `submit.production.ios.changelogs`. Use GitHub Releases for changelogs instead. [verified: 2026-02-10]
+- **GitHub Actions needs `permissions: contents: write`** — required for pushing tags and creating releases. Without it, git push fails with 403. [verified: 2026-02-10]
+- **EAS CLI `eas secret:create` is deprecated** — use `eas env:create` instead. [verified: 2026-02-10]
+- **EAS env var visibility** — "secret" vars may not be available as `process.env` during prebuild. Use "sensitive" for tokens needed in `app.config.ts`. [verified: 2026-02-10]
 
-## Mapbox
+## CocoaPods
 
-- **Access token is placeholder** — `EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_token_here` in `.env.local`. Need real token from mapbox.com dashboard. [verified: 2026-02-08]
+- **Must be 1.15+** for visionOS support in react-native-safe-area-context. RVM's old Ruby 2.6.3 had pod 1.11.3. Fix: `gem install cocoapods` under RVM ruby. [verified: 2026-02-08]
 
 ## i18n
 
-- **80 translation keys** in en.json + ru.json. Both languages complete for current placeholder screens. [verified: 2026-02-08]
-- **Device locale auto-detection works** via expo-localization. Fallback to English. [verified: 2026-02-08]
+- **~130 translation keys** in en.json + ru.json. Both languages complete. [verified: 2026-02-10]
+- **Device locale auto-detection** via expo-localization. Fallback to English. [verified: 2026-02-08]
 
-## Dependencies Installed But Unused
+## Dependencies Status
 
-- expo-camera, expo-location, expo-notifications, react-native-mmkv — installed but not wired up yet. [verified: 2026-02-09]
-- expo-image-picker, @rnmapbox/maps, react-native-reanimated — installed and in use. [verified: 2026-02-09]
+- **In use:** expo-image-picker, expo-image-manipulator, @rnmapbox/maps, react-native-reanimated, react-native-mmkv, expo-location, expo-linking [verified: 2026-02-10]
+- **Installed but NOT wired up:** expo-camera, expo-notifications [verified: 2026-02-10]
