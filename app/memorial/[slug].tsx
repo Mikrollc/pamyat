@@ -6,7 +6,6 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
-  Share,
   StyleSheet,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -38,12 +37,6 @@ export default function MemorialPageScreen() {
 
   const canEdit = membership?.role === 'owner' || membership?.role === 'editor';
   const isOnWaitlist = !!waitlistEntry;
-
-  function handleShare() {
-    Share.share({
-      message: `${grave?.person_name} — https://raduna.app/memorial/${slug}`,
-    });
-  }
 
   function handleWaitlistPress() {
     if (!session) {
@@ -107,16 +100,6 @@ export default function MemorialPageScreen() {
         </Pressable>
 
         <View style={styles.headerRight}>
-          <Pressable
-            onPress={handleShare}
-            hitSlop={12}
-            accessibilityRole="button"
-            accessibilityLabel={t('memorial.share')}
-            style={styles.headerButton}
-          >
-            <FontAwesome name="share" size={20} color={colors.textPrimary} />
-          </Pressable>
-
           {canEdit && (
             <Pressable
               onPress={() => router.push(`/memorial/edit/${slug}`)}
