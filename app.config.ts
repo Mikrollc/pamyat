@@ -4,6 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Raduna',
   slug: 'raduna',
+  owner: 'mikrollc0033',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
@@ -60,7 +61,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     router: {},
     eas: {
-      projectId: 'df5bad0a-03e0-4aa0-ae9a-20e2d84cbe54',
+      projectId: '75cd9211-74ff-4352-bf10-bb65486d06f3',
     },
   },
 });
