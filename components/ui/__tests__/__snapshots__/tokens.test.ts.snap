@@ -18,6 +18,12 @@ exports[`Design Tokens matches token snapshot 1`] = `
     "primary": "#1a5c54",
     "primaryPressed": "#14463f",
     "shadow": "#000",
+    "splash": {
+      "gradientEnd": "#0f3835",
+      "gradientMid": "#1a5c54",
+      "gradientMidDark": "#154a45",
+      "gradientStart": "#1e6b62",
+    },
     "textPrimary": "#000",
     "textSecondary": "#555",
     "textTertiary": "#767676",
