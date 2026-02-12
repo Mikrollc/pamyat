@@ -48,6 +48,7 @@
     "year": "Год",
     "datesFor": "Даты для {{name}}",
     "dateFieldsHint": "День и месяц можно не указывать.",
+    "unknownDate": "Неизвестно",
     "takePhoto": "Сделать фото",
     "chooseGallery": "Выбрать из галереи",
     "skip": "Пропустить",

@@ -37,7 +37,6 @@ interface AddGraveState {
 
   // Actions
   setLocation: (lat: number, lng: number, confirmed?: boolean) => void;
-  confirmPin: () => void;
   setFirstName: (name: string) => void;
   setLastName: (name: string) => void;
   setBirthDate: (date: Partial<PartialDate>) => void;
@@ -74,7 +73,6 @@ export const useAddGraveStore = create<AddGraveState>()(
     (set) => ({
       ...initialState,
       setLocation: (lat, lng, confirmed) => set({ latitude: lat, longitude: lng, pinConfirmed: confirmed ?? false }),
-      confirmPin: () => set({ pinConfirmed: true }),
       setFirstName: (name) => set({ firstName: name }),
       setLastName: (name) => set({ lastName: name }),
       setBirthDate: (date) =>

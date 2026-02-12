@@ -18,12 +18,12 @@ interface ReviewCardProps {
   testID?: string;
 }
 
-function formatPartialDate(d: PartialDate): string {
+function formatPartialDate(d: PartialDate, unknown: string): string {
   const parts: string[] = [];
   if (d.day != null) parts.push(String(d.day).padStart(2, '0'));
   if (d.month != null) parts.push(String(d.month).padStart(2, '0'));
   if (d.year != null) parts.push(String(d.year));
-  return parts.join('.') || '—';
+  return parts.join('.') || unknown;
 }
 
 export function ReviewCard({
@@ -40,7 +40,8 @@ export function ReviewCard({
 }: ReviewCardProps) {
   const { t } = useTranslation();
   const fullName = `${firstName} ${lastName}`.trim();
-  const dates = `${formatPartialDate(birthDate)} — ${formatPartialDate(deathDate)}`;
+  const unknown = t('addGrave.unknownDate');
+  const dates = `${formatPartialDate(birthDate, unknown)} — ${formatPartialDate(deathDate, unknown)}`;
 
   return (
     <Card testID={testID}>
