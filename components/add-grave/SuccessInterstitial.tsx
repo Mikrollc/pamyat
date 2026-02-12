@@ -30,7 +30,7 @@ export function SuccessInterstitial({ personName, onDone, testID }: SuccessInter
           </Typography>
         </View>
       </Animated.View>
-      <Animated.View entering={FadeIn.delay(800)} style={styles.button}>
+      <Animated.View entering={FadeIn.delay(100)} style={styles.button}>
         <Button
           variant="brand"
           title={t('common.done')}

@@ -48,6 +48,7 @@
     "year": "Year",
     "datesFor": "Dates for {{name}}",
     "dateFieldsHint": "You can leave Day or Month blank if unknown.",
+    "unknownDate": "Unknown",
     "takePhoto": "Take Photo",
     "chooseGallery": "Choose from Gallery",
     "skip": "Skip",

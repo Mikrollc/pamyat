@@ -91,6 +91,9 @@ export function StepDates({ onNext, onBack }: StepDatesProps) {
                   key={rel}
                   style={[styles.chip, selected && styles.chipSelected]}
                   onPress={() => store.setRelationship(selected ? null : rel)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={t(relKeys[rel] ?? rel)}
                   testID={`rel-${rel}`}
                 >
                   <Typography
