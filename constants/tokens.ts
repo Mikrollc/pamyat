@@ -15,6 +15,12 @@ export const colors = {
   white: '#fff',
   shadow: '#000',
   brandLight: '#e8f0ef',
+  splash: {
+    gradientStart: '#1e6b62',
+    gradientMid: '#1a5c54',
+    gradientMidDark: '#154a45',
+    gradientEnd: '#0f3835',
+  },
 } as const;
 
 export const spacing = {

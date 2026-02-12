@@ -8,6 +8,7 @@ import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { fetchProfile } from '@/lib/api/profiles';
 import { devSignIn, isDevBypassEnabled } from '@/lib/dev-auth';
+import SplashOverlay from '@/components/SplashOverlay';
 import '@/i18n';
 
 export { ErrorBoundary } from 'expo-router';
@@ -59,8 +60,11 @@ function useProtectedRoute(session: Session | null, isReady: boolean) {
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [fontsLoaded] = useFonts({
     ...FontAwesome.font,
+    'CormorantGaramond-SemiBold': require('../assets/fonts/CormorantGaramond-SemiBold.ttf'),
+    'DMSans-Medium': require('../assets/fonts/DMSans-Medium.ttf'),
   });
 
   useEffect(() => {
@@ -111,6 +115,9 @@ export default function RootLayout() {
         <Stack.Screen name="memorial/[slug]" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ title: 'Not Found' }} />
       </Stack>
+      {showSplash && (
+        <SplashOverlay onComplete={() => setShowSplash(false)} />
+      )}
     </QueryClientProvider>
   );
 }
