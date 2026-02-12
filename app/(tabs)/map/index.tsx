@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapboxGL from '@rnmapbox/maps';
+import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useMapGraves, useCemeterySearch, useAllCemeteries } from '@/hooks';
 import { useAddGraveStore } from '@/stores/add-grave-store';
@@ -62,6 +63,29 @@ export default function MapScreen() {
   const [selectedCemetery, setSelectedCemetery] = useState<SelectedCemetery | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentZoomRef = useRef(DEFAULT_ZOOM);
+  const centerRef = useRef<[number, number]>(NYC_CENTER);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') return;
+        const loc = await Location.getLastKnownPositionAsync();
+        if (loc) {
+          const coords: [number, number] = [loc.coords.longitude, loc.coords.latitude];
+          setCameraTarget(coords);
+          centerRef.current = coords;
+          return;
+        }
+        const current = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        const coords: [number, number] = [current.coords.longitude, current.coords.latitude];
+        setCameraTarget(coords);
+        centerRef.current = coords;
+      } catch {
+        // Location unavailable (e.g. simulator) — keep NYC default
+      }
+    })();
+  }, []);
 
   const cemeteryGeoJSON = useMemo(
     () => cemeteriesToGeoJSON(cemeteries ?? []),
@@ -134,18 +158,24 @@ export default function MapScreen() {
     setSelectedCemetery(null);
   }
 
-  function handleRegionChange(state: { properties: { zoom: number } }) {
+  function handleRegionChange(state: { properties: { zoom: number; center: GeoJSON.Position } }) {
     currentZoomRef.current = state.properties.zoom;
+    const [lng, lat] = state.properties.center;
+    if (lng != null && lat != null) {
+      centerRef.current = [lng, lat];
+    }
   }
 
   function handleZoomIn() {
     const newZoom = Math.min(currentZoomRef.current + 1, 18);
+    setCameraTarget(centerRef.current);
     setCameraZoom(newZoom);
     currentZoomRef.current = newZoom;
   }
 
   function handleZoomOut() {
     const newZoom = Math.max(currentZoomRef.current - 1, 5);
+    setCameraTarget(centerRef.current);
     setCameraZoom(newZoom);
     currentZoomRef.current = newZoom;
   }
@@ -161,6 +191,10 @@ export default function MapScreen() {
         onMapIdle={handleRegionChange}
       >
         <MapboxGL.Camera
+          defaultSettings={{
+            centerCoordinate: NYC_CENTER,
+            zoomLevel: DEFAULT_ZOOM,
+          }}
           centerCoordinate={cameraTarget}
           zoomLevel={cameraZoom}
           animationDuration={1000}
