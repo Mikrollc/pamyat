@@ -12,8 +12,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   splash: {
-    image: './assets/images/splash-icon.png',
-    resizeMode: 'contain',
     backgroundColor: '#1a5c54',
   },
   ios: {
@@ -43,6 +41,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         fonts: [
           'node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome.ttf',
+          './assets/fonts/CormorantGaramond-SemiBold.ttf',
+          './assets/fonts/DMSans-Medium.ttf',
         ],
       },
     ],
