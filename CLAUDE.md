@@ -1,6 +1,6 @@
-# Pamyat — Codebase Rules
+# Raduna — Codebase Rules
 
-Grave care registry app. React Native (Expo SDK 54) + Supabase + Mapbox.
+Grave care registry app (formerly Pamyat). React Native (Expo SDK 54) + Supabase + Mapbox.
 
 ---
 

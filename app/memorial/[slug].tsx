@@ -41,7 +41,7 @@ export default function MemorialPageScreen() {
 
   function handleShare() {
     Share.share({
-      message: `${grave?.person_name} — https://pamyat.app/memorial/${slug}`,
+      message: `${grave?.person_name} — https://raduna.app/memorial/${slug}`,
     });
   }
 

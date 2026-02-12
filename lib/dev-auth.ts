@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 
-const DEV_EMAIL = 'dev@pamyat.local';
+const DEV_EMAIL = 'dev@raduna.local';
 const DEV_PASSWORD = 'devpassword123';
 
 /**

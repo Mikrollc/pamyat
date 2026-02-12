@@ -2,12 +2,12 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'pamyat',
-  slug: 'pamyat',
+  name: 'Raduna',
+  slug: 'raduna',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
-  scheme: 'pamyat',
+  scheme: 'raduna',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   splash: {
@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.mikrollc.pamyat',
+    bundleIdentifier: 'com.mikrollc.raduna',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
@@ -28,7 +28,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundImage: './assets/images/adaptive-icon-bg.png',
     },
     edgeToEdgeEnabled: true,
-    package: 'com.mikrollc.pamyat',
+    package: 'com.mikrollc.raduna',
   },
   web: {
     bundler: 'metro',
@@ -49,8 +49,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-image-picker',
       {
-        photosPermission: 'Pamyat needs access to your photos to add memorial images.',
-        cameraPermission: 'Pamyat needs access to your camera to take memorial photos.',
+        photosPermission: 'Raduna needs access to your photos to add memorial images.',
+        cameraPermission: 'Raduna needs access to your camera to take memorial photos.',
       },
     ],
   ],
