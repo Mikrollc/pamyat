@@ -63,7 +63,7 @@ describe('devSignIn', () => {
     const session = await devSignIn();
 
     expect(mockSignIn).toHaveBeenCalledWith({
-      email: 'dev@pamyat.local',
+      email: 'dev@raduna.local',
       password: 'devpassword123',
     });
     expect(session).toBe(mockSession);
