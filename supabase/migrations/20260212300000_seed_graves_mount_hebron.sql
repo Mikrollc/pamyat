@@ -2,6 +2,10 @@
 -- Source: Find a Grave, verified Feb 2026
 -- These are public seed data — no real user owns them.
 
+-- Cloud Supabase installs pgcrypto in the extensions schema.
+-- generate_grave_slug() calls gen_random_bytes() which needs this.
+SET search_path TO public, extensions;
+
 -- Disable triggers and FK constraints for seed inserts.
 -- This lets us create a system profile without an auth.users entry
 -- and insert graves without the on_grave_created trigger firing.
