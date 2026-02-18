@@ -5,3 +5,4 @@ export { searchCemeteries, fetchNearbyCemeteries, findOrCreateCemetery, fetchAll
 export type { CemeterySearchResult, MapCemetery } from './cemeteries';
 export { fetchProfile, updateProfile } from './profiles';
 export { joinWaitlist, checkWaitlistStatus } from './waitlist';
+export { deleteAccount } from './account';

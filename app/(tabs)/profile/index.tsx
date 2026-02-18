@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { supabase } from '@/lib/supabase';
+import { deleteAccount } from '@/lib/api';
 import { useSession } from '@/hooks/useSession';
 import { useProfile } from '@/hooks/useProfile';
 import { Typography } from '@/components/ui/Typography';
@@ -74,6 +75,21 @@ export default function ProfileScreen() {
   };
 
   const [showSignOut, setShowSignOut] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      setShowDeleteAccount(false);
+      await supabase.auth.signOut();
+    } catch (error) {
+      setIsDeleting(false);
+      setShowDeleteAccount(false);
+      Alert.alert(t('profile.deleteAccount'), t('profile.deleteAccountError'));
+    }
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -96,6 +112,16 @@ export default function ProfileScreen() {
           value={currentLang}
           onPress={handleLanguageToggle}
           testID="language-toggle"
+        />
+      </View>
+
+      <View style={styles.section}>
+        <ProfileRow
+          icon="trash"
+          label={t('profile.deleteAccount')}
+          onPress={() => setShowDeleteAccount(true)}
+          destructive
+          testID="delete-account-button"
         />
       </View>
 
@@ -122,6 +148,18 @@ export default function ProfileScreen() {
           setShowSignOut(false);
           supabase.auth.signOut();
         }}
+      />
+
+      <ConfirmModal
+        visible={showDeleteAccount}
+        title={t('profile.deleteAccount')}
+        message={t('profile.deleteAccountConfirm')}
+        cancelLabel={t('common.cancel')}
+        confirmLabel={isDeleting ? t('profile.deleting') : t('profile.deleteAccount')}
+        confirmVariant="destructive"
+        confirmIcon="trash"
+        onCancel={() => !isDeleting && setShowDeleteAccount(false)}
+        onConfirm={handleDeleteAccount}
       />
 
       <View style={styles.version}>
