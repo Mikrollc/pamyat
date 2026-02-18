@@ -114,8 +114,8 @@ export function PhotoSelector({
           onPress={takePhoto}
           testID={testID ? `${testID}-camera` : undefined}
         >
-          <FontAwesome name="camera" size={32} color={colors.textSecondary} />
-          <Typography variant="bodySmall" color={colors.textSecondary} align="center">
+          <FontAwesome name="camera" size={32} color={colors.primary} />
+          <Typography variant="bodySmall" color={colors.textPrimary} align="center">
             {t('addGrave.takePhoto')}
           </Typography>
         </Pressable>
@@ -124,8 +124,8 @@ export function PhotoSelector({
           onPress={pickFromGallery}
           testID={testID ? `${testID}-gallery` : undefined}
         >
-          <FontAwesome name="image" size={32} color={colors.textSecondary} />
-          <Typography variant="bodySmall" color={colors.textSecondary} align="center">
+          <FontAwesome name="image" size={32} color={colors.primary} />
+          <Typography variant="bodySmall" color={colors.textPrimary} align="center">
             {t('addGrave.chooseGallery')}
           </Typography>
         </Pressable>
