@@ -4,6 +4,25 @@ Product and technical decisions with dates and reasoning. Newest first.
 
 ---
 
+## 2026-02-12 — Graves private by default
+- **Decision:** Changed `is_public` column default from `true` to `false`. New graves are private unless user explicitly opts in.
+- **Rationale:** Sensitive memorial data should not be publicly accessible by default. Shared links were also removed (no web memorial page).
+- **Migration:** `20260212200000_graves_private_by_default.sql` (PR #102).
+
+## 2026-02-12 — Share button removed from memorial page
+- **Decision:** Removed the share button that generated `raduna.app/memorial/{slug}` links.
+- **Rationale:** No web memorial page exists to receive these links. Sharing exposes sensitive data via URLs that 404.
+
+## 2026-02-12 — Invite family: MVP scope decisions
+- **Decision:** Phone-number-based invites only for MVP. Per-grave scope. Viewer role default.
+- **Details:**
+  - **No link-based invites yet** — deferred until universal links (#10) are implemented post-launch.
+  - **Per-grave only** — no "share all my graves" shortcut. Different graves have different family circles.
+  - **Viewer role** — read-only. Later extend to Collaborator (upload photos, edit during visits).
+  - **Flow:** Owner enters phone number → invitation row created → invitee sees invite in-app or gets SMS → accept via Edge Function → grave appears in their "My Graves."
+- **Issues:** #44 (epic), #103 (schema), #104 (Edge Function), #105 (app UI).
+- **Sprint:** Sprint 2 (Feb 26 - Mar 11), alongside App Store launch.
+
 ## 2026-02-10 — Switch EAS builds to manual trigger
 - **Decision:** Removed auto-deploy on push to main. Builds now trigger only on version tag push (`v*`) or manual workflow_dispatch.
 - **Rationale:** Multiple PRs per session were burning EAS build credits fast. Manual control lets us batch changes into fewer builds.

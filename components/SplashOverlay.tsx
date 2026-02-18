@@ -28,12 +28,12 @@ function SplashIcon() {
       <Rect width={200} height={200} rx={44} fill="rgba(255,255,255,0.08)" />
       <Path
         d="M100 30 C68 30 44 56 44 88 C44 124 100 172 100 172 C100 172 156 124 156 88 C156 56 132 30 100 30Z"
-        fill="#fff"
+        fill={colors.white}
         opacity={0.95}
       />
       <Path
         d="M100 76 C100 76 82 62 74 72 C66 82 74 96 100 116 C126 96 134 82 126 72 C118 62 100 76 100 76Z"
-        fill="#1a5c54"
+        fill={colors.brand}
       />
     </Svg>
   );
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     fontFamily: 'CormorantGaramond-SemiBold',
     fontSize: 42,
     fontWeight: '600',
-    color: '#fff',
+    color: colors.white,
     letterSpacing: 3,
     marginBottom: 8,
   },

@@ -35,7 +35,7 @@ export function WizardHeader({ step, totalSteps = 4, title, onClose, testID }: W
             accessibilityLabel={t('common.close')}
             testID={testID ? `${testID}-close` : undefined}
           >
-            <FontAwesome name="times" size={15} color="#666" />
+            <FontAwesome name="times" size={15} color={colors.textSecondary} />
           </Pressable>
         </View>
       </View>
