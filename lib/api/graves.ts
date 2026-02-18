@@ -27,13 +27,23 @@ export async function fetchGravesByUser(userId: string) {
 }
 
 export async function createGrave(data: GraveInsert) {
-  const { data: grave, error } = await supabase
+  // Insert without .select() — the AFTER INSERT trigger creates the
+  // grave_member row needed by the SELECT RLS policy, but it may not
+  // be visible in the same statement. So we insert first, then fetch.
+  const { error: insertError } = await supabase
     .from('graves')
-    .insert(data)
+    .insert(data);
+
+  if (insertError) throw insertError;
+
+  // Fetch the newly created grave by slug (unique, just created)
+  const { data: grave, error: fetchError } = await supabase
+    .from('graves')
     .select()
+    .eq('slug', data.slug)
     .single();
 
-  if (error) throw error;
+  if (fetchError) throw fetchError;
   return grave;
 }
 

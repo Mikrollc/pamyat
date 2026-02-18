@@ -25,6 +25,13 @@ export function usePublishGrave() {
 
   return useMutation({
     mutationFn: async (params: PublishParams) => {
+      // Refresh session first to ensure valid JWT for RLS
+      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
+      if (sessionError || !session) {
+        // Fallback: try getUser
+        const { data: { user: fallbackUser } } = await supabase.auth.getUser();
+        if (!fallbackUser) throw new Error('Not authenticated');
+      }
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
