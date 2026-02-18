@@ -1,4 +1,5 @@
-import { View, Pressable, ScrollView, Alert, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -6,6 +7,8 @@ import { supabase } from '@/lib/supabase';
 import { useSession } from '@/hooks/useSession';
 import { useProfile } from '@/hooks/useProfile';
 import { Typography } from '@/components/ui/Typography';
+import { Button } from '@/components/ui/Button';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { colors, spacing, radii } from '@/constants/tokens';
 import i18n from '@/i18n';
 
@@ -70,16 +73,7 @@ export default function ProfileScreen() {
     i18n.changeLanguage(newLang);
   };
 
-  const handleSignOut = () => {
-    Alert.alert('', t('profile.signOutConfirm'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('profile.signOut'),
-        style: 'destructive',
-        onPress: () => supabase.auth.signOut(),
-      },
-    ]);
-  };
+  const [showSignOut, setShowSignOut] = useState(false);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -105,15 +99,30 @@ export default function ProfileScreen() {
         />
       </View>
 
-      <View style={styles.section}>
-        <ProfileRow
+      <View style={styles.signOutSection}>
+        <Button
+          variant="destructive"
+          title={t('profile.signOut')}
           icon="sign-out"
-          label={t('profile.signOut')}
-          onPress={handleSignOut}
-          destructive
+          onPress={() => setShowSignOut(true)}
           testID="sign-out-button"
         />
       </View>
+
+      <ConfirmModal
+        visible={showSignOut}
+        title={t('profile.signOut')}
+        message={t('profile.signOutConfirm')}
+        cancelLabel={t('common.cancel')}
+        confirmLabel={t('profile.signOut')}
+        confirmVariant="destructive"
+        confirmIcon="sign-out"
+        onCancel={() => setShowSignOut(false)}
+        onConfirm={() => {
+          setShowSignOut(false);
+          supabase.auth.signOut();
+        }}
+      />
 
       <View style={styles.version}>
         <Typography variant="caption" color={colors.textTertiary}>
@@ -166,6 +175,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
+  },
+  signOutSection: {
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.md,
   },
   version: {
     alignItems: 'center' as const,
