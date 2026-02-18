@@ -104,6 +104,7 @@ export default function NameSetupScreen() {
       <View style={styles.bottom}>
         <Button
           title={t('auth.getStarted')}
+          icon="arrow-right"
           onPress={handleGetStarted}
           loading={updateProfile.isPending}
           disabled={name.trim().length < 2}

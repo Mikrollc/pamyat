@@ -84,6 +84,7 @@ export default function GravesScreen() {
             <Button
               variant="brand"
               title={t('graves.addFirst')}
+              icon="plus"
               onPress={() => router.push('/add-grave')}
               testID="add-first-grave-button"
             />

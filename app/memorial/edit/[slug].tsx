@@ -324,6 +324,7 @@ export default function EditMemorialScreen() {
         <Button
           variant="brand"
           title={updateGrave.isPending ? t('manage.saving') : t('manage.save')}
+          icon="check"
           onPress={handleSave}
           disabled={!canSave}
           loading={updateGrave.isPending}

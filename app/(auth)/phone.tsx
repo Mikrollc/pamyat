@@ -82,6 +82,7 @@ export default function PhoneScreen() {
       <View style={styles.bottom}>
         <Button
           title={t('auth.sendCode')}
+          icon="paper-plane"
           onPress={handleSendCode}
           loading={loading}
           disabled={!isValid}

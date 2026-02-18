@@ -146,6 +146,7 @@ export default function OtpScreen() {
         <Button
           title={countdown > 0 ? t('auth.resendIn', { seconds: countdown }) : t('auth.resend')}
           variant="secondary"
+          icon="refresh"
           onPress={handleResend}
           disabled={countdown > 0}
         />
