@@ -15,7 +15,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: '#1a5c54',
   },
   ios: {
-    supportsTablet: true,
+    supportsTablet: false,
     bundleIdentifier: 'com.mikrollc.raduna',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
