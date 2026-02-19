@@ -1,4 +1,5 @@
-import { View, StyleSheet, Linking, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Typography, Button } from '@/components/ui';
@@ -33,7 +34,7 @@ export default function AuthScreen() {
             {t('auth.legalNotice')}{' '}
           </Typography>
           <View style={styles.legalLinks}>
-            <Pressable onPress={() => Linking.openURL(PRIVACY_URL)}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync(PRIVACY_URL)}>
               <Typography variant="caption" color={colors.brand}>
                 {t('profile.privacyPolicy')}
               </Typography>
@@ -41,7 +42,7 @@ export default function AuthScreen() {
             <Typography variant="caption" color={colors.textTertiary}>
               {' '}{t('auth.and')}{' '}
             </Typography>
-            <Pressable onPress={() => Linking.openURL(TERMS_URL)}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync(TERMS_URL)}>
               <Typography variant="caption" color={colors.brand}>
                 {t('profile.termsOfService')}
               </Typography>

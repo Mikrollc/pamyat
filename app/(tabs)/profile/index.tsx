@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Pressable, ScrollView, StyleSheet, Alert, Linking } from 'react-native';
+import { View, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -119,13 +120,13 @@ export default function ProfileScreen() {
         <ProfileRow
           icon="shield"
           label={t('profile.privacyPolicy')}
-          onPress={() => Linking.openURL('https://raduna.app/privacy')}
+          onPress={() => WebBrowser.openBrowserAsync('https://raduna.app/privacy')}
           testID="privacy-policy-button"
         />
         <ProfileRow
           icon="file-text-o"
           label={t('profile.termsOfService')}
-          onPress={() => Linking.openURL('https://raduna.app/terms')}
+          onPress={() => WebBrowser.openBrowserAsync('https://raduna.app/terms')}
           testID="terms-of-service-button"
         />
       </View>
