@@ -12,6 +12,7 @@ interface ButtonProps {
   loading?: boolean;
   disabled?: boolean;
   testID?: string;
+  style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 
 const variantColors = {
@@ -30,6 +31,7 @@ export function Button({
   loading = false,
   disabled = false,
   testID,
+  style,
 }: ButtonProps) {
   const scheme = variantColors[variant];
   const isDisabled = disabled || loading;
@@ -47,6 +49,7 @@ export function Button({
           backgroundColor: pressed ? scheme.pressed : scheme.bg,
           opacity: isDisabled ? 0.5 : 1,
         },
+        style,
       ]}
     >
       {loading ? (

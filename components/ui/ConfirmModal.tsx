@@ -38,9 +38,6 @@ export function ConfirmModal({
           </Typography>
           <View style={styles.actions}>
             <View style={styles.actionButton}>
-              <Button variant="secondary" title={cancelLabel} onPress={onCancel} />
-            </View>
-            <View style={styles.actionButton}>
               <Button
                 variant={confirmVariant}
                 title={confirmLabel}
@@ -48,6 +45,9 @@ export function ConfirmModal({
                 loading={loading}
                 onPress={onConfirm}
               />
+            </View>
+            <View style={styles.actionButton}>
+              <Button variant="secondary" title={cancelLabel} onPress={onCancel} />
             </View>
           </View>
         </Pressable>
@@ -59,7 +59,7 @@ export function ConfirmModal({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: spacing.xl,
@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     gap: spacing.sm,
     marginTop: spacing.md,
   },
   actionButton: {
-    flex: 1,
+    width: '100%',
   },
 });
