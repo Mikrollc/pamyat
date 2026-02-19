@@ -1,8 +1,11 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Linking, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Typography, Button } from '@/components/ui';
 import { colors, spacing } from '@/constants/tokens';
+
+const PRIVACY_URL = 'https://raduna.app/privacy';
+const TERMS_URL = 'https://raduna.app/terms';
 
 export default function AuthScreen() {
   const { t } = useTranslation();
@@ -19,10 +22,32 @@ export default function AuthScreen() {
         </Typography>
       </View>
 
-      <View style={styles.buttons}>
-        <Button title={t('auth.continueWithPhone')} icon="phone" onPress={() => router.push('/(auth)/phone')} />
-        <Button title={t('auth.signInGoogle')} icon="google" variant="secondary" disabled onPress={() => {}} />
-        <Button title={t('auth.signInApple')} icon="apple" variant="secondary" disabled onPress={() => {}} />
+      <View style={styles.bottom}>
+        <View style={styles.buttons}>
+          <Button title={t('auth.continueWithPhone')} icon="phone" onPress={() => router.push('/(auth)/phone')} />
+          <Button title={t('auth.signInGoogle')} icon="google" variant="secondary" disabled onPress={() => {}} />
+          <Button title={t('auth.signInApple')} icon="apple" variant="secondary" disabled onPress={() => {}} />
+        </View>
+        <View style={styles.legal}>
+          <Typography variant="caption" color={colors.textTertiary} align="center">
+            {t('auth.legalNotice')}{' '}
+          </Typography>
+          <View style={styles.legalLinks}>
+            <Pressable onPress={() => Linking.openURL(PRIVACY_URL)}>
+              <Typography variant="caption" color={colors.brand}>
+                {t('profile.privacyPolicy')}
+              </Typography>
+            </Pressable>
+            <Typography variant="caption" color={colors.textTertiary}>
+              {' '}{t('auth.and')}{' '}
+            </Typography>
+            <Pressable onPress={() => Linking.openURL(TERMS_URL)}>
+              <Typography variant="caption" color={colors.brand}>
+                {t('profile.termsOfService')}
+              </Typography>
+            </Pressable>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -39,8 +64,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
+  bottom: {
+    gap: spacing.md,
+    paddingBottom: spacing.xxl,
+  },
   buttons: {
     gap: spacing.sm + spacing.xs,
-    paddingBottom: spacing.xxl,
+  },
+  legal: {
+    alignItems: 'center',
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
 });
