@@ -12,6 +12,7 @@ import { Typography } from '@/components/ui/Typography';
 import { Button } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { colors, spacing, radii } from '@/constants/tokens';
+import { formatPhoneDisplay } from '@/lib/format-phone';
 import i18n from '@/i18n';
 
 
@@ -102,7 +103,7 @@ export default function ProfileScreen() {
           {profile?.display_name ?? ''}
         </Typography>
         <Typography variant="bodySmall" color={colors.textTertiary}>
-          {session?.user.phone ?? ''}
+          {session?.user.phone ? formatPhoneDisplay(session.user.phone) : ''}
         </Typography>
       </View>
 
