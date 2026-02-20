@@ -22,4 +22,8 @@ export const queryKeys = {
     byGraveAndUser: (graveId: string, userId: string) =>
       ['graveMembers', graveId, userId] as const,
   },
+  invitations: {
+    byGrave: (graveId: string) => ['invitations', 'byGrave', graveId] as const,
+    received: (phone: string) => ['invitations', 'received', phone] as const,
+  },
 } as const;

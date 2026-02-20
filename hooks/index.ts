@@ -11,3 +11,10 @@ export { useGraveMembership } from './useGraveMembership';
 export { useMapGraves } from './useMapGraves';
 export { useCemeterySearch } from './useCemeterySearch';
 export { useAllCemeteries } from './useAllCemeteries';
+export {
+  useGraveInvitations,
+  useCreateInvitation,
+  useRevokeInvitation,
+  useReceivedInvitations,
+  useAcceptInvitation,
+} from './useInvitations';
