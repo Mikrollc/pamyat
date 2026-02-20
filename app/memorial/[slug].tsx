@@ -94,9 +94,9 @@ export default function MemorialPageScreen() {
           hitSlop={12}
           accessibilityRole="button"
           accessibilityLabel={t('common.back')}
-          style={styles.headerButton}
+          style={styles.headerIconButton}
         >
-          <FontAwesome name="arrow-left" size={20} color={colors.textPrimary} />
+          <FontAwesome name="arrow-left" size={18} color={colors.textPrimary} />
         </Pressable>
 
         <View style={styles.headerRight}>
@@ -106,11 +106,9 @@ export default function MemorialPageScreen() {
               hitSlop={12}
               accessibilityRole="button"
               accessibilityLabel={t('graves.edit')}
-              style={[styles.headerButton, { marginLeft: spacing.md }]}
+              style={styles.headerIconButton}
             >
-              <Typography variant="body" color={colors.primary}>
-                {t('graves.edit')}
-              </Typography>
+              <FontAwesome name="pencil" size={18} color={colors.textPrimary} />
             </Pressable>
           )}
         </View>
@@ -228,6 +226,14 @@ const styles = StyleSheet.create({
   headerButton: {
     padding: spacing.xs,
   },
+  headerIconButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -236,7 +242,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
+    // no flexGrow — content fills naturally, no empty space below CTA
   },
   heroPhoto: {
     width: '100%',
@@ -265,6 +271,7 @@ const styles = StyleSheet.create({
   ctaSection: {
     paddingHorizontal: spacing.md,
     paddingTop: spacing.lg,
+    paddingBottom: spacing.xl,
   },
   bottomBar: {
     position: 'absolute',

@@ -17,6 +17,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useMapGraves, useCemeterySearch, useAllCemeteries } from '@/hooks';
 import { useAddGraveStore } from '@/stores/add-grave-store';
 import { CemeteryFloatingCard } from '@/components/map/CemeteryFloatingCard';
+import { RadunaPin } from '@/components/icons/RadunaPin';
 import { cemeteriesToGeoJSON } from '@/lib/geojson';
 import { parseLocationCoords } from '@/lib/geo';
 import { Typography } from '@/components/ui/Typography';
@@ -201,6 +202,19 @@ export default function MapScreen() {
           animationMode="flyTo"
         />
 
+        {graves?.map((grave) => (
+          <MapboxGL.MarkerView
+            key={grave.id}
+            id={grave.id}
+            coordinate={[grave.lng, grave.lat]}
+            anchor={{ x: 0.5, y: 1 }}
+          >
+            <Pressable onPress={() => handlePinPress(grave)} style={styles.pin}>
+              <RadunaPin size={28} />
+            </Pressable>
+          </MapboxGL.MarkerView>
+        ))}
+
         <MapboxGL.ShapeSource
           id="cemetery-source"
           shape={cemeteryGeoJSON}
@@ -257,24 +271,10 @@ export default function MapScreen() {
             }}
           />
         </MapboxGL.ShapeSource>
-
-        {graves?.map((grave) => (
-          <MapboxGL.PointAnnotation
-            key={grave.id}
-            id={grave.id}
-            coordinate={[grave.lng, grave.lat]}
-            onSelected={() => handlePinPress(grave)}
-          >
-            <View style={styles.pin}>
-              <FontAwesome name="map-marker" size={32} color={colors.brand} />
-            </View>
-            <MapboxGL.Callout title={grave.person_name} />
-          </MapboxGL.PointAnnotation>
-        ))}
       </MapboxGL.MapView>
 
       {/* Search bar */}
-      <View style={[styles.searchContainer, { top: insets.top + spacing.sm }]}>
+      <View style={[styles.searchContainer, { top: insets.top + spacing.md }]}>
         <View style={styles.searchBar}>
           <FontAwesome
             name="search"
@@ -347,7 +347,7 @@ export default function MapScreen() {
       </View>
 
       {/* Zoom controls */}
-      <View style={[styles.zoomControls, { top: insets.top + spacing.sm + 44 + spacing.md }]}>
+      <View style={[styles.zoomControls, { top: insets.top + spacing.md + 44 + spacing.md }]}>
         <Pressable
           onPress={handleZoomIn}
           style={({ pressed }) => [styles.zoomButton, pressed && styles.zoomButtonPressed]}
@@ -366,6 +366,32 @@ export default function MapScreen() {
           <FontAwesome name="minus" size={14} color={colors.textSecondary} />
         </Pressable>
       </View>
+
+      {/* Locate me button */}
+      <Pressable
+        onPress={async () => {
+          try {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') return;
+            const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+            const coords: [number, number] = [loc.coords.longitude, loc.coords.latitude];
+            setCameraTarget(coords);
+            setCameraZoom(14);
+            centerRef.current = coords;
+          } catch {
+            // Location unavailable
+          }
+        }}
+        style={({ pressed }) => [
+          styles.locateButton,
+          { top: insets.top + spacing.md + 44 + spacing.md + 36 + 36 + spacing.md },
+          pressed && styles.zoomButtonPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="My location"
+      >
+        <FontAwesome name="crosshairs" size={16} color={colors.textSecondary} />
+      </Pressable>
 
       {selectedCemetery && (
         <CemeteryFloatingCard
@@ -494,6 +520,22 @@ const styles = StyleSheet.create({
   zoomDivider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.border,
+  },
+  locateButton: {
+    position: 'absolute',
+    right: spacing.md,
+    zIndex: 30,
+    width: 36,
+    height: 36,
+    borderRadius: radii.sm,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   fab: {
     position: 'absolute',

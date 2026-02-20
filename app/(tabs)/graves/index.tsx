@@ -47,6 +47,15 @@ export default function GravesScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <Typography variant="h2">{t('tabs.myGraves')}</Typography>
+          <Pressable
+            onPress={() => router.push('/add-grave')}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t('map.addGrave')}
+            testID="add-grave-header-button"
+          >
+            <FontAwesome name="plus" size={22} color={colors.brand} />
+          </Pressable>
         </View>
         <GravesListSkeleton />
       </View>
@@ -65,6 +74,15 @@ export default function GravesScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <Typography variant="h2">{t('tabs.myGraves')}</Typography>
+        <Pressable
+          onPress={() => router.push('/add-grave')}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={t('map.addGrave')}
+          testID="add-grave-header-button"
+        >
+          <FontAwesome name="plus" size={22} color={colors.brand} />
+        </Pressable>
       </View>
 
       <FlatList
@@ -113,7 +131,7 @@ export default function GravesScreen() {
                   </View>
                 )}
                 <View style={styles.info}>
-                  <Typography variant="body" numberOfLines={1}>
+                  <Typography variant="body" numberOfLines={2}>
                     {item.person_name}
                   </Typography>
                   <Typography variant="caption" color={colors.textSecondary}>
@@ -156,6 +174,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors } from '@/constants/tokens';
 import { InviteBanner } from '@/components/invite/InviteBanner';
+import { RadunaTabIcon } from '@/components/icons/RadunaPin';
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ export default function TabLayout() {
           options={{
             title: t('tabs.map'),
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="map-marker" size={size} color={color} />
+              <RadunaTabIcon size={size} color={color} />
             ),
           }}
         />
