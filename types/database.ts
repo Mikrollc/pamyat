@@ -306,3 +306,5 @@ export type GravePhoto = Database['public']['Tables']['grave_photos']['Row'];
 export type GravePhotoInsert = Database['public']['Tables']['grave_photos']['Insert'];
 export type WaitlistEntry = Database['public']['Tables']['maintenance_waitlist']['Row'];
 export type WaitlistInsert = Database['public']['Tables']['maintenance_waitlist']['Insert'];
+export type Invitation = Database['public']['Tables']['invitations']['Row'];
+export type InvitationInsert = Database['public']['Tables']['invitations']['Insert'];

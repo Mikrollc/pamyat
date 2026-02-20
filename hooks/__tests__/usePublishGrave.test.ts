@@ -24,6 +24,7 @@ jest.mock('@/lib/transliterate', () => ({
 jest.mock('@/lib/supabase', () => ({
   supabase: {
     auth: {
+      refreshSession: () => Promise.resolve({ data: { session: { user: { id: 'user-1' } } }, error: null }),
       getUser: () => Promise.resolve({ data: { user: { id: 'user-1' } } }),
     },
   },

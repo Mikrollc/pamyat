@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { InviteFamilySheet } from '@/components/invite/InviteFamilySheet';
 import { PartialDateInput } from '@/components/add-grave/PartialDateInput';
 import { PhotoSelector } from '@/components/add-grave/PhotoSelector';
 import { colors, spacing, radii } from '@/constants/tokens';
@@ -65,6 +66,7 @@ export default function EditMemorialScreen() {
   const [photoChanged, setPhotoChanged] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showInviteSheet, setShowInviteSheet] = useState(false);
 
   // Track originals for diffing
   const originalCemeteryName = useRef('');
@@ -336,6 +338,22 @@ export default function EditMemorialScreen() {
       <Modal visible={showMenu} transparent animationType="slide" statusBarTranslucent>
         <Pressable style={styles.menuBackdrop} onPress={() => setShowMenu(false)}>
           <View style={[styles.menuSheet, { paddingBottom: insets.bottom + spacing.md }]}>
+            {(membership?.role === 'owner' || membership?.role === 'editor') && (
+              <Pressable
+                style={styles.menuItem}
+                onPress={() => {
+                  setShowMenu(false);
+                  setShowInviteSheet(true);
+                }}
+                testID="menu-invite-family"
+              >
+                <FontAwesome name="user-plus" size={18} color={colors.brand} />
+                <Typography variant="body" color={colors.brand}>
+                  {t('invite.title')}
+                </Typography>
+              </Pressable>
+            )}
+
             <Pressable
               style={styles.menuItem}
               onPress={() => {
@@ -371,6 +389,15 @@ export default function EditMemorialScreen() {
         onCancel={() => setShowDeleteConfirm(false)}
         onConfirm={handleDelete}
       />
+
+      {grave && session?.user?.id && (
+        <InviteFamilySheet
+          visible={showInviteSheet}
+          graveId={grave.id}
+          userId={session.user.id}
+          onClose={() => setShowInviteSheet(false)}
+        />
+      )}
     </View>
   );
 }
