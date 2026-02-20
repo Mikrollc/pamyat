@@ -45,10 +45,12 @@ export async function revokeInvitation(invitationId: string) {
 }
 
 export async function fetchReceivedInvitations(phone: string) {
+  const normalized = phone.startsWith('+') ? phone : `+${phone}`;
+
   const { data, error } = await supabase
     .from('invitations')
     .select('*, grave:graves(person_name, slug)')
-    .eq('recipient', phone)
+    .eq('recipient', normalized)
     .eq('status', 'pending')
     .gt('expires_at', new Date().toISOString())
     .order('created_at', { ascending: false });
