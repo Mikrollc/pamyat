@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Modal,
@@ -7,6 +7,9 @@ import {
   FlatList,
   Alert,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +45,15 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
   const pi = usePhoneInput();
 
   const [serverError, setServerError] = useState('');
+  const keyboardVisibleRef = useRef(false);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, () => { keyboardVisibleRef.current = true; });
+    const hideSub = Keyboard.addListener(hideEvent, () => { keyboardVisibleRef.current = false; });
+    return () => { showSub.remove(); hideSub.remove(); };
+  }, []);
 
   const { data: invitations } = useGraveInvitations(visible ? graveId : undefined);
   const createInvite = useCreateInvitation(graveId);
@@ -92,12 +104,24 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
     onClose();
   }
 
+  function handleBackdropPress() {
+    if (keyboardVisibleRef.current) {
+      Keyboard.dismiss();
+    } else {
+      handleClose();
+    }
+  }
+
   const pendingInvites = invitations?.filter((inv) => inv.status === 'pending') ?? [];
 
   return (
     <>
     <Modal visible={visible} transparent animationType="slide" statusBarTranslucent>
-      <Pressable style={styles.backdrop} onPress={handleClose}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+      <Pressable style={styles.backdrop} onPress={handleBackdropPress}>
         <Pressable
           style={[styles.sheet, { paddingBottom: insets.bottom + spacing.md }]}
           onPress={() => {}}
@@ -187,6 +211,7 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
           )}
         </Pressable>
       </Pressable>
+      </KeyboardAvoidingView>
     </Modal>
 
     <CountryPickerSheet
@@ -199,6 +224,9 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
