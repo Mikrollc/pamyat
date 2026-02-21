@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { View, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Typography, Button, Input } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { useUpdateProfile } from '@/hooks/useProfile';
@@ -12,6 +14,7 @@ type Locale = 'ru' | 'en';
 export default function NameSetupScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [locale, setLocale] = useState<Locale>(i18n.language === 'ru' ? 'ru' : 'en');
   const [error, setError] = useState('');
@@ -52,9 +55,22 @@ export default function NameSetupScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { paddingTop: insets.top + spacing.md }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <Pressable
+        onPress={async () => {
+          await supabase.auth.signOut();
+          router.replace('/(auth)');
+        }}
+        hitSlop={12}
+        accessibilityRole="button"
+        accessibilityLabel={t('common.back')}
+        style={styles.backButton}
+      >
+        <FontAwesome name="arrow-left" size={20} color={colors.textPrimary} />
+      </Pressable>
+
       <View style={styles.content}>
         <Typography variant="h2">{t('auth.yourName')}</Typography>
 
@@ -118,7 +134,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: spacing.xl,
-    paddingTop: 120,
+  },
+  backButton: {
+    padding: spacing.xs,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.lg,
   },
   content: {
     flex: 1,
