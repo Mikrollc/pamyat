@@ -13,8 +13,11 @@ import { useTranslation } from 'react-i18next';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Typography } from '@/components/ui/Typography';
 import { Button } from '@/components/ui/Button';
+import { CountryPickerSheet } from '@/components/ui/CountryPickerSheet';
 import { useGraveInvitations, useCreateInvitation, useRevokeInvitation } from '@/hooks';
-import { formatUSPhone, stripPhone } from '@/lib/format-phone';
+import { usePhoneInput } from '@/hooks/usePhoneInput';
+import { stripPhone, formatPhoneDisplay } from '@/lib/format-phone';
+import { COUNTRIES_BY_CODE } from '@/lib/country-data';
 import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
 import type { InviteStatus } from '@/types/database';
 
@@ -35,33 +38,34 @@ const STATUS_COLORS: Record<InviteStatus, string> = {
 export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteFamilySheetProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const [phone, setPhone] = useState('');
-  const [error, setError] = useState('');
+
+  const pi = usePhoneInput();
+
+  const [serverError, setServerError] = useState('');
 
   const { data: invitations } = useGraveInvitations(visible ? graveId : undefined);
   const createInvite = useCreateInvitation(graveId);
   const revokeInvite = useRevokeInvitation(graveId);
 
-  const digits = stripPhone(phone);
-  const isValid = digits.length === 10;
+  const displayError = serverError || pi.error;
+  const countryInfo = COUNTRIES_BY_CODE[pi.country];
 
   function handleSend() {
-    if (!isValid) {
-      setError(t('invite.invalidPhone'));
+    if (!pi.isValid || !pi.e164) {
+      setServerError(t('invite.invalidPhone'));
       return;
     }
 
-    setError('');
-    const fullPhone = `+1${digits}`;
+    setServerError('');
 
     createInvite.mutate(
-      { invitedBy: userId, recipient: fullPhone, role: 'viewer' },
+      { invitedBy: userId, recipient: pi.e164!, role: 'viewer' },
       {
         onSuccess: () => {
-          setPhone('');
+          pi.setNationalNumber('');
         },
         onError: () => {
-          setError(t('invite.sendError'));
+          setServerError(t('invite.sendError'));
         },
       },
     );
@@ -83,14 +87,15 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
   }
 
   function handleClose() {
-    setPhone('');
-    setError('');
+    pi.setNationalNumber('');
+    setServerError('');
     onClose();
   }
 
   const pendingInvites = invitations?.filter((inv) => inv.status === 'pending') ?? [];
 
   return (
+    <>
     <Modal visible={visible} transparent animationType="slide" statusBarTranslucent>
       <Pressable style={styles.backdrop} onPress={handleClose}>
         <Pressable
@@ -107,27 +112,33 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
 
           {/* Phone input */}
           <View style={styles.phoneRow}>
-            <View style={styles.countryCode}>
-              <Typography variant="body">+1</Typography>
-            </View>
+            <Pressable
+              style={styles.countryButton}
+              onPress={() => pi.setPickerOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('auth.selectCountry')}
+            >
+              <Typography variant="body">
+                {countryInfo?.flag ?? ''} {countryInfo?.dialCode ?? ''}
+              </Typography>
+            </Pressable>
             <TextInput
               style={styles.phoneInput}
-              value={formatUSPhone(phone)}
+              value={pi.formatted}
               onChangeText={(text) => {
-                setPhone(stripPhone(text));
-                setError('');
+                pi.setNationalNumber(stripPhone(text));
+                setServerError('');
               }}
               placeholder={t('invite.phonePlaceholder')}
               placeholderTextColor={colors.textTertiary}
               keyboardType="phone-pad"
-              maxLength={14}
               testID="invite-phone-input"
             />
           </View>
 
-          {error ? (
+          {displayError ? (
             <Typography variant="caption" color={colors.destructive}>
-              {error}
+              {displayError}
             </Typography>
           ) : null}
 
@@ -135,7 +146,7 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
             title={createInvite.isPending ? t('invite.sending') : t('invite.send')}
             icon="paper-plane"
             onPress={handleSend}
-            disabled={!isValid}
+            disabled={!pi.isValid}
             loading={createInvite.isPending}
             testID="invite-send-button"
           />
@@ -153,7 +164,7 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
                 renderItem={({ item }) => (
                   <View style={styles.inviteRow}>
                     <View style={styles.inviteInfo}>
-                      <Typography variant="body">{item.recipient}</Typography>
+                      <Typography variant="body">{formatPhoneDisplay(item.recipient)}</Typography>
                       <Typography variant="caption" color={STATUS_COLORS[item.status]}>
                         {t(`invite.${item.status}`)}
                       </Typography>
@@ -177,6 +188,13 @@ export function InviteFamilySheet({ visible, graveId, userId, onClose }: InviteF
         </Pressable>
       </Pressable>
     </Modal>
+
+    <CountryPickerSheet
+      visible={pi.pickerOpen}
+      onSelect={(c) => pi.setCountry(c.code)}
+      onClose={() => pi.setPickerOpen(false)}
+    />
+    </>
   );
 }
 
@@ -204,7 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
   },
-  countryCode: {
+  countryButton: {
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.sm,

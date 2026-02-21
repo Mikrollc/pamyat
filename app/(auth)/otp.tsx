@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Typography, Button } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { fetchProfile } from '@/lib/api/profiles';
+import { formatPhoneDisplay } from '@/lib/format-phone';
 import { colors, spacing, radii } from '@/constants/tokens';
 
 const CODE_LENGTH = 6;
@@ -99,7 +100,7 @@ export default function OtpScreen() {
       <View style={styles.content}>
         <Typography variant="h2">{t('auth.enterCode')}</Typography>
         <Typography variant="body" color={colors.textSecondary}>
-          {phone}
+          {formatPhoneDisplay(phone ?? '')}
         </Typography>
 
         <Pressable style={styles.codeRow} onPress={() => hiddenInput.current?.focus()}>

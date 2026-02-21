@@ -7,6 +7,7 @@ export { useNearbyCemeteries } from './useNearbyCemeteries';
 export { useWaitlistStatus, useJoinWaitlist } from './useWaitlist';
 export { usePublishGrave } from './usePublishGrave';
 export { useSession } from './useSession';
+export { usePhoneInput } from './usePhoneInput';
 export { useGraveMembership } from './useGraveMembership';
 export { useMapGraves } from './useMapGraves';
 export { useCemeterySearch } from './useCemeterySearch';

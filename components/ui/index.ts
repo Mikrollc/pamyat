@@ -6,3 +6,4 @@ export { ConfirmModal } from './ConfirmModal';
 export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
 export { Skeleton, GraveCardSkeleton, GravesListSkeleton } from './Skeleton';
+export { CountryPickerSheet } from './CountryPickerSheet';

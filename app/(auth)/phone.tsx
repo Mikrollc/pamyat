@@ -1,47 +1,49 @@
 import { useState } from 'react';
-import { View, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Typography, Button } from '@/components/ui';
+import { Typography, Button, CountryPickerSheet } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
-import { formatUSPhone, stripPhone } from '@/lib/format-phone';
+import { stripPhone } from '@/lib/format-phone';
+import { usePhoneInput } from '@/hooks/usePhoneInput';
+import { COUNTRIES_BY_CODE } from '@/lib/country-data';
 import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
 
 export default function PhoneScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [serverError, setServerError] = useState('');
 
-  const digits = stripPhone(phone);
-  const isValid = digits.length === 10;
+  const pi = usePhoneInput();
+
+  const displayError = serverError || pi.error;
+  const countryInfo = COUNTRIES_BY_CODE[pi.country];
 
   async function handleSendCode() {
-    if (!isValid) {
-      setError(t('auth.invalidPhone'));
+    if (!pi.isValid || !pi.e164) {
+      setServerError(t('auth.invalidPhone'));
       return;
     }
 
-    setError('');
+    setServerError('');
     setLoading(true);
 
-    const fullPhone = `+1${digits}`;
-    const { error: otpError } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+    const { error: otpError } = await supabase.auth.signInWithOtp({ phone: pi.e164 });
 
     setLoading(false);
 
     if (otpError) {
       if (__DEV__) console.error('OTP error:', otpError.message, otpError.status);
       if (otpError.message?.includes('fetch') || otpError.status === 0) {
-        setError(t('auth.networkError'));
+        setServerError(t('auth.networkError'));
       } else {
-        setError(t('auth.otpSendError'));
+        setServerError(t('auth.otpSendError'));
       }
       return;
     }
 
-    router.push({ pathname: '/(auth)/otp', params: { phone: fullPhone } });
+    router.push({ pathname: '/(auth)/otp', params: { phone: pi.e164 } });
   }
 
   return (
@@ -53,28 +55,34 @@ export default function PhoneScreen() {
         <Typography variant="h2">{t('auth.enterPhone')}</Typography>
 
         <View style={styles.phoneRow}>
-          <View style={styles.countryCode}>
-            <Typography variant="body">+1</Typography>
-          </View>
+          <Pressable
+            style={styles.countryButton}
+            onPress={() => pi.setPickerOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('auth.selectCountry')}
+          >
+            <Typography variant="body">
+              {countryInfo?.flag ?? ''} {countryInfo?.dialCode ?? ''}
+            </Typography>
+          </Pressable>
           <TextInput
             style={styles.phoneInput}
-            value={formatUSPhone(phone)}
+            value={pi.formatted}
             onChangeText={(text) => {
-              setPhone(stripPhone(text));
-              setError('');
+              pi.setNationalNumber(stripPhone(text));
+              setServerError('');
             }}
-            placeholder="(555) 123-4567"
+            placeholder={t('auth.phonePlaceholder')}
             placeholderTextColor={colors.textTertiary}
             keyboardType="phone-pad"
-            maxLength={14}
             autoFocus
             testID="phone-input"
           />
         </View>
 
-        {error ? (
+        {displayError ? (
           <Typography variant="caption" color={colors.destructive}>
-            {error}
+            {displayError}
           </Typography>
         ) : null}
       </View>
@@ -85,9 +93,15 @@ export default function PhoneScreen() {
           icon="paper-plane"
           onPress={handleSendCode}
           loading={loading}
-          disabled={!isValid}
+          disabled={!pi.isValid}
         />
       </View>
+
+      <CountryPickerSheet
+        visible={pi.pickerOpen}
+        onSelect={(c) => pi.setCountry(c.code)}
+        onClose={() => pi.setPickerOpen(false)}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -106,7 +120,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
   },
-  countryCode: {
+  countryButton: {
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.sm,
