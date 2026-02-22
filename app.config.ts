@@ -19,6 +19,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: 'com.mikrollc.raduna',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
+      NSLocationWhenInUseUsageDescription:
+        'Raduna uses your location to find nearby cemeteries and help you navigate to grave sites.',
     },
   },
   android: {
