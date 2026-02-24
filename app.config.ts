@@ -51,6 +51,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     '@rnmapbox/maps',
     [
+      '@sentry/react-native/expo',
+      {
+        organization: process.env.SENTRY_ORG,
+        project: 'raduna',
+      },
+    ],
+    [
       'expo-image-picker',
       {
         photosPermission: 'Raduna needs access to your photos to add memorial images.',
