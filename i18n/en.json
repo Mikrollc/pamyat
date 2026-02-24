@@ -131,7 +131,8 @@
     "bannerMessage": "{{name}} invited you to view {{person}}'s memorial",
     "accept": "Accept",
     "dismiss": "Later",
-    "acceptError": "Could not accept invite. Try again."
+    "acceptError": "Could not accept invite. Try again.",
+    "receivedSubtitle": "Invited to view this memorial"
   },
   "notifications": {
     "empty": "No upcoming dates",

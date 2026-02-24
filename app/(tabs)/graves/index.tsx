@@ -20,6 +20,7 @@ import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { GravesListSkeleton } from '@/components/ui/Skeleton';
+import { PendingInvitations } from '@/components/invite/PendingInvitations';
 import { colors, spacing } from '@/constants/tokens';
 
 const THUMB_SIZE = 64;
@@ -92,6 +93,7 @@ export default function GravesScreen() {
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={refetch} />
         }
+        ListHeaderComponent={<PendingInvitations />}
         ListEmptyComponent={
           <EmptyState
             icon="book"
