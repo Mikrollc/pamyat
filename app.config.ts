@@ -5,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: 'Raduna',
   slug: 'raduna',
   owner: 'mikrollc0033',
-  version: '1.0.0',
+  version: process.env.APP_VERSION || '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'raduna',
