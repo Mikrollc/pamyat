@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -65,6 +66,7 @@ function ProfileRow({
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const session = useSession();
   const { data: profile } = useProfile(session?.user.id);
 
@@ -129,6 +131,12 @@ export default function ProfileScreen() {
           label={t('profile.termsOfService')}
           onPress={() => WebBrowser.openBrowserAsync('https://raduna.app/terms')}
           testID="terms-of-service-button"
+        />
+        <ProfileRow
+          icon="code"
+          label={t('profile.licenses')}
+          onPress={() => router.push('/(tabs)/profile/licenses')}
+          testID="oss-licenses-button"
         />
       </View>
 

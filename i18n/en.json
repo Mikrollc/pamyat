@@ -165,7 +165,8 @@
     "deleteAccount": "Delete Account",
     "deleteAccountConfirm": "This will permanently delete your account and all your memorials. This cannot be undone.",
     "deleteAccountError": "Failed to delete account. Please try again.",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "licenses": "Open Source Licenses"
   },
   "manage": {
     "title": "Edit Memorial",
