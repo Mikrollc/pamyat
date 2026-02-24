@@ -14,11 +14,15 @@ import '@/i18n';
 
 export { ErrorBoundary } from 'expo-router';
 
-Sentry.init({
-  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-  enabled: !__DEV__,
-  tracesSampleRate: 0,
-});
+const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN;
+
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    enabled: !__DEV__,
+    tracesSampleRate: 0,
+  });
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -129,4 +133,4 @@ function RootLayout() {
   );
 }
 
-export default Sentry.wrap(RootLayout);
+export default SENTRY_DSN ? Sentry.wrap(RootLayout) : RootLayout;
