@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Sentry from '@sentry/react-native';
 import { useFonts } from 'expo-font';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -13,16 +12,6 @@ import SplashOverlay from '@/components/SplashOverlay';
 import '@/i18n';
 
 export { ErrorBoundary } from 'expo-router';
-
-const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN;
-
-if (SENTRY_DSN) {
-  Sentry.init({
-    dsn: SENTRY_DSN,
-    enabled: !__DEV__,
-    tracesSampleRate: 0,
-  });
-}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -133,4 +122,4 @@ function RootLayout() {
   );
 }
 
-export default SENTRY_DSN ? Sentry.wrap(RootLayout) : RootLayout;
+export default RootLayout;
