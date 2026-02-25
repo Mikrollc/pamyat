@@ -27,6 +27,7 @@ export function MapPinSelector({
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const [locating, setLocating] = useState(false);
   const zoomRef = useRef(DEFAULT_ZOOM);
+  const initializedRef = useRef(false);
 
   const initialCenter: [number, number] =
     longitude != null && latitude != null
@@ -54,6 +55,16 @@ export function MapPinSelector({
   const handleRegionChange = (state: { properties: { center: GeoJSON.Position } }) => {
     const [lng, lat] = state.properties.center;
     if (lat == null || lng == null) return;
+
+    // Skip the first idle event — it fires before the camera settles on the
+    // initial position, which would overwrite a pre-set cemetery location
+    // with the default map center.
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      centerRef.current = [lng, lat];
+      return;
+    }
+
     centerRef.current = [lng, lat];
     onLocationChange(lat, lng, true);
   };
