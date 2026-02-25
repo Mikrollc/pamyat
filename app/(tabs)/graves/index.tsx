@@ -3,8 +3,10 @@ import {
   View,
   FlatList,
   Image,
+  Text,
   Pressable,
   RefreshControl,
+  Platform,
   StyleSheet,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -21,9 +23,10 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { GravesListSkeleton } from '@/components/ui/Skeleton';
 import { PendingInvitations } from '@/components/invite/PendingInvitations';
-import { colors, spacing } from '@/constants/tokens';
+import { colors, spacing, radii } from '@/constants/tokens';
 
-const THUMB_SIZE = 64;
+const THUMB_SIZE = 72;
+const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 export default function GravesScreen() {
   const { t } = useTranslation();
@@ -110,56 +113,59 @@ export default function GravesScreen() {
             />
           </EmptyState>
         }
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => router.push(`/memorial/${item.slug}`)}
-            accessibilityRole="button"
-            accessibilityLabel={item.person_name}
-          >
-            <Card style={styles.card}>
-              <View style={styles.row}>
-                {item.cover_photo_path ? (
-                  <Image
-                    source={{ uri: getGravePhotoUrl(item.cover_photo_path) }}
-                    style={styles.thumb}
-                  />
-                ) : (
-                  <View style={[styles.thumb, styles.placeholder]}>
-                    <FontAwesome
-                      name="image"
-                      size={24}
-                      color={colors.textTertiary}
+        renderItem={({ item }) => {
+          const dateStr = formatGraveDateRange(
+            item.birth_year,
+            item.birth_month,
+            item.birth_day,
+            item.death_year,
+            item.death_month,
+            item.death_day,
+          );
+          return (
+            <Pressable
+              onPress={() => router.push(`/memorial/${item.slug}`)}
+              accessibilityRole="button"
+              accessibilityLabel={item.person_name}
+            >
+              <Card style={styles.card}>
+                <View style={styles.row}>
+                  {item.cover_photo_path ? (
+                    <Image
+                      source={{ uri: getGravePhotoUrl(item.cover_photo_path) }}
+                      style={styles.thumb}
                     />
-                  </View>
-                )}
-                <View style={styles.info}>
-                  <Typography variant="body" numberOfLines={2}>
-                    {item.person_name}
-                  </Typography>
-                  <Typography variant="caption" color={colors.textSecondary}>
-                    {formatGraveDateRange(
-                      item.birth_year,
-                      item.birth_month,
-                      item.birth_day,
-                      item.death_year,
-                      item.death_month,
-                      item.death_day,
-                    )}
-                  </Typography>
-                  {item.cemetery?.name && (
-                    <Typography
-                      variant="caption"
-                      color={colors.textTertiary}
-                      numberOfLines={1}
-                    >
-                      {item.cemetery.name}
-                    </Typography>
+                  ) : (
+                    <View style={[styles.thumb, styles.placeholder]}>
+                      <FontAwesome
+                        name="camera"
+                        size={24}
+                        color="rgba(255,255,255,0.4)"
+                      />
+                    </View>
                   )}
+                  <View style={styles.info}>
+                    <Text style={styles.personName} numberOfLines={2}>
+                      {item.person_name}
+                    </Text>
+                    {dateStr ? (
+                      <Text style={styles.dates}>{dateStr}</Text>
+                    ) : null}
+                    {item.cemetery?.name ? (
+                      <View style={styles.cemeteryRow}>
+                        <FontAwesome name="map-marker" size={11} color={colors.textTertiary} />
+                        <Text style={styles.cemetery} numberOfLines={1}>
+                          {item.cemetery.name}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <FontAwesome name="chevron-right" size={14} color={colors.textTertiary} />
                 </View>
-              </View>
-            </Card>
-          </Pressable>
-        )}
+              </Card>
+            </Pressable>
+          );
+        }}
       />
     </View>
   );
@@ -197,15 +203,37 @@ const styles = StyleSheet.create({
   thumb: {
     width: THUMB_SIZE,
     height: THUMB_SIZE,
-    borderRadius: spacing.sm,
+    borderRadius: radii.md,
   },
   placeholder: {
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: '#2c3e2c',
     alignItems: 'center',
     justifyContent: 'center',
   },
   info: {
     flex: 1,
-    gap: 2,
+    gap: 3,
+  },
+  personName: {
+    fontFamily: SERIF_FONT,
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    lineHeight: 22,
+  },
+  dates: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.primary,
+    letterSpacing: 0.3,
+  },
+  cemeteryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  cemetery: {
+    fontSize: 13,
+    color: colors.textTertiary,
   },
 });
