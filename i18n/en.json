@@ -53,7 +53,7 @@
     "month": "Month",
     "year": "Year",
     "datesFor": "Dates for {{name}}",
-    "dateFieldsHint": "You can leave Day or Month blank if unknown.",
+    "dateFieldsHint": "All date fields are optional. Skip if you don't know.",
     "unknownDate": "Unknown",
     "takePhoto": "Take Photo",
     "chooseGallery": "Choose from Gallery",

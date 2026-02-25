@@ -28,6 +28,7 @@ export function StepDates({ onNext, onBack }: StepDatesProps) {
   );
   const dateOrderError = !dateOrderValid ? t('addGrave.deathBeforeBirth') : null;
 
+  const hasDates = store.birthDate.year != null || store.deathDate.year != null;
   const canProceed = birthValid && deathValid && dateOrderValid;
 
   const relKeys: Record<string, string> = {
@@ -119,7 +120,7 @@ export function StepDates({ onNext, onBack }: StepDatesProps) {
         <View style={styles.nextButton}>
           <Button
             variant="brand"
-            title={t('common.next')}
+            title={hasDates ? t('common.next') : t('common.skip')}
             icon="arrow-right"
             onPress={onNext}
             disabled={!canProceed}
