@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raduna — Memorial Detail Screen Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: #111;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+    color: #fff;
+  }
+
+  .page-header { text-align: center; margin-bottom: 48px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; color: #666; max-width: 500px; margin: 0 auto; line-height: 1.5; }
+
+  .comparison {
+    display: flex; gap: 48px; justify-content: center; align-items: flex-start; flex-wrap: wrap;
+  }
+
+  .comp-col { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .comp-label {
+    font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase;
+    letter-spacing: 2px; display: flex; align-items: center; gap: 8px;
+  }
+  .comp-label .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-before { background: #ff4444; }
+  .dot-after { background: #34c759; }
+
+  /* ══ iPHONE FRAME ══ */
+  .phone {
+    width: 390px; height: 844px; border-radius: 52px;
+    background: #0a0a0a; padding: 4px; position: relative;
+    box-shadow: 0 0 0 2px #222, 0 20px 60px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+  .phone-side { position: absolute; right: -3px; top: 180px; width: 3px; height: 80px; background: #222; border-radius: 0 2px 2px 0; }
+  .phone-vol1 { position: absolute; left: -3px; top: 160px; width: 3px; height: 36px; background: #222; border-radius: 2px 0 0 2px; }
+  .phone-vol2 { position: absolute; left: -3px; top: 210px; width: 3px; height: 36px; background: #222; border-radius: 2px 0 0 2px; }
+
+  .scr {
+    width: 100%; height: 100%; border-radius: 48px;
+    overflow: hidden; position: relative; background: #fff;
+  }
+  .scr-scroll {
+    width: 100%; height: 100%; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scr-scroll::-webkit-scrollbar { display: none; }
+
+  .island {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 50;
+  }
+  .home-ind {
+    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    width: 134px; height: 5px; border-radius: 3px; background: rgba(0,0,0,0.18); z-index: 50;
+  }
+
+  /* ══ BEFORE (Current) ══ */
+  .before-nav {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 58px 16px 12px; background: #fff;
+  }
+  .before-nav svg { cursor: pointer; }
+
+  .before-photo {
+    width: 100%; height: 340px; background: #4a6741;
+    position: relative; overflow: hidden;
+  }
+  /* Simplified representation of the cross photo */
+  .before-photo-inner {
+    width: 100%; height: 100%;
+    background:
+      linear-gradient(180deg, rgba(74,103,65,0.3) 0%, rgba(74,103,65,0.6) 100%),
+      linear-gradient(135deg, #5a7a50 0%, #3d5a35 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .before-info { padding: 24px 16px; }
+  .before-name { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 6px; }
+  .before-dates { font-size: 16px; color: #666; margin-bottom: 6px; }
+  .before-cem { font-size: 15px; color: #888; margin-bottom: 4px; }
+  .before-plot { font-size: 15px; color: #888; margin-bottom: 4px; }
+  .before-rel { font-size: 15px; color: #888; margin-bottom: 24px; }
+
+  .before-cta {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 24px; border-radius: 14px;
+    background: #8a7a2a; color: #fff;
+    font-size: 16px; font-weight: 600; width: calc(100% - 32px);
+    margin: 0 16px;
+  }
+
+  /* ══ AFTER (Redesigned) ══ */
+
+  /* Floating nav over photo */
+  .after-nav {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 40;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 58px 16px 12px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 100%);
+  }
+  .nav-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: none;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn-right { display: flex; gap: 8px; }
+
+  /* Hero photo section */
+  .after-photo {
+    width: 100%; height: 380px; position: relative; overflow: hidden;
+  }
+  .after-photo-inner {
+    width: 100%; height: 100%;
+    background:
+      linear-gradient(180deg, rgba(74,103,65,0.2) 0%, rgba(74,103,65,0.5) 100%),
+      linear-gradient(135deg, #5a7a50 0%, #3d5a35 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Bottom fade for content overlap */
+  .after-photo::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: linear-gradient(transparent, #fff);
+  }
+  /* Photo counter pill */
+  .photo-counter {
+    position: absolute; bottom: 70px; right: 16px;
+    padding: 5px 10px; border-radius: 8px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    font-size: 12px; font-weight: 600; color: #fff;
+    z-index: 5;
+  }
+
+  /* Main content area */
+  .after-content {
+    position: relative; z-index: 1;
+    padding: 0 20px;
+    margin-top: -20px;
+  }
+
+  /* Name + dates header */
+  .after-header { margin-bottom: 24px; }
+  .after-name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 30px; font-weight: 600; color: #000;
+    line-height: 1.15; margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .after-dates {
+    font-size: 15px; font-weight: 500; color: #1a5c54;
+    letter-spacing: 0.5px;
+  }
+  .after-dates span {
+    color: #bbb; margin: 0 6px;
+  }
+
+  /* Relationship badge */
+  .rel-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 8px;
+    background: #f0eeeb; margin-top: 10px;
+    font-size: 13px; font-weight: 600; color: #666;
+  }
+  .rel-badge svg { opacity: 0.5; }
+
+  /* Info sections */
+  .info-section {
+    padding: 20px 0;
+    border-top: 1px solid #f0eeeb;
+  }
+
+  .info-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 4px 0;
+  }
+  .info-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: #f5f3f0; display: flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .info-text {}
+  .info-label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+  .info-value { font-size: 16px; font-weight: 500; color: #1a1a1a; }
+  .info-value-sub { font-size: 13px; color: #999; margin-top: 1px; }
+
+  /* Epitaph / Notes */
+  .epitaph-section {
+    padding: 20px 0;
+    border-top: 1px solid #f0eeeb;
+  }
+  .epitaph-label {
+    font-size: 11px; font-weight: 700; color: #aaa;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+  }
+  .epitaph-text {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 20px; font-weight: 500; font-style: italic;
+    color: #444; line-height: 1.5;
+  }
+
+  /* Actions */
+  .actions-section {
+    padding: 20px 0;
+    border-top: 1px solid #f0eeeb;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .action-primary {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px; border-radius: 14px;
+    background: #1a5c54; color: #fff;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer; border: none; width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(26,92,84,0.2);
+  }
+  .action-primary:hover { background: #1e6b62; transform: translateY(-1px); }
+
+  .action-row { display: flex; gap: 10px; }
+  .action-secondary {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px; border-radius: 14px;
+    background: #f5f3f0; color: #444;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .action-secondary:hover { background: #eceae6; }
+
+  /* Bottom safe area padding */
+  .safe-bottom { height: 40px; }
+
+  /* ══ ANNOTATIONS ══ */
+  .annotations {
+    max-width: 320px; margin-top: 40px;
+  }
+  .anno-title {
+    font-size: 11px; font-weight: 700; color: #555;
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;
+  }
+  .anno-list { display: flex; flex-direction: column; gap: 12px; }
+  .anno-item {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .anno-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #1a5c54; color: #fff;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .anno-text { font-size: 13px; color: #888; line-height: 1.5; }
+  .anno-text strong { color: #ccc; }
+
+  /* SVG cross representation for mockup */
+  .cross-svg { opacity: 0.9; }
+
+  @media (max-width: 900px) {
+    .comparison { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Memorial Detail — Redesign</h1>
+  <p>Side-by-side comparison of the current screen vs. the improved version with better hierarchy, structure, and brand consistency.</p>
+</div>
+
+<div class="comparison">
+
+  <!-- ══════════════════════════════════
+       BEFORE (Current Design)
+       ══════════════════════════════════ -->
+  <div class="comp-col">
+    <div class="comp-label"><div class="dot dot-before"></div> Current</div>
+    <div class="phone">
+      <div class="phone-side"></div><div class="phone-vol1"></div><div class="phone-vol2"></div>
+      <div class="scr">
+        <div class="island"></div>
+        <div class="scr-scroll">
+          <div class="before-nav">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"><path d="M11 4H4v14a2 2 0 002 2h12a2 2 0 002-2V7l-5-3z"/><path d="M15.5 2.5L18 5"/><path d="M12 18v-6"/></svg>
+          </div>
+
+          <div class="before-photo">
+            <div class="before-photo-inner">
+              <svg class="cross-svg" width="140" height="240" viewBox="0 0 140 240" fill="none">
+                <!-- Orthodox cross -->
+                <rect x="58" y="10" width="24" height="220" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1"/>
+                <!-- Top bar -->
+                <rect x="38" y="40" width="64" height="8" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1"/>
+                <!-- Middle bar -->
+                <rect x="28" y="80" width="84" height="8" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1"/>
+                <!-- Bottom slanted bar -->
+                <rect x="38" y="160" width="64" height="8" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1" transform="rotate(-15, 70, 164)"/>
+                <!-- Text on cross -->
+                <text x="70" y="110" text-anchor="middle" fill="#666" font-size="9" font-weight="600" font-family="serif">ЕЛЕНА МИГАЛИВ</text>
+                <text x="70" y="128" text-anchor="middle" fill="#888" font-size="9" font-family="serif">1918</text>
+                <text x="70" y="148" text-anchor="middle" fill="#888" font-size="8" font-family="serif">ПОМЕРЛА</text>
+                <text x="70" y="180" text-anchor="middle" fill="#888" font-size="8" font-family="serif">НОВ 2</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="before-info">
+            <div class="before-name">Елена Ивановна Соколова</div>
+            <div class="before-dates">08.07.1945 — 14.05.2021</div>
+            <div class="before-cem">Mount Hebron Cemetery</div>
+            <div class="before-plot">Plot</div>
+            <div class="before-rel">grandparent</div>
+          </div>
+
+          <div class="before-cta">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+            Get notified when care services launch
+          </div>
+
+          <div style="height:300px;"></div>
+        </div>
+        <div class="home-ind"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       AFTER (Redesigned)
+       ══════════════════════════════════ -->
+  <div class="comp-col">
+    <div class="comp-label"><div class="dot dot-after"></div> Redesigned</div>
+    <div class="phone">
+      <div class="phone-side"></div><div class="phone-vol1"></div><div class="phone-vol2"></div>
+      <div class="scr">
+        <div class="island"></div>
+        <div class="scr-scroll">
+
+          <!-- Photo with overlaid nav -->
+          <div class="after-photo">
+            <div class="after-photo-inner">
+              <svg class="cross-svg" width="140" height="240" viewBox="0 0 140 240" fill="none">
+                <rect x="58" y="10" width="24" height="220" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1"/>
+                <rect x="38" y="40" width="64" height="8" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1"/>
+                <rect x="28" y="80" width="84" height="8" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1"/>
+                <rect x="38" y="160" width="64" height="8" rx="2" fill="#e8e0d0" stroke="#d0c8b8" stroke-width="1" transform="rotate(-15, 70, 164)"/>
+                <text x="70" y="110" text-anchor="middle" fill="#666" font-size="9" font-weight="600" font-family="serif">ЕЛЕНА МИГАЛИВ</text>
+                <text x="70" y="128" text-anchor="middle" fill="#888" font-size="9" font-family="serif">1918</text>
+                <text x="70" y="148" text-anchor="middle" fill="#888" font-size="8" font-family="serif">ПОМЕРЛА</text>
+                <text x="70" y="180" text-anchor="middle" fill="#888" font-size="8" font-family="serif">НОВ 2</text>
+              </svg>
+            </div>
+            <!-- Floating nav -->
+            <div class="after-nav">
+              <button class="nav-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              </button>
+              <div class="nav-btn-right">
+                <button class="nav-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                </button>
+                <button class="nav-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="photo-counter">1 / 1</div>
+          </div>
+
+          <!-- Content -->
+          <div class="after-content">
+
+            <!-- Header -->
+            <div class="after-header">
+              <div class="after-name">Елена Ивановна Соколова</div>
+              <div class="after-dates">
+                08.07.1945 <span>—</span> 14.05.2021
+              </div>
+              <div class="rel-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+                Grandparent
+              </div>
+            </div>
+
+            <!-- Cemetery & Plot info -->
+            <div class="info-section">
+              <div class="info-row">
+                <div class="info-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5c54" stroke-width="2" stroke-linecap="round"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                </div>
+                <div class="info-text">
+                  <div class="info-label">Cemetery</div>
+                  <div class="info-value">Mount Hebron Cemetery</div>
+                  <div class="info-value-sub">Flushing, Queens, NY</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <div class="info-row">
+                <div class="info-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5c54" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                </div>
+                <div class="info-text">
+                  <div class="info-label">Plot</div>
+                  <div class="info-value">Section 4, Row B, Plot 12</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Epitaph -->
+            <div class="epitaph-section">
+              <div class="epitaph-label">Notes</div>
+              <div class="epitaph-text">
+                «Ты всегда в наших сердцах, бабушка.»
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions-section">
+              <button class="action-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+                Notify Me About Care Services
+              </button>
+              <div class="action-row">
+                <button class="action-secondary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  Add Photo
+                </button>
+                <button class="action-secondary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                  More
+                </button>
+              </div>
+            </div>
+
+            <div class="safe-bottom"></div>
+          </div>
+        </div>
+        <div class="home-ind"></div>
+      </div>
+    </div>
+
+    <!-- Annotations -->
+    <div class="annotations">
+      <div class="anno-title">What Changed</div>
+      <div class="anno-list">
+        <div class="anno-item">
+          <div class="anno-num">1</div>
+          <div class="anno-text"><strong>Nav overlays the photo</strong> — glass-morphism buttons save vertical space and feel more immersive. Added share button.</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">2</div>
+          <div class="anno-text"><strong>Photo fades into content</strong> — gradient at the bottom creates a seamless transition instead of a hard cut.</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">3</div>
+          <div class="anno-text"><strong>Serif name + brand green dates</strong> — Cormorant Garamond for the name adds dignity. Dates in brand green create a clear visual anchor.</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">4</div>
+          <div class="anno-text"><strong>Relationship badge</strong> — "grandparent" becomes a styled chip instead of plain text.</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">5</div>
+          <div class="anno-text"><strong>Structured info rows</strong> — cemetery and plot get icons, labels, and secondary text. Plot now shows actual data instead of just "Plot".</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">6</div>
+          <div class="anno-text"><strong>Epitaph section</strong> — italic serif quote gives the notes section emotional weight.</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">7</div>
+          <div class="anno-text"><strong>Brand green CTA</strong> — replaced the off-brand gold with your #1a5c54 green. Shortened the text. Added secondary actions (Add Photo, More).</div>
+        </div>
+        <div class="anno-item">
+          <div class="anno-num">8</div>
+          <div class="anno-text"><strong>No dead space</strong> — the bottom half is now filled with structured content instead of empty white.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
