@@ -21,11 +21,11 @@ import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, radii } from '@/constants/tokens';
 
 const BOTTOM_BAR_HEIGHT = 56;
 const HERO_HEIGHT = 380;
-const NAV_BTN_SIZE = 36;
 const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 export default function MemorialPageScreen() {
@@ -138,19 +138,16 @@ export default function MemorialPageScreen() {
             />
           ) : (
             <View style={styles.heroPlaceholder}>
-              <FontAwesome name="camera" size={48} color={colors.textSecondary} />
+              <FontAwesome name="camera" size={48} color="rgba(255,255,255,0.3)" />
             </View>
           )}
 
           {/* Dark gradient at top for nav readability */}
-          <View style={styles.navOverlay} pointerEvents="none">
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.35)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.25)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.15)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.08)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.02)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0)' }]} />
-          </View>
+          <LinearGradient
+            colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.25)', 'transparent']}
+            style={styles.navOverlay}
+            pointerEvents="none"
+          />
 
           {/* Floating nav buttons */}
           <View style={[styles.floatingNav, { paddingTop: insets.top + spacing.sm }]}>
@@ -195,14 +192,11 @@ export default function MemorialPageScreen() {
           ) : null}
 
           {/* Bottom gradient fade into content */}
-          <View style={styles.bottomGradient} pointerEvents="none">
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.15)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.35)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.55)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.8)' }]} />
-            <View style={[styles.gradientStrip, { backgroundColor: colors.backgroundPrimary }]} />
-          </View>
+          <LinearGradient
+            colors={['transparent', 'rgba(255,255,255,0.6)', colors.backgroundPrimary]}
+            style={styles.bottomGradient}
+            pointerEvents="none"
+          />
         </View>
 
         {/* Content area — overlaps photo slightly */}
@@ -363,7 +357,7 @@ const styles = StyleSheet.create({
   heroPlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: '#2c3e2c',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -388,10 +382,12 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   navBtn: {
-    width: NAV_BTN_SIZE,
-    height: NAV_BTN_SIZE,
-    borderRadius: NAV_BTN_SIZE / 2,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -425,10 +421,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 60,
   },
-  gradientStrip: {
-    flex: 1,
-  },
-
   /* Content */
   content: {
     paddingHorizontal: spacing.lg,
