@@ -6,6 +6,8 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
+  Share,
+  Platform,
   StyleSheet,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -14,14 +16,17 @@ import { useTranslation } from 'react-i18next';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useGrave, useSession, useGraveMembership, useWaitlistStatus, useJoinWaitlist } from '@/hooks';
 import { getGravePhotoUrl } from '@/lib/api/photos';
-import { formatGraveDateRange } from '@/lib/format-dates';
+import { formatGraveDate } from '@/lib/format-dates';
 import { Button } from '@/components/ui/Button';
 import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
-import { colors, spacing, typography as typographyTokens } from '@/constants/tokens';
+import { colors, spacing, radii } from '@/constants/tokens';
 
 const BOTTOM_BAR_HEIGHT = 56;
+const HERO_HEIGHT = 380;
+const NAV_BTN_SIZE = 36;
+const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 export default function MemorialPageScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -37,6 +42,20 @@ export default function MemorialPageScreen() {
 
   const canEdit = membership?.role === 'owner' || membership?.role === 'editor';
   const isOnWaitlist = !!waitlistEntry;
+
+  async function handleShare() {
+    if (!grave) return;
+    const url = `https://raduna.app/memorial/${grave.slug}`;
+    try {
+      await Share.share(
+        Platform.OS === 'ios'
+          ? { message: grave.person_name, url }
+          : { message: `${grave.person_name}\n${url}` },
+      );
+    } catch {
+      // user cancelled or share failed
+    }
+  }
 
   function handleWaitlistPress() {
     if (!session) {
@@ -85,114 +104,213 @@ export default function MemorialPageScreen() {
     );
   }
 
+  const birthDate = formatGraveDate(grave.birth_year, grave.birth_month, grave.birth_day);
+  const deathDate = formatGraveDate(grave.death_year, grave.death_month, grave.death_day);
+
+  const cemeterySubtitle = [grave.cemetery?.city, grave.cemetery?.state]
+    .filter(Boolean)
+    .join(', ');
+
+  const relationshipLabel = membership?.relationship
+    ? t(`addGrave.relationships.${membership.relationship}`, membership.relationship)
+    : null;
+
   return (
     <View style={styles.root}>
-      {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
-        <Pressable
-          onPress={() => router.back()}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel={t('common.back')}
-          style={styles.headerIconButton}
-        >
-          <FontAwesome name="arrow-left" size={18} color={colors.textPrimary} />
-        </Pressable>
-
-        <View style={styles.headerRight}>
-          {canEdit && (
-            <Pressable
-              onPress={() => router.push(`/memorial/edit/${slug}`)}
-              hitSlop={12}
-              accessibilityRole="button"
-              accessibilityLabel={t('graves.edit')}
-              style={styles.headerIconButton}
-            >
-              <FontAwesome name="pencil" size={18} color={colors.textPrimary} />
-            </Pressable>
-          )}
-        </View>
-      </View>
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
-          !session ? { paddingBottom: insets.bottom + BOTTOM_BAR_HEIGHT + spacing.md } : { paddingBottom: insets.bottom + spacing.xl },
+          !session
+            ? { paddingBottom: insets.bottom + BOTTOM_BAR_HEIGHT + spacing.md }
+            : { paddingBottom: insets.bottom + spacing.xl },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero photo */}
-        {grave.cover_photo_path ? (
-          <Image
-            source={{ uri: getGravePhotoUrl(grave.cover_photo_path) }}
-            style={styles.heroPhoto}
-            resizeMode="cover"
-            accessibilityLabel={grave.person_name}
-          />
-        ) : (
-          <View style={styles.heroPlaceholder}>
-            <FontAwesome name="camera" size={48} color={colors.textSecondary} />
-          </View>
-        )}
-
-        {/* Info section */}
-        <View style={styles.infoSection}>
-          <Typography variant="h2">{grave.person_name}</Typography>
-
-          <Typography variant="body" color={colors.textSecondary}>
-            {formatGraveDateRange(
-              grave.birth_year,
-              grave.birth_month,
-              grave.birth_day,
-              grave.death_year,
-              grave.death_month,
-              grave.death_day,
-            )}
-          </Typography>
-
-          {grave.cemetery?.name ? (
-            <Typography variant="bodySmall" color={colors.textTertiary}>
-              {grave.cemetery.name}
-            </Typography>
-          ) : null}
-
-          {grave.plot_info ? (
-            <Typography variant="bodySmall" color={colors.textTertiary}>
-              {grave.plot_info}
-            </Typography>
-          ) : null}
-
-          {membership?.relationship ? (
-            <Typography variant="bodySmall" color={colors.textTertiary}>
-              {t(`addGrave.relationships.${membership.relationship}`, membership.relationship)}
-            </Typography>
-          ) : null}
-
-          {grave.inscription ? (
-            <Text style={styles.inscription}>{grave.inscription}</Text>
-          ) : null}
-        </View>
-
-        {/* Waitlist CTA */}
-        <View style={styles.ctaSection}>
-          {isOnWaitlist ? (
-            <Button
-              variant="secondary"
-              disabled
-              title={t('memorial.onWaitlist')}
-              icon="clock-o"
-              onPress={() => {}}
+        {/* Hero photo with overlaid nav */}
+        <View style={styles.heroContainer}>
+          {grave.cover_photo_path ? (
+            <Image
+              source={{ uri: getGravePhotoUrl(grave.cover_photo_path) }}
+              style={styles.heroPhoto}
+              resizeMode="cover"
+              accessibilityLabel={grave.person_name}
             />
           ) : (
-            <Button
-              variant="accent"
-              title={t('memorial.wantCare')}
-              icon="heart"
-              onPress={handleWaitlistPress}
-              loading={joinWaitlist.isPending}
-            />
+            <View style={styles.heroPlaceholder}>
+              <FontAwesome name="camera" size={48} color={colors.textSecondary} />
+            </View>
           )}
+
+          {/* Dark gradient at top for nav readability */}
+          <View style={styles.navOverlay} pointerEvents="none">
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.35)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.25)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.15)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.08)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0.02)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(0,0,0,0)' }]} />
+          </View>
+
+          {/* Floating nav buttons */}
+          <View style={[styles.floatingNav, { paddingTop: insets.top + spacing.sm }]}>
+            <Pressable
+              onPress={() => router.back()}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.back')}
+              style={styles.navBtn}
+            >
+              <FontAwesome name="arrow-left" size={16} color={colors.white} />
+            </Pressable>
+            <View style={styles.navRight}>
+              <Pressable
+                onPress={handleShare}
+                hitSlop={12}
+                accessibilityRole="button"
+                accessibilityLabel={t('memorial.share')}
+                style={styles.navBtn}
+              >
+                <FontAwesome name="share" size={14} color={colors.white} />
+              </Pressable>
+              {canEdit && (
+                <Pressable
+                  onPress={() => router.push(`/memorial/edit/${slug}`)}
+                  hitSlop={12}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('graves.edit')}
+                  style={styles.navBtn}
+                >
+                  <FontAwesome name="pencil" size={14} color={colors.white} />
+                </Pressable>
+              )}
+            </View>
+          </View>
+
+          {/* Photo counter pill */}
+          {grave.cover_photo_path ? (
+            <View style={styles.photoCounter}>
+              <Text style={styles.photoCounterText}>1 / 1</Text>
+            </View>
+          ) : null}
+
+          {/* Bottom gradient fade into content */}
+          <View style={styles.bottomGradient} pointerEvents="none">
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.15)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.35)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.55)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: 'rgba(255,255,255,0.8)' }]} />
+            <View style={[styles.gradientStrip, { backgroundColor: colors.backgroundPrimary }]} />
+          </View>
+        </View>
+
+        {/* Content area — overlaps photo slightly */}
+        <View style={styles.content}>
+          {/* Name + Dates */}
+          <View style={styles.headerSection}>
+            <Text style={styles.personName}>{grave.person_name}</Text>
+            <Text style={styles.dates}>
+              {birthDate}
+              <Text style={styles.datesSeparator}> — </Text>
+              {deathDate}
+            </Text>
+            {relationshipLabel ? (
+              <View style={styles.relationshipBadge}>
+                <FontAwesome name="heart" size={12} color={colors.textTertiary} />
+                <Text style={styles.relationshipText}>{relationshipLabel}</Text>
+              </View>
+            ) : null}
+          </View>
+
+          {/* Cemetery info */}
+          {grave.cemetery?.name ? (
+            <View style={styles.infoSection}>
+              <View style={styles.infoRow}>
+                <View style={styles.infoIcon}>
+                  <FontAwesome name="map-marker" size={18} color={colors.primary} />
+                </View>
+                <View>
+                  <Text style={styles.infoLabel}>{t('memorial.cemetery')}</Text>
+                  <Text style={styles.infoValue}>{grave.cemetery.name}</Text>
+                  {cemeterySubtitle ? (
+                    <Text style={styles.infoValueSub}>{cemeterySubtitle}</Text>
+                  ) : null}
+                </View>
+              </View>
+            </View>
+          ) : null}
+
+          {/* Plot info */}
+          {grave.plot_info ? (
+            <View style={styles.infoSection}>
+              <View style={styles.infoRow}>
+                <View style={styles.infoIcon}>
+                  <FontAwesome name="th" size={16} color={colors.primary} />
+                </View>
+                <View>
+                  <Text style={styles.infoLabel}>{t('memorial.plot')}</Text>
+                  <Text style={styles.infoValue}>{grave.plot_info}</Text>
+                </View>
+              </View>
+            </View>
+          ) : null}
+
+          {/* Inscription / Notes */}
+          {grave.inscription ? (
+            <View style={styles.epitaphSection}>
+              <Text style={styles.epitaphLabel}>{t('memorial.notes')}</Text>
+              <Text style={styles.epitaphText}>{grave.inscription}</Text>
+            </View>
+          ) : null}
+
+          {/* Actions */}
+          <View style={styles.actionsSection}>
+            {isOnWaitlist ? (
+              <Button
+                variant="secondary"
+                disabled
+                title={t('memorial.onWaitlist')}
+                icon="clock-o"
+                onPress={() => {}}
+              />
+            ) : (
+              <Button
+                variant="brand"
+                title={t('memorial.notifyMe')}
+                icon="heart"
+                onPress={handleWaitlistPress}
+                loading={joinWaitlist.isPending}
+                style={styles.primaryAction}
+              />
+            )}
+            <View style={styles.actionRow}>
+              <Pressable
+                onPress={() => {}}
+                style={({ pressed }) => [
+                  styles.secondaryAction,
+                  pressed && styles.secondaryActionPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('memorial.addPhoto')}
+              >
+                <FontAwesome name="camera" size={14} color={colors.textSecondary} />
+                <Text style={styles.secondaryActionText}>{t('memorial.addPhoto')}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {}}
+                style={({ pressed }) => [
+                  styles.secondaryAction,
+                  pressed && styles.secondaryActionPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('memorial.more')}
+              >
+                <FontAwesome name="ellipsis-v" size={14} color={colors.textSecondary} />
+                <Text style={styles.secondaryActionText}>{t('memorial.more')}</Text>
+              </Pressable>
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -226,65 +344,238 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.backgroundPrimary,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
-    backgroundColor: colors.backgroundPrimary,
-    zIndex: 1,
-  },
-  headerButton: {
-    padding: spacing.xs,
-  },
-  headerIconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   scrollView: {
     flex: 1,
   },
-  scrollContent: {
-    // no flexGrow — content fills naturally, no empty space below CTA
+  scrollContent: {},
+
+  /* Hero */
+  heroContainer: {
+    width: '100%',
+    height: HERO_HEIGHT,
+    position: 'relative',
+    overflow: 'hidden',
   },
   heroPhoto: {
     width: '100%',
-    aspectRatio: 3 / 2,
+    height: '100%',
   },
   heroPlaceholder: {
     width: '100%',
-    aspectRatio: 3 / 2,
+    height: '100%',
     backgroundColor: colors.backgroundSecondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  /* Nav overlay — dark gradient at top */
+  navOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+  },
+  floatingNav: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    zIndex: 10,
+  },
+  navBtn: {
+    width: NAV_BTN_SIZE,
+    height: NAV_BTN_SIZE,
+    borderRadius: NAV_BTN_SIZE / 2,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navRight: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+
+  /* Photo counter pill */
+  photoCounter: {
+    position: 'absolute',
+    bottom: 70,
+    right: spacing.md,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: radii.sm,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 5,
+  },
+  photoCounterText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.white,
+  },
+
+  /* Bottom gradient fade */
+  bottomGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+  },
+  gradientStrip: {
+    flex: 1,
+  },
+
+  /* Content */
+  content: {
+    paddingHorizontal: spacing.lg,
+    marginTop: -20,
+  },
+
+  /* Header */
+  headerSection: {
+    marginBottom: spacing.xl,
+  },
+  personName: {
+    fontFamily: SERIF_FONT,
+    fontSize: 30,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    lineHeight: 34,
+    letterSpacing: -0.3,
+    marginBottom: 6,
+  },
+  dates: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: colors.primary,
+    letterSpacing: 0.5,
+  },
+  datesSeparator: {
+    color: '#bbb',
+  },
+
+  /* Relationship badge */
+  relationshipBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: radii.sm,
+    backgroundColor: '#f0eeeb',
+    marginTop: 10,
+    alignSelf: 'flex-start',
+  },
+  relationshipText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textTertiary,
+  },
+
+  /* Info sections */
   infoSection: {
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.lg,
-    gap: spacing.xs,
+    paddingVertical: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: '#f0eeeb',
   },
-  inscription: {
-    fontSize: typographyTokens.body.fontSize,
-    fontWeight: typographyTokens.body.fontWeight,
-    lineHeight: typographyTokens.body.lineHeight,
-    color: colors.textSecondary,
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 14,
+  },
+  infoIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#f5f3f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#aaa',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: 2,
+  },
+  infoValue: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1a1a1a',
+  },
+  infoValueSub: {
+    fontSize: 13,
+    color: '#999',
+    marginTop: 1,
+  },
+
+  /* Epitaph / Notes */
+  epitaphSection: {
+    paddingVertical: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: '#f0eeeb',
+  },
+  epitaphLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#aaa',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: 10,
+  },
+  epitaphText: {
+    fontFamily: SERIF_FONT,
+    fontSize: 20,
+    fontWeight: '500',
     fontStyle: 'italic',
-    marginTop: spacing.sm,
+    color: '#444',
+    lineHeight: 30,
   },
-  ctaSection: {
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
+
+  /* Actions */
+  actionsSection: {
+    paddingVertical: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: '#f0eeeb',
+    gap: 10,
   },
+  primaryAction: {
+    borderRadius: 14,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  secondaryAction: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingVertical: 14,
+    borderRadius: 14,
+    backgroundColor: '#f5f3f0',
+  },
+  secondaryActionPressed: {
+    backgroundColor: '#eceae6',
+  },
+  secondaryActionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#444',
+  },
+
+  /* Bottom bar */
   bottomBar: {
     position: 'absolute',
     bottom: 0,

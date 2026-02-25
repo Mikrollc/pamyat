@@ -18,7 +18,13 @@
     "signUpToManage": "Sign up to help manage this memorial",
     "confirmCare": "You'll be notified when care services become available for this grave.",
     "confirmCareYes": "Join Waitlist",
-    "notFound": "Memorial not found"
+    "notFound": "Memorial not found",
+    "cemetery": "Cemetery",
+    "plot": "Plot",
+    "notes": "Notes",
+    "notifyMe": "Notify Me About Care Services",
+    "addPhoto": "Add Photo",
+    "more": "More"
   },
   "graves": {
     "empty": "No memorials yet",
