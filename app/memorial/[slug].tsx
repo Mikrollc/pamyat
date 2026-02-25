@@ -157,6 +157,18 @@ export default function MemorialPageScreen() {
             </Typography>
           ) : null}
 
+          {grave.plot_info ? (
+            <Typography variant="bodySmall" color={colors.textTertiary}>
+              {grave.plot_info}
+            </Typography>
+          ) : null}
+
+          {membership?.relationship ? (
+            <Typography variant="bodySmall" color={colors.textTertiary}>
+              {t(`addGrave.relationships.${membership.relationship}`, membership.relationship)}
+            </Typography>
+          ) : null}
+
           {grave.inscription ? (
             <Text style={styles.inscription}>{grave.inscription}</Text>
           ) : null}
