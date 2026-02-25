@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["XXXXXXXXXX.com.mikrollc.raduna"],
+        "paths": ["/memorial/*"]
+      }
+    ]
+  }
+}
