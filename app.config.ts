@@ -17,7 +17,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: false,
     bundleIdentifier: 'com.mikrollc.raduna',
-    associatedDomains: ['applinks:raduna.app'],
+    // TODO: Add associatedDomains when raduna.app domain is live + provisioning profile updated
+    // associatedDomains: ['applinks:raduna.app'],
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
