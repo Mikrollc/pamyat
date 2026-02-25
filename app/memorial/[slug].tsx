@@ -278,32 +278,6 @@ export default function MemorialPageScreen() {
                 style={styles.primaryAction}
               />
             )}
-            <View style={styles.actionRow}>
-              <Pressable
-                onPress={() => {}}
-                style={({ pressed }) => [
-                  styles.secondaryAction,
-                  pressed && styles.secondaryActionPressed,
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={t('memorial.addPhoto')}
-              >
-                <FontAwesome name="camera" size={14} color={colors.textSecondary} />
-                <Text style={styles.secondaryActionText}>{t('memorial.addPhoto')}</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {}}
-                style={({ pressed }) => [
-                  styles.secondaryAction,
-                  pressed && styles.secondaryActionPressed,
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={t('memorial.more')}
-              >
-                <FontAwesome name="ellipsis-v" size={14} color={colors.textSecondary} />
-                <Text style={styles.secondaryActionText}>{t('memorial.more')}</Text>
-              </Pressable>
-            </View>
           </View>
         </View>
       </ScrollView>
@@ -544,29 +518,6 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 4,
   },
-  actionRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  secondaryAction: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: '#f5f3f0',
-  },
-  secondaryActionPressed: {
-    backgroundColor: '#eceae6',
-  },
-  secondaryActionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#444',
-  },
-
   /* Bottom bar */
   bottomBar: {
     position: 'absolute',
