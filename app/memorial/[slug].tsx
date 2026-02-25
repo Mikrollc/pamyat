@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   View,
   ScrollView,
@@ -6,7 +7,6 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
-  Share,
   Platform,
   StyleSheet,
 } from 'react-native';
@@ -22,6 +22,7 @@ import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { LinearGradient } from 'expo-linear-gradient';
+import { InviteFamilySheet } from '@/components/invite/InviteFamilySheet';
 import { colors, spacing, radii } from '@/constants/tokens';
 
 const BOTTOM_BAR_HEIGHT = 56;
@@ -40,21 +41,16 @@ export default function MemorialPageScreen() {
   const { data: waitlistEntry } = useWaitlistStatus(grave?.id ?? '', session?.user?.id);
   const joinWaitlist = useJoinWaitlist();
 
+  const [showInviteSheet, setShowInviteSheet] = useState(false);
   const canEdit = membership?.role === 'owner' || membership?.role === 'editor';
   const isOnWaitlist = !!waitlistEntry;
 
-  async function handleShare() {
-    if (!grave) return;
-    const url = `https://raduna.app/memorial/${grave.slug}`;
-    try {
-      await Share.share(
-        Platform.OS === 'ios'
-          ? { message: grave.person_name, url }
-          : { message: `${grave.person_name}\n${url}` },
-      );
-    } catch {
-      // user cancelled or share failed
+  function handleShare() {
+    if (!session) {
+      router.push('/(auth)');
+      return;
     }
+    setShowInviteSheet(true);
   }
 
   function handleWaitlistPress() {
@@ -296,6 +292,15 @@ export default function MemorialPageScreen() {
             <FontAwesome name="chevron-right" size={16} color={colors.textTertiary} />
           </Pressable>
         </View>
+      )}
+
+      {grave && session && (
+        <InviteFamilySheet
+          visible={showInviteSheet}
+          graveId={grave.id}
+          userId={session.user.id}
+          onClose={() => setShowInviteSheet(false)}
+        />
       )}
     </View>
   );
