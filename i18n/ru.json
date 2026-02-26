@@ -110,6 +110,9 @@
     "networkError": "Ошибка соединения. Проверьте интернет.",
     "otpSendError": "Не удалось отправить код. Попробуйте ещё раз.",
     "resendIn": "Повтор через {{seconds}}с",
+    "taglineEn": "Memories that endure.",
+    "taglineRu": "Воспоминания, которые живут.",
+    "autoSubmitHint": "Код подтвердится автоматически",
     "chooseLanguage": "Выберите язык",
     "legalNotice": "Продолжая, вы соглашаетесь с",
     "and": "и"

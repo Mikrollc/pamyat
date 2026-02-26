@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { View, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Typography, Button, CountryPickerSheet } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { stripPhone } from '@/lib/format-phone';
@@ -12,6 +14,7 @@ import { colors, spacing, radii, typography as typo } from '@/constants/tokens';
 export default function PhoneScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
 
@@ -48,11 +51,21 @@ export default function PhoneScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { paddingTop: insets.top + spacing.md }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <Pressable
+        onPress={() => router.back()}
+        hitSlop={12}
+        accessibilityRole="button"
+        accessibilityLabel={t('common.back')}
+        style={styles.backButton}
+      >
+        <FontAwesome name="arrow-left" size={20} color={colors.brand} />
+      </Pressable>
+
       <View style={styles.content}>
-        <Typography variant="h2">{t('auth.enterPhone')}</Typography>
+        <Text style={styles.title}>{t('auth.enterPhone')}</Text>
 
         <View style={styles.phoneRow}>
           <Pressable
@@ -110,7 +123,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: spacing.xl,
-    paddingTop: 120,
+  },
+  backButton: {
+    padding: spacing.xs,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.lg,
+  },
+  title: {
+    fontFamily: 'CormorantGaramond-SemiBold',
+    fontSize: 28,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    lineHeight: 34,
   },
   content: {
     flex: 1,

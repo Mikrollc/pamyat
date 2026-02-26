@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Typography, Button } from '@/components/ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Typography } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { fetchProfile } from '@/lib/api/profiles';
 import { formatPhoneDisplay } from '@/lib/format-phone';
@@ -14,6 +16,7 @@ const RESEND_SECONDS = 60;
 export default function OtpScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { phone } = useLocalSearchParams<{ phone: string }>();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -94,28 +97,45 @@ export default function OtpScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { paddingTop: insets.top + spacing.md }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <Pressable
+        onPress={() => router.back()}
+        hitSlop={12}
+        accessibilityRole="button"
+        accessibilityLabel={t('common.back')}
+        style={styles.backButton}
+      >
+        <FontAwesome name="arrow-left" size={20} color={colors.brand} />
+      </Pressable>
+
       <View style={styles.content}>
-        <Typography variant="h2">{t('auth.enterCode')}</Typography>
+        <Text style={styles.title}>{t('auth.enterCode')}</Text>
         <Typography variant="body" color={colors.textSecondary}>
           {formatPhoneDisplay(phone ?? '')}
         </Typography>
 
         <Pressable style={styles.codeRow} onPress={() => hiddenInput.current?.focus()}>
-          {Array.from({ length: CODE_LENGTH }, (_, i) => (
-            <View
-              key={i}
-              style={[
-                styles.codeBox,
-                error ? styles.codeBoxError : undefined,
-                i === code.length && styles.codeBoxFocused,
-              ]}
-            >
-              <Typography variant="h2">{digits[i] ?? ''}</Typography>
-            </View>
-          ))}
+          {Array.from({ length: CODE_LENGTH }, (_, i) => {
+            const isFilled = i < code.length;
+            const isCursor = i === code.length;
+            return (
+              <View
+                key={i}
+                style={[
+                  styles.codeBox,
+                  error ? styles.codeBoxError : undefined,
+                  isFilled && !error ? styles.codeBoxFilled : undefined,
+                  isCursor && !error ? styles.codeBoxFocused : undefined,
+                ]}
+              >
+                <Text style={[styles.codeDigit, isFilled && !error ? styles.codeDigitFilled : undefined]}>
+                  {digits[i] ?? ''}
+                </Text>
+              </View>
+            );
+          })}
         </Pressable>
 
         <TextInput
@@ -130,27 +150,36 @@ export default function OtpScreen() {
           testID="otp-input"
         />
 
+        <Typography variant="caption" color={colors.textTertiary} align="center">
+          {t('auth.autoSubmitHint')}
+        </Typography>
+
         {error ? (
-          <Typography variant="caption" color={colors.destructive}>
+          <Typography variant="caption" color={colors.destructive} align="center">
             {error}
           </Typography>
         ) : null}
 
         {loading ? (
-          <Typography variant="bodySmall" color={colors.textSecondary}>
+          <Typography variant="bodySmall" color={colors.textSecondary} align="center">
             {t('common.loading')}
           </Typography>
         ) : null}
       </View>
 
       <View style={styles.bottom}>
-        <Button
-          title={countdown > 0 ? t('auth.resendIn', { seconds: countdown }) : t('auth.resend')}
-          variant="secondary"
-          icon="refresh"
-          onPress={handleResend}
-          disabled={countdown > 0}
-        />
+        {countdown > 0 ? (
+          <View style={styles.countdownRow}>
+            <Typography variant="bodySmall" color={colors.textTertiary}>
+              {t('auth.resendIn', { seconds: countdown })}
+            </Typography>
+          </View>
+        ) : (
+          <Pressable onPress={handleResend} style={styles.resendButton}>
+            <FontAwesome name="refresh" size={14} color={colors.brand} />
+            <Text style={styles.resendText}>{t('auth.resend')}</Text>
+          </Pressable>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -160,7 +189,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: spacing.xl,
-    paddingTop: 120,
+  },
+  backButton: {
+    padding: spacing.xs,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.lg,
+  },
+  title: {
+    fontFamily: 'CormorantGaramond-SemiBold',
+    fontSize: 28,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    lineHeight: 34,
   },
   content: {
     flex: 1,
@@ -168,24 +208,39 @@ const styles = StyleSheet.create({
   },
   codeRow: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.sm + spacing.xs,
     justifyContent: 'center',
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
   },
   codeBox: {
     width: 48,
     height: 56,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    borderRadius: radii.sm,
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.backgroundPrimary,
+  },
+  codeBoxFilled: {
+    borderColor: colors.brand,
+    backgroundColor: colors.brandLight,
   },
   codeBoxError: {
     borderColor: colors.destructive,
   },
   codeBoxFocused: {
-    borderColor: colors.primary,
+    borderColor: colors.brand,
+  },
+  codeDigit: {
+    fontFamily: 'DMSans-Medium',
+    fontSize: 24,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    lineHeight: 29,
+  },
+  codeDigitFilled: {
+    color: colors.brand,
   },
   hiddenInput: {
     position: 'absolute',
@@ -195,5 +250,22 @@ const styles = StyleSheet.create({
   },
   bottom: {
     paddingBottom: spacing.xxl,
+    alignItems: 'center',
+  },
+  countdownRow: {
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  resendButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+  },
+  resendText: {
+    fontFamily: 'DMSans-Medium',
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.brand,
   },
 });

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -68,11 +68,11 @@ export default function NameSetupScreen() {
         accessibilityLabel={t('common.back')}
         style={styles.backButton}
       >
-        <FontAwesome name="arrow-left" size={20} color={colors.textPrimary} />
+        <FontAwesome name="arrow-left" size={20} color={colors.brand} />
       </Pressable>
 
       <View style={styles.content}>
-        <Typography variant="h2">{t('auth.yourName')}</Typography>
+        <Text style={styles.title}>{t('auth.yourName')}</Text>
 
         <Input
           label={t('auth.yourName')}
@@ -139,6 +139,13 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
     alignSelf: 'flex-start',
     marginBottom: spacing.lg,
+  },
+  title: {
+    fontFamily: 'CormorantGaramond-SemiBold',
+    fontSize: 28,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    lineHeight: 34,
   },
   content: {
     flex: 1,
