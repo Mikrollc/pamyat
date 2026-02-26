@@ -17,6 +17,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useMapGraves, useCemeterySearch, useAllCemeteries } from '@/hooks';
 import { useAddGraveStore } from '@/stores/add-grave-store';
 import { CemeteryFloatingCard } from '@/components/map/CemeteryFloatingCard';
+import { GraveBottomSheet } from '@/components/map/GraveBottomSheet';
 import { RadunaPin } from '@/components/icons/RadunaPin';
 import { cemeteriesToGeoJSON } from '@/lib/geojson';
 import { parseLocationCoords } from '@/lib/geo';
@@ -62,6 +63,7 @@ export default function MapScreen() {
   const [cameraTarget, setCameraTarget] = useState<[number, number]>(NYC_CENTER);
   const [cameraZoom, setCameraZoom] = useState(DEFAULT_ZOOM);
   const [selectedCemetery, setSelectedCemetery] = useState<SelectedCemetery | null>(null);
+  const [selectedGraveSlug, setSelectedGraveSlug] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentZoomRef = useRef(DEFAULT_ZOOM);
   const centerRef = useRef<[number, number]>(NYC_CENTER);
@@ -125,7 +127,8 @@ export default function MapScreen() {
   }
 
   function handlePinPress(grave: MapGrave) {
-    router.push(`/memorial/${grave.slug}`);
+    setSelectedCemetery(null);
+    setSelectedGraveSlug(grave.slug);
   }
 
   function handleCemeteryPress(e: OnPressEvent) {
@@ -157,6 +160,7 @@ export default function MapScreen() {
 
   function handleMapPress() {
     setSelectedCemetery(null);
+    setSelectedGraveSlug(null);
   }
 
   function handleRegionChange(state: { properties: { zoom: number; center: GeoJSON.Position } }) {
@@ -404,8 +408,15 @@ export default function MapScreen() {
         />
       )}
 
-      {/* Add Grave FAB — hidden when floating card is shown */}
-      {!selectedCemetery && (
+      {selectedGraveSlug && (
+        <GraveBottomSheet
+          slug={selectedGraveSlug}
+          onClose={() => setSelectedGraveSlug(null)}
+        />
+      )}
+
+      {/* Add Grave FAB — hidden when floating card or grave sheet is shown */}
+      {!selectedCemetery && !selectedGraveSlug && (
         <View style={[styles.fab, { bottom: insets.bottom + spacing.lg }]}>
           <Pressable
             onPress={() => router.push('/add-grave')}
