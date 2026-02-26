@@ -88,7 +88,10 @@
     "invalidDay": "Invalid day",
     "invalidMonth": "Invalid month",
     "invalidYear": "Year must be between 1800 and now",
-    "deathBeforeBirth": "Death date must be after birth date"
+    "deathBeforeBirth": "Death date must be after birth date",
+    "taglineMemory": "Memory is eternal",
+    "shareWithFamily": "Share with Family",
+    "viewMemorial": "View Memorial"
   },
   "auth": {
     "welcome": "Raduna",

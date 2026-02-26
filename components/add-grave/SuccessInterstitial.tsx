@@ -1,69 +1,170 @@
-import { View, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import Animated, { FadeIn, BounceIn } from 'react-native-reanimated';
-import { Typography } from '@/components/ui/Typography';
-import { Button } from '@/components/ui/Button';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing } from '@/constants/tokens';
+import { colors, spacing, radii, buttonHeight, typography } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+
+const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 interface SuccessInterstitialProps {
   personName: string;
-  onDone: () => void;
+  dates?: string;
+  onShare: () => void;
+  onView: () => void;
   testID?: string;
 }
 
-export function SuccessInterstitial({ personName, onDone, testID }: SuccessInterstitialProps) {
+export function SuccessInterstitial({
+  personName,
+  dates,
+  onShare,
+  onView,
+  testID,
+}: SuccessInterstitialProps) {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.container} testID={testID}>
-      <Animated.View entering={BounceIn.delay(200)} style={styles.checkCircle}>
-        <FontAwesome name="check" size={48} color={colors.white} />
+    <LinearGradient
+      colors={[colors.splash.gradientStart, colors.splash.gradientEnd]}
+      style={styles.gradient}
+      testID={testID}
+    >
+      <View style={styles.top} />
+
+      <View style={styles.center}>
+        <Animated.View entering={BounceIn.delay(200)} style={styles.checkCircle}>
+          <FontAwesome name="check" size={40} color={colors.brand} />
+        </Animated.View>
+
+        <Animated.View entering={FadeIn.delay(500)} style={styles.textBlock}>
+          <Text style={styles.title}>{t('addGrave.memorialCreated')}</Text>
+          <Text style={styles.personName}>{personName}</Text>
+          {dates ? <Text style={styles.dates}>{dates}</Text> : null}
+        </Animated.View>
+
+        <Animated.View entering={FadeIn.delay(800)}>
+          <Text style={styles.tagline}>{t('addGrave.taglineMemory')}</Text>
+        </Animated.View>
+      </View>
+
+      <Animated.View entering={FadeIn.delay(1000)} style={styles.actions}>
+        <Pressable
+          style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryButtonPressed]}
+          onPress={onShare}
+          accessibilityRole="button"
+          testID={testID ? `${testID}-share` : undefined}
+        >
+          <FontAwesome name="share-alt" size={16} color={colors.brand} />
+          <Text style={styles.primaryButtonText}>{t('addGrave.shareWithFamily')}</Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryButtonPressed]}
+          onPress={onView}
+          accessibilityRole="button"
+          testID={testID ? `${testID}-view` : undefined}
+        >
+          <Text style={styles.secondaryButtonText}>{t('addGrave.viewMemorial')}</Text>
+        </Pressable>
       </Animated.View>
-      <Animated.View entering={FadeIn.delay(500)}>
-        <Typography variant="h2" align="center">
-          {t('addGrave.memorialCreated')}
-        </Typography>
-        <View style={styles.name}>
-          <Typography variant="body" color={colors.textSecondary} align="center">
-            {personName}
-          </Typography>
-        </View>
-      </Animated.View>
-      <Animated.View entering={FadeIn.delay(100)} style={styles.button}>
-        <Button
-          variant="brand"
-          title={t('common.done')}
-          icon="check"
-          onPress={onDone}
-          testID={testID ? `${testID}-done` : undefined}
-        />
-      </Animated.View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
+  },
+  top: {
+    flex: 1,
+  },
+  center: {
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
     gap: spacing.xl,
   },
   checkCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: colors.brand,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  name: {
-    marginTop: spacing.sm,
+  textBlock: {
+    alignItems: 'center',
+    gap: spacing.xs,
   },
-  button: {
-    width: '100%',
-    marginTop: spacing.xxl,
+  title: {
+    fontFamily: SERIF_FONT,
+    fontSize: 32,
+    fontWeight: '600',
+    color: colors.white,
+    textAlign: 'center',
+  },
+  personName: {
+    fontSize: typography.body.fontSize,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+  },
+  dates: {
+    fontSize: typography.bodySmall.fontSize,
+    fontWeight: '400',
+    color: 'rgba(255,255,255,0.6)',
+    textAlign: 'center',
+  },
+  tagline: {
+    fontFamily: SERIF_FONT,
+    fontSize: typography.body.fontSize,
+    fontStyle: 'italic',
+    color: 'rgba(255,255,255,0.7)',
+    textAlign: 'center',
+  },
+  actions: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xxl,
+    gap: spacing.sm,
+  },
+  primaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    minHeight: buttonHeight.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.white,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  primaryButtonPressed: {
+    opacity: 0.85,
+  },
+  primaryButtonText: {
+    fontSize: typography.button.fontSize,
+    fontWeight: typography.button.fontWeight,
+    color: colors.brand,
+  },
+  secondaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: buttonHeight.md,
+    borderRadius: radii.md,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'transparent',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  secondaryButtonPressed: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  secondaryButtonText: {
+    fontSize: typography.button.fontSize,
+    fontWeight: typography.button.fontWeight,
+    color: colors.white,
   },
 });
