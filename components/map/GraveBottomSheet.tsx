@@ -1,4 +1,4 @@
-import { View, Modal, Pressable, Image, Platform, StyleSheet } from 'react-native';
+import { View, Modal, Pressable, Image, Text, Platform, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -73,13 +73,9 @@ export function GraveBottomSheet({ slug, onClose }: GraveBottomSheetProps) {
             )}
 
             <View style={styles.info}>
-              <Typography
-                variant="body"
-                numberOfLines={2}
-                style={{ fontFamily: SERIF_FONT }}
-              >
+              <Text style={styles.personName} numberOfLines={2}>
                 {grave.person_name}
-              </Typography>
+              </Text>
               {subtitle ? (
                 <Typography
                   variant="caption"
@@ -144,5 +140,11 @@ const styles = StyleSheet.create({
   info: {
     flex: 1,
     gap: spacing.xs,
+  },
+  personName: {
+    fontFamily: SERIF_FONT,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
 });
