@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, Alert, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -9,20 +9,41 @@ import { StepDates } from '@/components/add-grave/StepDates';
 import { StepPhoto } from '@/components/add-grave/StepPhoto';
 import { StepReview } from '@/components/add-grave/StepReview';
 import { SuccessInterstitial } from '@/components/add-grave/SuccessInterstitial';
+import { InviteFamilySheet } from '@/components/invite/InviteFamilySheet';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useAddGraveStore } from '@/stores/add-grave-store';
 import { usePublishGrave } from '@/hooks/usePublishGrave';
+import { useSession } from '@/hooks/useSession';
 import { colors } from '@/constants/tokens';
+import type { PartialDate } from '@/stores/add-grave-store';
 
+function formatPartialDate(d: PartialDate): string | null {
+  if (d.year == null) return null;
+  const parts: string[] = [];
+  if (d.day != null) parts.push(String(d.day).padStart(2, '0'));
+  if (d.month != null) parts.push(String(d.month).padStart(2, '0'));
+  parts.push(String(d.year));
+  return parts.join('.');
+}
+
+function buildDatesString(birth: PartialDate, death: PartialDate): string | undefined {
+  const b = formatPartialDate(birth);
+  const d = formatPartialDate(death);
+  if (!b && !d) return undefined;
+  return `${b ?? '?'} — ${d ?? '?'}`;
+}
 
 export default function AddGraveScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const store = useAddGraveStore();
+  const session = useSession();
   const publishMutation = usePublishGrave();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showDiscard, setShowDiscard] = useState(false);
+  const [showInviteSheet, setShowInviteSheet] = useState(false);
+  const publishedGraveRef = useRef<{ id: string; slug: string } | null>(null);
 
   const handleClose = () => {
     setShowDiscard(true);
@@ -42,7 +63,7 @@ export default function AddGraveScreen() {
     if (store.latitude == null || store.longitude == null) return;
 
     try {
-      await publishMutation.mutateAsync({
+      const grave = await publishMutation.mutateAsync({
         latitude: store.latitude,
         longitude: store.longitude,
         firstName: store.firstName,
@@ -56,25 +77,45 @@ export default function AddGraveScreen() {
         photoUri: store.photoUri,
         inscription: store.inscription,
       });
+      publishedGraveRef.current = { id: grave.id, slug: grave.slug };
       setShowSuccess(true);
     } catch (error) {
       Alert.alert('', t('addGrave.publishError'));
     }
   };
 
-  const handleDone = () => {
+  const handleShare = () => {
+    setShowInviteSheet(true);
+  };
+
+  const handleView = () => {
+    const slug = publishedGraveRef.current?.slug;
     store.reset();
-    router.replace('/(tabs)/graves');
+    if (slug) {
+      router.replace(`/memorial/${slug}`);
+    } else {
+      router.replace('/(tabs)/graves');
+    }
   };
 
   if (showSuccess) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.successContainer}>
         <SuccessInterstitial
           personName={`${store.firstName} ${store.lastName}`.trim()}
-          onDone={handleDone}
+          dates={buildDatesString(store.birthDate, store.deathDate)}
+          onShare={handleShare}
+          onView={handleView}
           testID="success"
         />
+        {publishedGraveRef.current && session && (
+          <InviteFamilySheet
+            visible={showInviteSheet}
+            graveId={publishedGraveRef.current.id}
+            userId={session.user.id}
+            onClose={() => setShowInviteSheet(false)}
+          />
+        )}
       </View>
     );
   }
@@ -123,5 +164,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.backgroundPrimary,
+  },
+  successContainer: {
+    flex: 1,
   },
 });

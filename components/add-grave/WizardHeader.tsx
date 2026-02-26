@@ -1,9 +1,11 @@
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, Text, StyleSheet, Platform } from 'react-native';
 import { Typography } from '@/components/ui/Typography';
 import { ProgressBar } from './ProgressBar';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing } from '@/constants/tokens';
+import { colors, spacing, typography } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+
+const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 interface WizardHeaderProps {
   step: number;
@@ -21,9 +23,7 @@ export function WizardHeader({ step, totalSteps = 4, title, onClose, testID }: W
       <View style={styles.container}>
         <View style={styles.topRow}>
           <View style={styles.titleGroup}>
-            <Typography variant="button">
-              {title}
-            </Typography>
+            <Text style={styles.serifTitle}>{title}</Text>
             <Typography variant="caption" color={colors.textTertiary}>
               {t('addGrave.stepOf', { current: step, total: totalSteps })}
             </Typography>
@@ -59,6 +59,13 @@ const styles = StyleSheet.create({
   },
   titleGroup: {
     flex: 1,
+  },
+  serifTitle: {
+    fontFamily: SERIF_FONT,
+    fontSize: typography.button.fontSize,
+    fontWeight: '600',
+    lineHeight: typography.button.lineHeight,
+    color: colors.textPrimary,
   },
   progressWrapper: {
     paddingVertical: spacing.sm,
