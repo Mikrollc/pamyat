@@ -166,6 +166,9 @@
     "remindBefore": "Напомнить заранее"
   },
   "profile": {
+    "title": "Профиль",
+    "settings": "Настройки",
+    "legal": "Правовая информация",
     "language": "Язык",
     "russian": "Русский",
     "english": "English",

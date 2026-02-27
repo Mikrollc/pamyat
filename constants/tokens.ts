@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 export const colors = {
   primary: '#1a5c54',
   primaryPressed: '#14463f',
@@ -50,4 +52,8 @@ export const typography = {
 
 export const buttonHeight = {
   md: 52,
+} as const;
+
+export const fonts = {
+  serif: Platform.select({ ios: 'Georgia', default: 'serif' }),
 } as const;
