@@ -18,12 +18,11 @@ import { getGravePhotoUrl } from '@/lib/api/photos';
 import { formatGraveDateRange } from '@/lib/format-dates';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { GravesListSkeleton } from '@/components/ui/Skeleton';
 import { PendingInvitations } from '@/components/invite/PendingInvitations';
-import { colors, spacing, radii } from '@/constants/tokens';
+import { colors, spacing, radii, fonts } from '@/constants/tokens';
 
 const THUMB_SIZE = 72;
 const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
@@ -50,7 +49,7 @@ export default function GravesScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.header}>
-          <Typography variant="h2">{t('tabs.myGraves')}</Typography>
+          <Text style={styles.headerTitle}>{t('tabs.myGraves')}</Text>
           <Pressable
             onPress={() => router.push('/add-grave')}
             hitSlop={8}
@@ -77,7 +76,7 @@ export default function GravesScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Typography variant="h2">{t('tabs.myGraves')}</Typography>
+        <Text style={styles.headerTitle}>{t('tabs.myGraves')}</Text>
         <Pressable
           onPress={() => router.push('/add-grave')}
           hitSlop={8}
@@ -187,6 +186,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+  },
+  headerTitle: {
+    fontFamily: fonts.serif,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    lineHeight: 29,
+    letterSpacing: -0.3,
   },
   list: {
     paddingHorizontal: spacing.md,

@@ -99,14 +99,11 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { paddingTop: insets.top }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
-        <View style={styles.headerBtnPlaceholder} />
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>{t('profile.title')}</Text>
-        <View style={styles.headerBtnPlaceholder} />
       </View>
-      <View style={styles.headerBorder} />
 
       <ScrollView
         style={styles.flex}
@@ -114,7 +111,7 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Avatar + identity */}
-        <View style={styles.identity}>
+        <View style={[styles.sectionCard, styles.identity]}>
           <View style={styles.avatar}>
             <FontAwesome name="user" size={28} color={colors.white} />
           </View>
@@ -243,16 +240,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
-    backgroundColor: colors.backgroundPrimary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.backgroundSecondary,
     zIndex: 1,
   },
   headerTitle: {
     fontFamily: fonts.serif,
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.textPrimary,
+    lineHeight: 29,
+    letterSpacing: -0.3,
   },
   headerBtnPlaceholder: {
     width: 36,
@@ -274,7 +273,8 @@ const styles = StyleSheet.create({
   identity: {
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.md,
   },
   avatar: {
     width: 68,
