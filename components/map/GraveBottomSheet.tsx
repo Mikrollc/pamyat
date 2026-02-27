@@ -1,4 +1,4 @@
-import { View, Modal, Pressable, Image, Text, Platform, StyleSheet } from 'react-native';
+import { View, Modal, Pressable, Image, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,9 +7,8 @@ import { getGravePhotoUrl } from '@/lib/api/photos';
 import { formatGraveDateRange } from '@/lib/format-dates';
 import { Typography } from '@/components/ui/Typography';
 import { Button } from '@/components/ui/Button';
-import { colors, spacing, radii } from '@/constants/tokens';
+import { colors, spacing, radii, fonts } from '@/constants/tokens';
 
-const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 const THUMB_SIZE = 56;
 
 interface GraveBottomSheetProps {
@@ -142,7 +141,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   personName: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: 16,
     fontWeight: '600',
     color: colors.textPrimary,
