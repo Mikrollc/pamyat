@@ -15,6 +15,7 @@ exports[`Design Tokens matches token snapshot 1`] = `
     "brandLight": "#e8f0ef",
     "destructive": "#C04040",
     "destructivePressed": "#993333",
+    "placeholderDark": "#2c3e2c",
     "primary": "#1a5c54",
     "primaryPressed": "#14463f",
     "shadow": "#000",
