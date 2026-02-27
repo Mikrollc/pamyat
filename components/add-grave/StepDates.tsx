@@ -120,7 +120,7 @@ export function StepDates({ onNext, onBack }: StepDatesProps) {
         <View style={styles.nextButton}>
           <Button
             variant="brand"
-            title={hasDates ? t('common.next') : t('common.skip')}
+            title={hasDates ? t('common.next') : t('addGrave.skip')}
             icon="arrow-right"
             onPress={onNext}
             disabled={!canProceed}
