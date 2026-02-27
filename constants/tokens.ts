@@ -16,6 +16,7 @@ export const colors = {
   border: '#e5e5ea',
   white: '#fff',
   shadow: '#000',
+  placeholderDark: '#2c3e2c',
   brandLight: '#e8f0ef',
   splash: {
     gradientStart: '#1e6b62',

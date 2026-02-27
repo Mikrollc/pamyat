@@ -6,7 +6,6 @@ import {
   Text,
   Pressable,
   RefreshControl,
-  Platform,
   StyleSheet,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -25,7 +24,6 @@ import { PendingInvitations } from '@/components/invite/PendingInvitations';
 import { colors, spacing, radii, fonts } from '@/constants/tokens';
 
 const THUMB_SIZE = 72;
-const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 export default function GravesScreen() {
   const { t } = useTranslation();
@@ -213,7 +211,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
   },
   placeholder: {
-    backgroundColor: '#2c3e2c',
+    backgroundColor: colors.placeholderDark,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -222,7 +220,7 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   personName: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: 17,
     fontWeight: '600',
     color: colors.textPrimary,

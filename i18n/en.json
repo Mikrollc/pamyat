@@ -25,7 +25,10 @@
     "notes": "Notes",
     "notifyMe": "Notify Me About Care Services",
     "addPhoto": "Add Photo",
-    "more": "More"
+    "more": "More",
+    "person": "Person",
+    "dates": "Dates",
+    "inscription": "Inscription"
   },
   "graves": {
     "empty": "No memorials yet",

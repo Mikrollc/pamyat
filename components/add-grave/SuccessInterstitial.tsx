@@ -1,11 +1,10 @@
-import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Animated, { FadeIn, BounceIn } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing, radii, buttonHeight, typography } from '@/constants/tokens';
+import { colors, spacing, radii, buttonHeight, typography, fonts } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 interface SuccessInterstitialProps {
   personName: string;
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   title: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: 32,
     fontWeight: '600',
     color: colors.white,
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tagline: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: typography.body.fontSize,
     fontStyle: 'italic',
     color: 'rgba(255,255,255,0.7)',

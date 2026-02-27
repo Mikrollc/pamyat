@@ -1,11 +1,10 @@
-import { View, Pressable, Text, StyleSheet, Platform } from 'react-native';
+import { View, Pressable, Text, StyleSheet } from 'react-native';
 import { Typography } from '@/components/ui/Typography';
 import { ProgressBar } from './ProgressBar';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing, typography } from '@/constants/tokens';
+import { colors, spacing, typography, fonts } from '@/constants/tokens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 interface WizardHeaderProps {
   step: number;
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   serifTitle: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: typography.button.fontSize,
     fontWeight: '600',
     lineHeight: typography.button.lineHeight,

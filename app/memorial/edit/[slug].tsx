@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   View,
   ScrollView,
+  Text,
   Modal,
   Pressable,
   ActivityIndicator,
@@ -25,7 +26,7 @@ import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { InviteFamilySheet } from '@/components/invite/InviteFamilySheet';
 import { PartialDateInput } from '@/components/add-grave/PartialDateInput';
 import { PhotoSelector } from '@/components/add-grave/PhotoSelector';
-import { colors, spacing, radii } from '@/constants/tokens';
+import { colors, spacing, radii, fonts } from '@/constants/tokens';
 import type { PartialDate } from '@/stores/add-grave-store';
 
 const BOTTOM_BAR_HEIGHT = 84;
@@ -192,23 +193,24 @@ export default function EditMemorialScreen() {
           hitSlop={12}
           accessibilityRole="button"
           accessibilityLabel={t('common.back')}
-          style={styles.headerButton}
+          style={styles.headerBtn}
         >
-          <FontAwesome name="arrow-left" size={20} color={colors.textPrimary} />
+          <FontAwesome name="arrow-left" size={15} color={colors.textSecondary} />
         </Pressable>
 
-        <Typography variant="body">{t('manage.title')}</Typography>
+        <Text style={styles.headerTitle}>{t('manage.title')}</Text>
 
         <Pressable
           onPress={() => setShowMenu(true)}
           hitSlop={12}
           accessibilityRole="button"
           accessibilityLabel={t('common.more')}
-          style={styles.headerButton}
+          style={styles.headerBtn}
         >
-          <FontAwesome name="ellipsis-h" size={20} color={colors.textPrimary} />
+          <FontAwesome name="ellipsis-h" size={15} color={colors.textSecondary} />
         </Pressable>
       </View>
+      <View style={styles.headerBorder} />
 
       <KeyboardAvoidingView
         style={styles.flex}
@@ -235,59 +237,72 @@ export default function EditMemorialScreen() {
             testID="edit-photo"
           />
 
-          {/* Name fields */}
-          <Input
-            label={t('addGrave.firstName')}
-            value={firstName}
-            onChangeText={setFirstName}
-            maxLength={50}
-            testID="edit-first-name"
-          />
-          <Input
-            label={t('addGrave.lastName')}
-            value={lastName}
-            onChangeText={setLastName}
-            maxLength={100}
-            testID="edit-last-name"
-          />
+          {/* Person section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{t('memorial.person')}</Text>
+            <View style={styles.sectionCard}>
+              <Input
+                label={t('addGrave.firstName')}
+                value={firstName}
+                onChangeText={setFirstName}
+                maxLength={50}
+                testID="edit-first-name"
+              />
+              <Input
+                label={t('addGrave.lastName')}
+                value={lastName}
+                onChangeText={setLastName}
+                maxLength={100}
+                testID="edit-last-name"
+              />
+            </View>
+          </View>
 
-          {/* Dates */}
-          <PartialDateInput
-            label={t('addGrave.birthDate')}
-            value={birthDate}
-            onChange={(update) => setBirthDate((prev) => ({ ...prev, ...update }))}
-            testID="edit-birth-date"
-          />
-          <PartialDateInput
-            label={t('addGrave.deathDate')}
-            value={deathDate}
-            onChange={(update) => setDeathDate((prev) => ({ ...prev, ...update }))}
-            error={dateOrderError}
-            testID="edit-death-date"
-          />
+          {/* Dates section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{t('memorial.dates')}</Text>
+            <View style={styles.sectionCard}>
+              <PartialDateInput
+                label={t('addGrave.birthDate')}
+                value={birthDate}
+                onChange={(update) => setBirthDate((prev) => ({ ...prev, ...update }))}
+                testID="edit-birth-date"
+              />
+              <PartialDateInput
+                label={t('addGrave.deathDate')}
+                value={deathDate}
+                onChange={(update) => setDeathDate((prev) => ({ ...prev, ...update }))}
+                error={dateOrderError}
+                testID="edit-death-date"
+              />
+            </View>
+          </View>
 
-          {/* Cemetery & plot */}
-          <Input
-            label={t('addGrave.cemeteryName')}
-            value={cemeteryName}
-            onChangeText={setCemeteryName}
-            maxLength={100}
-            testID="edit-cemetery"
-          />
-          <Input
-            label={t('addGrave.plotInfo')}
-            value={plotInfo}
-            onChangeText={setPlotInfo}
-            placeholder={t('addGrave.plotInfoHint')}
-            maxLength={200}
-            testID="edit-plot"
-          />
+          {/* Location section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{t('memorial.cemetery')}</Text>
+            <View style={styles.sectionCard}>
+              <Input
+                label={t('addGrave.cemeteryName')}
+                value={cemeteryName}
+                onChangeText={setCemeteryName}
+                maxLength={100}
+                testID="edit-cemetery"
+              />
+              <Input
+                label={t('addGrave.plotInfo')}
+                value={plotInfo}
+                onChangeText={setPlotInfo}
+                placeholder={t('addGrave.plotInfoHint')}
+                maxLength={200}
+                testID="edit-plot"
+              />
+            </View>
+          </View>
 
-          {/* Relationship chips */}
-          <View style={styles.fieldGroup}>
-            <Typography variant="bodySmall" color={colors.textSecondary}>
-              {t('addGrave.relationship')}
-            </Typography>
+          {/* Relationship section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{t('addGrave.relationship')}</Text>
             <View style={styles.chipGroup}>
               {RELATIONSHIPS.map((rel) => {
                 const selected = relationship === rel;
@@ -298,26 +313,31 @@ export default function EditMemorialScreen() {
                     onPress={() => setRelationship(selected ? null : rel)}
                     testID={`edit-rel-${rel}`}
                   >
-                    <Typography
-                      variant="bodySmall"
-                      color={selected ? colors.brand : colors.textSecondary}
-                    >
+                    {selected && (
+                      <FontAwesome name="check" size={11} color={colors.brand} />
+                    )}
+                    <Text style={[styles.chipText, selected && styles.chipTextSelected]}>
                       {t(relKeys[rel] ?? rel)}
-                    </Typography>
+                    </Text>
                   </Pressable>
                 );
               })}
             </View>
           </View>
 
-          {/* Inscription */}
-          <Input
-            label={t('addGrave.inscriptionHint')}
-            value={inscription}
-            onChangeText={setInscription}
-            maxLength={500}
-            testID="edit-inscription"
-          />
+          {/* Inscription section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{t('memorial.inscription')}</Text>
+            <View style={styles.sectionCard}>
+              <Input
+                label={t('addGrave.inscriptionHint')}
+                value={inscription}
+                onChangeText={setInscription}
+                maxLength={500}
+                testID="edit-inscription"
+              />
+            </View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -330,6 +350,7 @@ export default function EditMemorialScreen() {
           onPress={handleSave}
           disabled={!canSave}
           loading={updateGrave.isPending}
+          style={styles.saveButton}
           testID="edit-save"
         />
       </View>
@@ -337,35 +358,43 @@ export default function EditMemorialScreen() {
       {/* Menu bottom sheet */}
       <Modal visible={showMenu} transparent animationType="slide" statusBarTranslucent>
         <Pressable style={styles.menuBackdrop} onPress={() => setShowMenu(false)}>
-          <View style={[styles.menuSheet, { paddingBottom: insets.bottom + spacing.md }]}>
-            {(membership?.role === 'owner' || membership?.role === 'editor') && (
+          <View style={[styles.menuSheet, { paddingBottom: insets.bottom + spacing.lg }]}>
+            <View style={styles.menuHandle} />
+
+            <View style={styles.menuActions}>
               <Pressable
-                style={styles.menuItem}
+                style={styles.menuItemDestructive}
                 onPress={() => {
                   setShowMenu(false);
-                  setShowInviteSheet(true);
+                  setShowDeleteConfirm(true);
                 }}
-                testID="menu-invite-family"
               >
-                <FontAwesome name="user-plus" size={18} color={colors.brand} />
-                <Typography variant="body" color={colors.brand}>
-                  {t('invite.title')}
+                <View style={styles.menuIconDestructive}>
+                  <FontAwesome name="trash" size={16} color={colors.destructive} />
+                </View>
+                <Typography variant="body" color={colors.destructive}>
+                  {t('manage.deleteTitle')}
                 </Typography>
               </Pressable>
-            )}
 
-            <Pressable
-              style={styles.menuItem}
-              onPress={() => {
-                setShowMenu(false);
-                setShowDeleteConfirm(true);
-              }}
-            >
-              <FontAwesome name="trash" size={18} color={colors.destructive} />
-              <Typography variant="body" color={colors.destructive}>
-                {t('manage.deleteTitle')}
-              </Typography>
-            </Pressable>
+              {(membership?.role === 'owner' || membership?.role === 'editor') && (
+                <Pressable
+                  style={styles.menuItem}
+                  onPress={() => {
+                    setShowMenu(false);
+                    setShowInviteSheet(true);
+                  }}
+                  testID="menu-invite-family"
+                >
+                  <View style={styles.menuIcon}>
+                    <FontAwesome name="user-plus" size={14} color={colors.brand} />
+                  </View>
+                  <Typography variant="body" color={colors.brand}>
+                    {t('invite.title')}
+                  </Typography>
+                </Pressable>
+              )}
+            </View>
 
             <Pressable
               style={styles.menuCancel}
@@ -405,7 +434,7 @@ export default function EditMemorialScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.backgroundPrimary,
+    backgroundColor: colors.backgroundSecondary,
   },
   flex: {
     flex: 1,
@@ -416,6 +445,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.backgroundPrimary,
   },
+
+  /* Header */
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -425,33 +456,121 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundPrimary,
     zIndex: 1,
   },
-  headerButton: {
-    padding: spacing.xs,
+  headerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  headerTitle: {
+    fontFamily: fonts.serif,
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  headerBorder: {
+    height: 1,
+    backgroundColor: colors.border,
+  },
+
+  /* Scroll */
   scrollContent: {
     padding: spacing.md,
     gap: spacing.lg,
   },
-  fieldGroup: {
+
+  /* Sections */
+  section: {
     gap: spacing.sm,
   },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textTertiary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    paddingHorizontal: spacing.xs,
+  },
+  sectionCard: {
+    backgroundColor: colors.backgroundPrimary,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    gap: spacing.md,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+
+  /* Chips */
   chipGroup: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
   },
   chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm + 2,
     borderRadius: radii.full,
     borderWidth: 1.5,
     borderColor: colors.border,
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundPrimary,
   },
   chipSelected: {
     backgroundColor: colors.brandLight,
     borderColor: colors.brand,
   },
+  chipText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textSecondary,
+  },
+  chipTextSelected: {
+    color: colors.brand,
+    fontWeight: '600',
+  },
+
+  /* Bottom bar */
+  bottomBar: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    backgroundColor: colors.backgroundPrimary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  saveButton: {
+    borderRadius: radii.md,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+
+  /* Menu bottom sheet */
   menuBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -461,8 +580,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundPrimary,
     borderTopLeftRadius: radii.lg,
     borderTopRightRadius: radii.lg,
-    paddingTop: spacing.md,
+    paddingTop: spacing.sm,
     paddingHorizontal: spacing.md,
+  },
+  menuHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.border,
+    alignSelf: 'center',
+    marginBottom: spacing.md,
+  },
+  menuActions: {
     gap: spacing.xs,
   },
   menuItem: {
@@ -473,16 +602,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     borderRadius: radii.sm,
   },
+  menuItemDestructive: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radii.sm,
+  },
+  menuIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: colors.brandLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuIconDestructive: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#fdf0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   menuCancel: {
     alignItems: 'center',
     paddingVertical: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  bottomBar: {
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.md,
-    backgroundColor: colors.backgroundPrimary,
+    marginTop: spacing.sm,
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
