@@ -7,7 +7,6 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
-  Platform,
   StyleSheet,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -23,11 +22,10 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { LinearGradient } from 'expo-linear-gradient';
 import { InviteFamilySheet } from '@/components/invite/InviteFamilySheet';
-import { colors, spacing, radii } from '@/constants/tokens';
+import { colors, spacing, radii, fonts } from '@/constants/tokens';
 
 const BOTTOM_BAR_HEIGHT = 56;
 const HERO_HEIGHT = 380;
-const SERIF_FONT = Platform.select({ ios: 'Georgia', default: 'serif' });
 
 export default function MemorialPageScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -336,7 +334,7 @@ const styles = StyleSheet.create({
   heroPlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#2c3e2c',
+    backgroundColor: colors.placeholderDark,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -411,7 +409,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   personName: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: 30,
     fontWeight: '600',
     color: colors.textPrimary,
@@ -500,7 +498,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   epitaphText: {
-    fontFamily: SERIF_FONT,
+    fontFamily: fonts.serif,
     fontSize: 20,
     fontWeight: '500',
     fontStyle: 'italic',
