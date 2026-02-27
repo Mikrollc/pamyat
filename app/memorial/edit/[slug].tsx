@@ -239,7 +239,7 @@ export default function EditMemorialScreen() {
 
           {/* Person section */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('addGrave.firstName')}</Text>
+            <Text style={styles.sectionLabel}>{t('memorial.person')}</Text>
             <View style={styles.sectionCard}>
               <Input
                 label={t('addGrave.firstName')}
@@ -260,7 +260,7 @@ export default function EditMemorialScreen() {
 
           {/* Dates section */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('addGrave.birthDate')}</Text>
+            <Text style={styles.sectionLabel}>{t('memorial.dates')}</Text>
             <View style={styles.sectionCard}>
               <PartialDateInput
                 label={t('addGrave.birthDate')}
@@ -327,7 +327,7 @@ export default function EditMemorialScreen() {
 
           {/* Inscription section */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('memorial.notes')}</Text>
+            <Text style={styles.sectionLabel}>{t('memorial.inscription')}</Text>
             <View style={styles.sectionCard}>
               <Input
                 label={t('addGrave.inscriptionHint')}
