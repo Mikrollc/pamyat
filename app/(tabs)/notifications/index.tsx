@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { View, FlatList, Pressable, RefreshControl, StyleSheet } from 'react-native';
+import { View, FlatList, Pressable, RefreshControl, Text, Platform, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +9,7 @@ import { getUpcomingDates, type MemorialDate } from '@/lib/memorial-dates';
 import { Card } from '@/components/ui/Card';
 import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { colors, spacing } from '@/constants/tokens';
+import { colors, spacing, radii, fonts } from '@/constants/tokens';
 
 function getDaysAway(date: Date, now: Date): number {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -31,6 +31,17 @@ function dotColor(type: MemorialDate['type']): string {
       return colors.accent;
     case 'anniversary':
       return colors.destructive;
+  }
+}
+
+function iconBgColor(type: MemorialDate['type']): string {
+  switch (type) {
+    case 'orthodox':
+      return colors.brandLight;
+    case 'us_holiday':
+      return '#fdf6e8';
+    case 'anniversary':
+      return '#fdf0f0';
   }
 }
 
@@ -90,7 +101,7 @@ export default function NotificationsScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Typography variant="h2">{t('tabs.notifications')}</Typography>
+        <Text style={styles.headerTitle}>{t('tabs.notifications')}</Text>
       </View>
 
       <FlatList
@@ -119,7 +130,7 @@ export default function NotificationsScreen() {
             >
               <Card style={styles.card}>
                 <View style={styles.row}>
-                  <View style={styles.iconContainer}>
+                  <View style={[styles.iconContainer, { backgroundColor: iconBgColor(item.type) }]}>
                     <FontAwesome
                       name={iconForType(item.type) as never}
                       size={18}
@@ -127,12 +138,13 @@ export default function NotificationsScreen() {
                     />
                   </View>
                   <View style={styles.info}>
-                    <Typography variant="body" numberOfLines={1}>
+                    <Typography variant="body">
                       {t(item.nameKey, item.nameParams)}
                     </Typography>
-                    <Typography variant="caption" color={colors.textSecondary}>
-                      {formatDate(item.date)} · {countdown}
-                    </Typography>
+                    <Text style={styles.dateText}>{formatDate(item.date)}</Text>
+                    <Text style={[styles.countdown, days <= 1 && styles.countdownUrgent]}>
+                      {countdown}
+                    </Text>
                   </View>
                   <FontAwesome name="chevron-right" size={14} color={colors.textTertiary} />
                 </View>
@@ -154,6 +166,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
+  headerTitle: {
+    fontFamily: fonts.serif,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    lineHeight: 29,
+    letterSpacing: -0.3,
+  },
   center: {
     flex: 1,
     justifyContent: 'center',
@@ -171,15 +191,27 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.backgroundSecondary,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   info: {
     flex: 1,
-    gap: 2,
+    gap: 3,
+  },
+  dateText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textSecondary,
+  },
+  countdown: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textTertiary,
+  },
+  countdownUrgent: {
+    color: colors.primary,
   },
 });
