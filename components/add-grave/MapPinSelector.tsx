@@ -46,9 +46,9 @@ export function MapPinSelector({
   };
 
   useEffect(() => {
-    // Set initial coords for camera display, but don't mark as confirmed
+    // Set initial coords and mark as confirmed so the Next button is enabled
     if (latitude == null || longitude == null) {
-      onLocationChange(DEFAULT_CENTER[1], DEFAULT_CENTER[0]);
+      onLocationChange(DEFAULT_CENTER[1], DEFAULT_CENTER[0], true);
     }
   }, []);
 
