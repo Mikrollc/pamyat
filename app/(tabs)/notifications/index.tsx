@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { View, FlatList, Pressable, RefreshControl, Text, Platform, StyleSheet } from 'react-native';
+import { View, FlatList, Pressable, RefreshControl, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +9,7 @@ import { getUpcomingDates, type MemorialDate } from '@/lib/memorial-dates';
 import { Card } from '@/components/ui/Card';
 import { Typography } from '@/components/ui/Typography';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { colors, spacing, radii, fonts } from '@/constants/tokens';
+import { colors, spacing, fonts } from '@/constants/tokens';
 
 function getDaysAway(date: Date, now: Date): number {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
